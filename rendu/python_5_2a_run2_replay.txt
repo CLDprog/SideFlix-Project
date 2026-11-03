@@ -1,0 +1,9 @@
+# Action 5.2.a - run 2 : relance sans modification de la source (replay), 2026-11-03 vers 17 h 37 (Paris)
+# python ingestion/incremental_catalog.py. Sortie réelle copiée depuis PowerShell.
+
+C:\Users\jerem\AppData\Roaming\Python\Python311\site-packages\snowflake\connector\connection\_connection.py:135:FutureWarning: enable_server_session_keep_alive_auto_detection was not set and defaults to True. [...]
+Watermark (dernier updated_at dans Snowflake) : 2026-10-29T12:00:00.000000Z
+Lignes extraites de PostgreSQL : 0
+Rien de nouveau : aucun MERGE nécessaire.
+SIDEFLIX.BRONZE.CATALOG contient 6 contenu(s), 6 content_id distinct(s).
+Exécution journalisée dans SIDEFLIX.BRONZE.LOAD_RUNS (source : 6 contenus).

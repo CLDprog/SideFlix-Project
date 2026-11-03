@@ -1,0 +1,14 @@
+{"session_id": "S18", "content_id": "C", "viewer_id": "V009", "started_at": "2026-11-01T08:00:00Z", "watched_seconds": 366, "device": "web"}
+{"session_id": "S19", "content_id": "D", "viewer_id": "V010", "started_at": "2026-11-01T09:00:00Z", "watched_seconds": 503, "device": "mobile"}
+{"session_id": "S20", "content_id": "E", "viewer_id": "V001", "started_at": "2026-11-01T10:00:00Z", "watched_seconds": 640, "device": "tv"}
+{"session_id": "S21", "content_id": "F", "viewer_id": "V002", "started_at": "2026-11-01T11:00:00Z", "watched_seconds": 777, "device": "web"}
+{"session_id": "S22", "content_id": "A", "viewer_id": "V003", "started_at": "2026-11-01T12:00:00Z", "watched_seconds": 914, "device": "mobile"}
+{"session_id": "S23", "content_id": "B", "viewer_id": "V004", "started_at": "2026-11-01T13:00:00Z", "watched_seconds": 1051, "device": "tv"}
+{"session_id": "S24", "content_id": "C", "viewer_id": "V005", "started_at": "2026-11-01T14:00:00Z", "watched_seconds": 1188, "device": "web"}
+{"session_id": "S25", "content_id": "D", "viewer_id": "V006", "started_at": "2026-11-01T15:00:00Z", "watched_seconds": 1325, "device": "mobile"}
+{"session_id": "S26", "content_id": "E", "viewer_id": "V007", "started_at": "2026-11-01T16:00:00Z", "watched_seconds": 1462, "device": "tv"}
+{"session_id": "S27", "content_id": "F", "viewer_id": "V008", "started_at": "2026-11-01T17:00:00Z", "watched_seconds": 399, "device": "web"}
+{"session_id": "S28", "content_id": "A", "viewer_id": "V009", "started_at": "2026-11-01T18:00:00Z", "watched_seconds": 536, "device": "mobile"}
+{"session_id": "S29", "content_id": "B", "viewer_id": "V010", "started_at": "2026-11-01T19:00:00Z", "watched_seconds": 673, "device": "tv"}
+{"session_id": "S30", "content_id": "C", "viewer_id": "V001", "started_at": "2026-11-01T20:00:00Z", "watched_seconds": 810, "device": "web"}
+{"session_id": "S31", "content_id": "C", "viewer_id": "V011", "started_at": "2026-11-01T23:00:00Z", "watched_seconds": -60, "device": "web"}

@@ -1,0 +1,11 @@
+CONTROLE,ATTENDU,OBTENU,VERDICT
+Catalogue : contenus en Bronze,6,6,OK
+Catalogue : content_id distincts,6,6,OK
+Catalogue : titre de B mis a jour (5.2),Dernier Metro (version restauree),Dernier Metro (version restauree),OK
+LOAD_RUNS : executions journalisees,3,3,OK
+LOAD_RUNS : lignes extraites par run (ordre),6 / 0 / 1,6 / 0 / 1,OK
+Sessions : lignes brutes,32,32,OK
+Sessions : fichiers sources,3,3,OK
+Sessions : session_id distincts,31,31,OK
+Sessions : occurrences de S4 (doublon conserve),2,2,OK
+Sessions : duree de S31 (rejet attendu conserve),-60,-60,OK

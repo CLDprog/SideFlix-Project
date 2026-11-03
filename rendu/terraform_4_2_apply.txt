@@ -1,0 +1,38 @@
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.sideflix_warehouse.snowflake_warehouse.this will be created
+  + resource "snowflake_warehouse" "this" {
+      + auto_resume                         = "true"
+      + auto_suspend                        = 60
+      + comment                             = "Sideflix : ingestion, dbt et requetes Gold - gere par Terraform, ne pas modifier a la main"
+      + enable_query_acceleration           = "default"
+      + fully_qualified_name                = (known after apply)
+      + id                                  = (known after apply)
+      + initially_suspended                 = true
+      + max_concurrency_level               = (known after apply)
+      + name                                = "SIDEFLIX_WH"
+      + parameters                          = (known after apply)
+      + query_acceleration_max_scale_factor = -1
+      + show_output                         = (known after apply)
+      + statement_queued_timeout_in_seconds = (known after apply)
+      + statement_timeout_in_seconds        = (known after apply)
+      + warehouse_size                      = "XSMALL"
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + warehouse = "SIDEFLIX_WH"
+module.sideflix_warehouse.snowflake_warehouse.this: Creating...
+module.sideflix_warehouse.snowflake_warehouse.this: Creation complete after 0s [id=SIDEFLIX_WH]
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+warehouse = "SIDEFLIX_WH"

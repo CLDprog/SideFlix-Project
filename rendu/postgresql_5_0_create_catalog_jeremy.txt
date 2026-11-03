@@ -1,0 +1,21 @@
+# Étape 5.0 - recréation de la base PostgreSQL sideflix sur le poste de Jérémy, 2026-11-03 vers 17 h 24 (Paris)
+# PostgreSQL 17 (service postgresql-x64-17), utilisateur postgres ; script source/01_create_catalog.sql de Matis, sans modification.
+# Sortie réelle copiée depuis PowerShell. updated_at affiché en heure de Paris (+01) : 13:00+01 = 12:00 UTC, identique à rendu/catalogue_postgresql.csv.
+
+> createdb -h 127.0.0.1 sideflix
+> psql -X -h 127.0.0.1 -v ON_ERROR_STOP=1 -d sideflix -f source/01_create_catalog.sql
+BEGIN
+CREATE TABLE
+CREATE FUNCTION
+CREATE TRIGGER
+INSERT 0 6
+COMMIT
+ content_id |          title           |  content_type  | duration_seconds |       updated_at
+------------+--------------------------+----------------+------------------+------------------------
+ A          | Les Lumieres du quartier | film           |             3600 | 2026-10-29 13:00:00+01
+ B          | Dernier Metro            | short_film     |             1200 | 2026-10-29 13:00:00+01
+ C          | Au fil du fleuve         | documentary    |             2700 | 2026-10-29 13:00:00+01
+ D          | Les Artisans de demain   | reportage      |             1800 | 2026-10-29 13:00:00+01
+ E          | Hors Cadre - S01E01      | series_episode |             1500 | 2026-10-29 13:00:00+01
+ F          | La Route des collines    | film           |             5400 | 2026-10-29 13:00:00+01
+(6 rows)

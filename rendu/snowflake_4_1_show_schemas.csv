@@ -1,0 +1,7 @@
+created_on,name,is_default,is_current,database_name,owner,comment,options,retention_time,owner_role_type,classification_profile_database,classification_profile_schema,classification_profile,object_visibility,is_nested
+2026-11-03 06:40:38.692 -0800,BRONZE,N,N,SIDEFLIX,SYSADMIN,"Donnees brutes : catalogue PostgreSQL et sessions JSON, avec metadonnees de chargement",,1,ROLE,,,,,false
+2026-11-03 06:40:40.219 -0800,GOLD,N,N,SIDEFLIX,SYSADMIN,Indicateurs metier par contenu et par jour (dbt),,1,ROLE,,,,,false
+2026-11-03 06:41:20.906 -0800,INFORMATION_SCHEMA,N,N,SIDEFLIX,,Views describing the contents of schemas in this database,,1,,,,,,false
+2026-11-03 06:40:41.031 -0800,LAB,N,Y,SIDEFLIX,SYSADMIN,Controles et publication journaliere (DAILY_USAGE),,1,ROLE,,,,,false
+2026-11-03 06:40:37.855 -0800,PUBLIC,N,N,SIDEFLIX,SYSADMIN,,,1,ROLE,,,,,false
+2026-11-03 06:40:39.447 -0800,SILVER,N,N,SIDEFLIX,SYSADMIN,"Donnees nettoyees, typees et dedoublonnees (dbt)",,1,ROLE,,,,,false

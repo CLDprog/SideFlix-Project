@@ -1,0 +1,6 @@
+# Copier ce fichier en terraform.tfvars et le remplir. terraform.tfvars n'est PAS versionné.
+# Identifiant de compte ABCDEFG-XY12345  ->  organization_name = "ABCDEFG", account_name = "XY12345"
+organization_name = "ABCDEFG"
+account_name      = "XY12345"
+user              = "YOUR_USER"
+private_key_path  = "C:/chemin/hors/du/depot/rsa_key.p8"

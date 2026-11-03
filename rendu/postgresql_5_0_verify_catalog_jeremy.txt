@@ -1,0 +1,21 @@
+# Étape 5.0 - contrôles du catalogue sur le poste de Jérémy, 2026-11-03 vers 17 h 25 (Paris)
+# Exécution directe du fichier du dépôt source/02_verify_catalog.sql (et non d'une copie). Sortie réelle copiée depuis PowerShell.
+
+> psql -X -h 127.0.0.1 -v ON_ERROR_STOP=1 -d sideflix -f source/02_verify_catalog.sql
+SET
+   base   | contenus
+----------+----------
+ sideflix |        6
+(1 row)
+
+
+BEGIN
+psql:source/02_verify_catalog.sql:26: NOTICE:  OK : duree negative refusee
+psql:source/02_verify_catalog.sql:26: NOTICE:  OK : doublon de cle primaire refuse
+psql:source/02_verify_catalog.sql:26: NOTICE:  OK : trigger updated_at actualise lors du changement de titre
+DO
+ROLLBACK
+ contenus_apres_tests | titres_de_test_restants
+----------------------+-------------------------
+                    6 |                       0
+(1 row)

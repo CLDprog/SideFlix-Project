@@ -1,0 +1,3 @@
+created_on,privilege,granted_on,name,role,granted_to,grantee_name,grant_option,granted_by,expires_on
+2026-11-03 09:09:57.583 -0800,USAGE,ROLE,SYSADMIN,SYSADMIN,USER,MATIS_DOUAY,false,ACCOUNTADMIN,
+2026-11-03 09:09:58.397 -0800,USAGE,ROLE,SYSADMIN,SYSADMIN,USER,RAYAN_FAHER_BONNE,false,ACCOUNTADMIN,

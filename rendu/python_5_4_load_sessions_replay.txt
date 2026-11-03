@@ -1,0 +1,12 @@
+# Action 5.4 - relance du chargement des sessions (replay), 2026-11-03 vers 17 h 41 (Paris)
+# python ingestion/load_sessions.py, exécuté une seconde fois sans changement. Sortie réelle copiée depuis PowerShell.
+
+C:\Users\jerem\AppData\Roaming\Python\Python311\site-packages\snowflake\connector\connection\_connection.py:135:FutureWarning: enable_server_session_keep_alive_auto_detection was not set and defaults to True. [...]
+PUT  sessions_2026-10-30.json   -> sessions_2026-10-30.json.gz   statut : SKIPPED
+PUT  sessions_2026-10-31.json   -> sessions_2026-10-31.json.gz   statut : SKIPPED
+PUT  sessions_2026-11-01.json   -> sessions_2026-11-01.json.gz   statut : SKIPPED
+COPY : Copy executed with 0 files processed.
+Bronze sessions_2026-10-30.json.gz   : 3 ligne(s)
+Bronze sessions_2026-10-31.json.gz   : 15 ligne(s)
+Bronze sessions_2026-11-01.json.gz   : 14 ligne(s)
+SIDEFLIX.BRONZE.SESSIONS_RAW contient 32 ligne(s) brute(s) au total.

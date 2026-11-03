@@ -1,0 +1,17 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+*.p8
+*.pem
+*.key
+__pycache__/
+.venv/
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+terraform.tfvars
+dbt/target/
+dbt/logs/
+airflow/logs/

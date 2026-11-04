@@ -5,28 +5,55 @@ sources:
   schema: BRONZE
   description: Catalogue réel, cinq sources publiques authentiques et sessions Sideflix
     explicitement simulées.
-  loaded_at_field: _loaded_at
-  freshness:
-    warn_after:
-      count: 24
-      period: hour
-    error_after:
-      count: 90
-      period: day
   tables:
   - name: catalog
     description: Catalogue PostgreSQL charge par watermark et MERGE ; une ligne par
       contenu.
+    config:
+      loaded_at_field: _loaded_at
+      freshness:
+        warn_after:
+          count: 24
+          period: hour
+        error_after:
+          count: 26
+          period: hour
   - name: sessions_raw
     description: Historique JSON brut ; dbt sélectionne uniquement le lot simulé v2
       déclaré dans vars.
+    config:
+      loaded_at_field: _loaded_at
+      freshness:
+        warn_after:
+          count: 24
+          period: hour
+        error_after:
+          count: 26
+          period: hour
+        filter: source_system='sessions_simulated' AND _batch_id='{{ var("batch_sessions_simulated")
+          }}'
   - name: imdb_raw
     description: Source publique imdb ; provenance et lot conservés.
+    config:
+      loaded_at_field: _loaded_at
+      freshness: null
   - name: movielens_raw
     description: Source publique movielens ; provenance et lot conservés.
+    config:
+      loaded_at_field: _loaded_at
+      freshness: null
   - name: netflix_raw
     description: Source publique netflix ; provenance et lot conservés.
+    config:
+      loaded_at_field: _loaded_at
+      freshness: null
   - name: wikidata_raw
     description: Source publique wikidata ; provenance et lot conservés.
+    config:
+      loaded_at_field: _loaded_at
+      freshness: null
   - name: wikimedia_raw
     description: Source publique wikimedia ; provenance et lot conservés.
+    config:
+      loaded_at_field: _loaded_at
+      freshness: null

@@ -1,0 +1,5 @@
+PASS final lot A/2026-10-31: expected 3 sessions, 2610s /60 =43.5min; actual (3, Decimal('43.500000'))
+PASS authentic Whiplash context: ratings count 38 sum 153.5 mean 4.039473684210526315789473684 pageviews 15551 actual (38, 4.0394736842105265, 15551)
+PASS authentic Sicario Netflix context: week 2025-03-09 rank 5 actual (1, 5, datetime.date(2025, 3, 9))
+PASS isolated LAB reference: 32 raw =30 valid+1 reject+1 duplicate; A45+B10=55min [('A', 2, Decimal('45.000000')), ('B', 1, Decimal('10.000000'))]
+ALL_INDEPENDENT_BUSINESS_SAMPLES_PASS

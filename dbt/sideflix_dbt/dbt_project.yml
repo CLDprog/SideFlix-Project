@@ -1,18 +1,19 @@
-# Adaptation du projet dbt du TD 3.2 pour Sideflix.
 name: sideflix_dbt
-version: "1.0.0"
+version: 1.0.0
 config-version: 2
 profile: sideflix
-model-paths: ["models"]
-test-paths: ["tests"]
-macro-paths: ["macros"]
-clean-targets: ["target", "dbt_packages", "logs"]
+model-paths:
+- models
+test-paths:
+- tests
+macro-paths:
+- macros
+clean-targets:
+- target
+- dbt_packages
+- logs
 models:
   sideflix_dbt:
-    my_first_dbt_model:
-      +enabled: false
-    my_second_dbt_model:
-      +enabled: false
     silver:
       +schema: SILVER
       +materialized: view
@@ -20,13 +21,12 @@ models:
       +schema: GOLD
       +materialized: table
 on-run-end:
-  - "{{ log_run_results(results) }}"
-
+- '{{ log_run_results(results) }}'
 vars:
-  analysis_date: "2026-11-01"
-  batch_sessions_simulated: "sessions_simulated_6c58e1a654180f3e4b910331"
-  batch_imdb: "imdb_bea94e86ec6fdac6cc69b038"
-  batch_movielens: "movielens_7e24050af79446cb15cf8d00"
-  batch_netflix: "netflix_0286f00f5c7eebccd9debf0a"
-  batch_wikidata: "wikidata_b711503480e8aea3d442f00f"
-  batch_wikimedia: "wikimedia_4a60caa5f861b0a04eeb4fa6"
+  analysis_date: '2026-11-01'
+  batch_sessions_simulated: sessions_simulated_6c58e1a654180f3e4b910331
+  batch_imdb: imdb_bea94e86ec6fdac6cc69b038
+  batch_movielens: movielens_7e24050af79446cb15cf8d00
+  batch_netflix: netflix_0286f00f5c7eebccd9debf0a
+  batch_wikidata: wikidata_b711503480e8aea3d442f00f
+  batch_wikimedia: wikimedia_4a60caa5f861b0a04eeb4fa6

@@ -1,0 +1,17 @@
+[0m15:17:00  Running with dbt=1.11.16
+[0m15:17:01  Registered adapter: snowflake=1.11.6
+[0m15:17:01  Found 11 models, 21 data tests, 1 operation, 7 sources, 540 macros
+[0m15:17:01  
+[0m15:17:01  Concurrency: 4 threads (target='core')
+[0m15:17:01  
+[0m15:17:11  Pulling freshness from warehouse metadata tables for 0 sources
+[0m15:17:11  1 of 2 START freshness of bronze.catalog ....................................... [RUN]
+[0m15:17:11  2 of 2 START freshness of bronze.sessions_raw .................................. [RUN]
+[0m15:17:11  2 of 2 PASS freshness of bronze.sessions_raw ................................... [[32mPASS[0m in 0.21s]
+[0m15:17:11  1 of 2 PASS freshness of bronze.catalog ........................................ [[32mPASS[0m in 0.22s]
+[0m15:17:11  
+[0m15:17:18  1 of 1 START hook: sideflix_dbt.on-run-end.0 ................................... [RUN]
+[0m15:17:18  1 of 1 OK hook: sideflix_dbt.on-run-end.0 ...................................... [[32mOK[0m in 6.62s]
+[0m15:17:18  
+[0m15:17:18  Finished running 1 project hook, 2 sources in 0 hours 0 minutes and 17.20 seconds (17.20s).
+[0m15:17:18  Done.

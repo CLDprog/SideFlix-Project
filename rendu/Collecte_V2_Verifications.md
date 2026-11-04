@@ -23,7 +23,7 @@ python source/collect_public_data.py
 
 Le script réutilise les réponses API et le sous-ensemble IMDb conservés. Le collecteur télécharge MovieLens et Netflix si absents aux chemins indiqués. Conserver les snapshots exacts ; une extraction ultérieure peut changer.
 
-## Restant avant validation complète
+## Restant avant validation complète (état du contrôle initial, conservé comme historique)
 
 Documenter dans le manifeste les conditions d’usage/attribution et la période/granularité de chaque jeu ; compléter les références de curation du catalogue indépendant. Les six films sont une sélection technique, pas une preuve de droits de diffusion. L’échantillon IMDb ne doit pas être redistribué sans vérification de ses conditions.
 

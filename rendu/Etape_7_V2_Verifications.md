@@ -36,4 +36,4 @@ Avec les variables privées locales et l'environnement dbt décrit à l'étape 6
 
 Preuves : `dbt_7_v2_build.txt`, `dbt_7_v2_run_results.json`, `dbt_7_v2_freshness.txt`, `dbt_7_v2_freshness_results.json`, `dbt_7_v2_business_samples.txt`. Lineage source/ref et documentation générables par `dbt docs generate`. Avertissements YAML/config du premier run nettoyés.
 
-Étape 7 terminée pour les contrôles de référence. L'injection de device invalide, le blocage réel de publication et la reprise sont encore à exécuter à l'étape 9 ; aucun incident ni notification n'est déclaré réussi ici. Étape suivante : 8 Docker/Airflow, dont l'accès au daemon est actuellement refusé dans cette session.
+Étape 7 terminée pour les contrôles de référence. L'injection de device invalide, le blocage réel de publication et la reprise sont encore à exécuter à l'étape 9 ; aucun incident ni notification n'est déclaré réussi ici. Étape suivante : 8 Docker/Airflow, dont l'accès au daemon est actuellement refusé dans cette session. _Mise à jour du 4 novembre : étape 8 exécutée sur le PC de Jérémy (`Etape_8_V2_Verifications.md`), incidents 9.1 et 9.2 exécutés et repris (`Etape_9_V2_Verifications.md`)._

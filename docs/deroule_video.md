@@ -1,5 +1,7 @@
 # Déroulé de la vidéo du pipeline (environ 3 minutes)
 
+**Mise à jour du 4 novembre, 23 h (Matis) :** vidéo enregistrée le 4 novembre sur le Mac de Matis et versionnée à la racine sous son nom d’origine (`Enregistrement de l’écran 2026-11-04 à 20.47.48.mov`, commit 88065d5, lien dans le README) : 1 min 21, sans son, interface Airflow seulement (run du 1er novembre, publication encore en cours à la fin). Les autres scènes prévues ci-dessous sont couvertes par les preuves écrites (`rendu/Restitution_Snowsight.md`, `rendu/slack_8_4_alerte_recue.png`, `rendu/Etape_9_V2_Verifications.md`, `docs/architecture_v2.png`). Le déroulé reste la procédure pour un nouvel enregistrement.
+
 Poste retenu : Mac de Matis, Docker Desktop. Enregistrement : Maj + Cmd + 5, enregistrer une zone sélectionnée ; microphone si commentaire oral. Variante Windows : Outil Capture d’écran (Win + Maj + R) ou OBS. Ne jamais afficher `airflow/.env`, une clé, l’URL du webhook ni un mot de passe.
 
 ## Avant d’enregistrer

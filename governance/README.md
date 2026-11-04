@@ -1,4 +1,4 @@
-# Step 10 — status and remaining administrative action
+# Step 10 — administrative intervention done: replay procedure, measurements, shutdown/restart and cleanup
 
 Precondition verified: steps 1–9 completed. **Update of November 4, 19:20 (Jérémy): `10_admin_setup.sql` then `10b_pipeline_user.sql` run as ACCOUNTADMIN; roles, monitor and service user SIDEFLIX_PIPELINE created; denials and run under SIDEFLIX_RUNNER verified. Evidence: `rendu/Etape_10_V2_Verifications.md`.** The procedure below remains the reference for replaying the intervention.
 
@@ -14,7 +14,7 @@ The analyst role does not inherit from the runner or SYSADMIN: they are its pare
 
 ## Measurements and costs
 
-See `rendu/Etape_10_Mesures.json` and `rendu/Etape_10_V2_Verifications.md`. The ACCOUNT_USAGE views are denied to SYSADMIN; the empty result of the metering table function does not prove a zero cost. The actually billed and storage figures will be completed with the administrative exports. The 10 credits/month budget is a prototype control choice, not an observed invoice.
+See `rendu/Etape_10_Mesures.json` and `rendu/Etape_10_V2_Verifications.md`. The ACCOUNT_USAGE views are denied to SYSADMIN; the empty result of the metering table function does not prove a zero cost. The credits actually consumed (1.44) and the storage figures were then read from the administrative exports: see `rendu/Etape_10_admin_outputs.txt`. The 10 credits/month budget is a prototype control choice, not an observed invoice.
 
 ## Shutdown and restart (10.3)
 

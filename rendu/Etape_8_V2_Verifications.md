@@ -20,7 +20,7 @@ Ingestion et contrôle des six lots réussis ; APIs réellement rappelées, mêm
 
 ## Blocages exacts
 
-_Historique : le blocage Docker est levé depuis le 4 novembre à 17 h (exécution sur le PC de Jérémy, dernière section). Le webhook manque toujours._
+_Historique : le blocage Docker est levé depuis le 4 novembre à 17 h (exécution sur le PC de Jérémy, dernière section). Le webhook a ensuite été configuré et l'alerte d'échec reçue dans `#sideflix-alertes` (section 8.4)._
 
 `docker info` renvoie : `permission denied while trying to connect to the docker API at unix:///Users/matisdouay/.docker/run/docker.sock`.
 
@@ -33,7 +33,7 @@ Il faut un terminal du poste ayant accès à Docker Desktop, puis exécuter la p
 - `pipeline_8_v2_local_ingest.txt`, `pipeline_8_v2_local_check.txt`, `pipeline_8_v2_local_build.txt`, `pipeline_8_v2_local_publish.txt` : précontrôles Python/Core, à distinguer des runs conteneurisés.
 - `pipeline_8_v2_restore_reference.txt` : restauration du tableau éditorial à la date de référence versionnée après le test à date paramétrée.
 
-Prochaine action : suivre `airflow/README.md`, construire les images et exécuter un run Airflow puis son rejeu ; contrôler planning/durée/logs, publication unique et réception du webhook. Terminer ensuite les deux incidents 9.1/9.2 avant gouvernance/coûts et remise finale propre. Ne pas annoncer ces étapes achevées.
+_Historique, réalisé ensuite (sections suivantes, puis `Etape_9_V2_Verifications.md` et `Etape_10_V2_Verifications.md`) :_ prochaine action prévue : suivre `airflow/README.md`, construire les images et exécuter un run Airflow puis son rejeu ; contrôler planning/durée/logs, publication unique et réception du webhook. Terminer ensuite les deux incidents 9.1/9.2 avant gouvernance/coûts et remise finale propre. Ne pas annoncer ces étapes achevées.
 
 Échéances communiquées : rendu le 4 novembre, oral le 6 novembre à 13 h Paris. L'heure limite de remise n'a pas pu être vérifiée : aucune URL/session de la plateforme pédagogique identifiée ici ; vérifier sur cette plateforme avant l'envoi final.
 

@@ -6,7 +6,7 @@ The provided profile is the one for **dbt Projects on Snowflake / Workspaces** (
 
 Silver: rebuilt views, Gold: rebuilt table. The log_run_results hook from the TD logs runs to SIDEFLIX.LAB.DBT_RESULTS. No changes to the Bronze sources.
 
-Commands: `dbt run`, then `dbt docs generate`. Tests and their evidence will be completed in step 7, with `dbt build` then `dbt source freshness` separately.
+Commands: `dbt build`, then `dbt source freshness` separately, and `dbt docs generate` for the lineage. Tests and their evidence were completed in step 7: `dbt build` 33/33 (11 models, 21 tests, 1 on-run-end hook), freshness 2/2 (see `rendu/Etape_7_V2_Verifications.md`).
 
 October 30 reference: A = 2 sessions / 45 min; B = 1 session / 10 min. Overall: 32 raw rows = 30 valid sessions + 1 rejected + 1 duplicate removed.
 

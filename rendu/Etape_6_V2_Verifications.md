@@ -33,4 +33,4 @@ export SNOWFLAKE_DISABLE_PLATFORM_DETECTION=true AWS_EC2_METADATA_DISABLED=true 
 
 Variables Snowflake/RSA chargées depuis le fichier privé local, jamais depuis Git. Preuves : `dbt_6_v2_run.txt`, `dbt_6_v2_replay.txt`, `dbt_6_v2_docs.txt`, `dbt_6_v2_business_checks.txt`, `gold_editorial_v2.csv`. Catalogue/lineage dbt générés dans le dossier `target/` ignoré ; régénérables avec la commande ci-dessus.
 
-Suite : étape 7, tests dbt/build et fraîcheur ; étape 8 Docker/Airflow non validée. Le test d'accès Docker de cette session renvoie « permission denied while trying to connect to the docker API » ; ne pas annoncer une exécution conteneurisée réussie.
+Suite : étape 7, tests dbt/build et fraîcheur ; étape 8 Docker/Airflow non validée. Le test d'accès Docker de cette session renvoie « permission denied while trying to connect to the docker API » ; ne pas annoncer une exécution conteneurisée réussie. _Mise à jour du 4 novembre : étapes 7 et 8 terminées depuis (`Etape_7_V2_Verifications.md`, `Etape_8_V2_Verifications.md`)._

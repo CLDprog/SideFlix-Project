@@ -1,6 +1,6 @@
-# Conducteur proposé — à confirmer à trois sur les14slides
+# Conducteur proposé — à confirmer à trois sur le diaporama `Sideflix, Oral Defense.pptx`
 
-Oral :6novembre2026 à13h, groupe6. Le créneau exact de parole n'a pas été relevé ; ne pas inventer une durée réglementaire. Les numéros de diapositives seront reportés après accès à l'export14slides. Ce document ne vaut pas répétition effectuée.
+Oral :6novembre2026 à13h, groupe6. Le créneau exact de parole n'a pas été relevé ; ne pas inventer une durée réglementaire. Les numéros de diapositives restent à reporter d'après le diaporama versionné par Jérémy (`Sideflix, Oral Defense.pptx`, commit e11c528). Ce document ne vaut pas répétition effectuée.
 
 | Ordre/thème | Intervenant proposé | Ce qu'il montre et explique |
 | --- | --- | --- |
@@ -15,4 +15,4 @@ Run normal : conf `{"date":"2026-11-01"}`, run_id neuf, sans clé incident. Rés
 
 Le poste de présentation et Docker restent allumés ; un seul Airflow actif. Refaire un run normal pour la répétition si nécessaire ; les deux incidents ont déjà leurs preuves réelles et leurs paramètres documentés. Ne pas déclencher bad_device dans la vidéo finale. Pour l'oral, préparer avec le groupe la démonstration des reprises à partir de `rendu/Etape_9_V2_Verifications.md`, sans toucher les données de référence ni utiliser ACCOUNTADMIN dans le DAG. Vidéo et logs sont des secours, pas le remplacement annoncé du run live.
 
-À confirmer avant clôture11.6 : export14slides relu, répartition acceptée par les trois, présentation de la restitution Snowsight (exécutée et capturée par Matis le 4/11) par Rayan ou un autre membre, durée répétée et accès/réseau du poste de présentation.
+À confirmer avant clôture11.6 : diaporama `Sideflix, Oral Defense.pptx` relu, répartition acceptée par les trois, présentation de la restitution Snowsight (exécutée et capturée par Matis le 4/11) par Rayan ou un autre membre, durée répétée et accès/réseau du poste de présentation.

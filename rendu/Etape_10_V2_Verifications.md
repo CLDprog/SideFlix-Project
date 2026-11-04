@@ -1,4 +1,4 @@
-# Étape 10 — en cours, intervention administrative nécessaire
+# Étape 10 — terminée et vérifiée (intervention administrative réalisée le 4 novembre)
 
 **Mise à jour du 4 novembre 2026, 19 h 20 (Jérémy) : intervention administrative faite et vérifiée.** Rôles limités créés, refus réels prouvés, run Airflow normal exécuté sous SIDEFLIX_RUNNER par un utilisateur de service dédié, moniteur de ressources rattaché, crédits et stockage réels relevés (dernière section). Notifications e-mail du moniteur activées par Jérémy dans son profil Snowsight le 4 novembre à 19 h 50 : **étape 10 terminée.**
 
@@ -36,9 +36,9 @@ Contrôle choisi : moniteur10crédits/mois, notifications50/80%, suspension100%,
 
 Procédure courte dans `governance/README.md` : pause DAG, down sans suppression des volumes, suspension warehouse, puis up/contrôle/réactivation/run normal pour l'oral. Les mêmes commandes Compose/CLI ont été utilisées réellement en8/9 ; arrêt complet non déclenché ici pendant la préparation. Nettoyage strictement ciblé et différé après correction, depuis le bon state pour IaC ; aucune destruction avant l'oral.
 
-## Reste avant clôture
+## Reste avant clôture (état avant l'intervention, conservé comme historique)
 
-Jérémy exécute le script administratif et fournit sorties de grants/monitor, crédits et stockage. Ensuite Matis peut vérifier analyste seul (GoldSELECT oui, BronzeSELECT et GoldINSERT non), reconstruire les images et exécuter un run normal sous SIDEFLIX_RUNNER. Étape10 non terminée avant ces preuves ;10.2 reste bloquée sur coûts réels/moniteur,10.1 sur rôles/tests.
+Jérémy exécute le script administratif et fournit sorties de grants/monitor, crédits et stockage. Ensuite Matis peut vérifier analyste seul (GoldSELECT oui, BronzeSELECT et GoldINSERT non), reconstruire les images et exécuter un run normal sous SIDEFLIX_RUNNER. Étape10 non terminée avant ces preuves ;10.2 reste bloquée sur coûts réels/moniteur,10.1 sur rôles/tests. _Mise à jour : intervention réalisée le 4 novembre par Jérémy (section suivante, commits ea4d78d et b77ff6d) ; étape 10 terminée._
 
 ## Intervention administrative et validations réelles : 4 novembre 2026, 19 h 10 à 19 h 20 (Jérémy)
 

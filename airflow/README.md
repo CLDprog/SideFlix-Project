@@ -41,7 +41,7 @@ The snapshots are historical; the simulated sessions stop on November 1. An auto
 
 The `run_pipeline_job.py build` script writes a local marker only after freshness AND build have succeeded. `publish_daily_usage.py` requires this marker (matching date/run/invocation), reads Gold and runs a MERGE per date into SIDEFLIX.LAB.DAILY_USAGE. It rejects a missing day. The old fixture's target remains separate; do not mix the v2 tests into it.
 
-Once step 8 is validated, continue with 9.1 (invalid device → test blocks → notification → fix) and 9.2 (`--crash-on-try 1` after MERGE, retry → one row per date). These incidents are not yet declared as executed. Keep the last valid Gold in case of an upstream failure. Check the 07:00 availability time with a timed run; freshness thresholds alone do not prove it.
+After step 8 was validated, incidents 9.1 (invalid device → test blocks → notification → fix) and 9.2 (`--crash-on-try 1` after MERGE, retry → one row per date) were actually run and recovered on 4 November 2026: Slack alert received for 9.1, corrective run 33/33, a single row per date after the 9.2 retry (evidence: `rendu/Etape_9_V2_Verifications.md`). The last valid Gold is kept in case of an upstream failure. The timed demo runs take one to two minutes, well before 07:00 for a 06:00 trigger (`rendu/airflow_8_v2_windows_runs.txt`); this is a local measurement on a single simulated day, and freshness thresholds alone do not prove it.
 
 Good to know: as soon as the DAG is re-enabled, Airflow creates the scheduled run for the previous day (catchup disabled). Since the simulated sessions stop on November 1, this run fails at the source check without publishing anything: this is the expected behavior, to be shown during the oral presentation.
 

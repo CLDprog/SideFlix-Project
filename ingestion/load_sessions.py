@@ -1,85 +1,151 @@
-"""Sideflix · Actions 5.3 et 5.4 : charger les sessions JSON en Bronze (batch par stage + COPY INTO).
-
-Adaptation de la partie A du TD 2 (onprem-to-snowflake) : fichiers -> stage interne -> COPY INTO.
-Au TD 2, les fichiers étaient déposés à la main (bouton « + Files ») ; le TD précise qu'en entreprise
-un job planifié les pousse avec PUT. C'est ce que fait ce script, pour pouvoir être relancé tel quel
-(et plus tard par Airflow, étape 8). Mêmes garanties que le TD :
-  * PUT ... OVERWRITE = FALSE : un fichier déjà présent sur le stage n'est pas renvoyé ;
-  * COPY INTO garde 64 jours de métadonnées de chargement : un fichier déjà chargé est ignoré,
-    donc une relance n'ajoute aucune ligne (0 fichier traité).
-Chaque ligne JSON est stockée telle quelle dans raw (VARIANT), avec _source_file (METADATA$FILENAME)
-et _loaded_at. Le doublon S4 et la durée négative S31 restent en Bronze : ils seront traités en Silver.
-
-Variables d'environnement : SNOWFLAKE_ACCOUNT, SNOWFLAKE_USER, SNOWFLAKE_PRIVATE_KEY_FILE (voir .env.example).
-Lancement (depuis le dossier Sideflix) : python ingestion/load_sessions.py
+"""TD 2A/pack 05: PUT/COPY for files; requests -> VARIANT for APIs.
+Default: simulated v2 sessions only. --public includes the five real sources.
+--api-mode snapshot replays saved payloads; live makes actual API requests.
 """
-import os
+import argparse
+import csv
+import hashlib
+import json
 from pathlib import Path
+from uuid import uuid4
+import sys
+from check_connection import connect_snowflake
 
-import snowflake.connector
-from cryptography.hazmat.primitives import serialization
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0,str(ROOT))
+from source.collect_public_data import get
 
-SESSIONS_DIR = Path(__file__).resolve().parent.parent / "source" / "sessions"
-STAGE = "@SIDEFLIX.BRONZE.SESSIONS_STAGE"
-TARGET = "SIDEFLIX.BRONZE.SESSIONS_RAW"
-
-COPY_SQL = f"""
-COPY INTO {TARGET} (raw, _source_file, _loaded_at)
-FROM (SELECT $1, METADATA$FILENAME, CURRENT_TIMESTAMP() FROM {STAGE})
-FILE_FORMAT = (FORMAT_NAME = 'SIDEFLIX.BRONZE.JSON_LINES')
-PATTERN = '.*sessions_[0-9-]+[.]json[.]gz'
-"""
+TABLES = {name:'SIDEFLIX.BRONZE.'+name.upper()+'_RAW'
+          for name in ['imdb','movielens','netflix','wikidata','wikimedia']}
+STAGE = '@SIDEFLIX.BRONZE.PUBLIC_SOURCES_STAGE'
 
 
-def connect_snowflake():
-    key_file = Path(os.environ["SNOWFLAKE_PRIVATE_KEY_FILE"])
-    private_key = serialization.load_pem_private_key(key_file.read_bytes(), password=None)
-    return snowflake.connector.connect(
-        account=os.environ["SNOWFLAKE_ACCOUNT"],
-        user=os.environ["SNOWFLAKE_USER"],
-        private_key=private_key.private_bytes(
-            encoding=serialization.Encoding.DER,
-            format=serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=serialization.NoEncryption(),
-        ),
-        role="SYSADMIN",
-        warehouse="SIDEFLIX_WH",
-        database="SIDEFLIX",
-        schema="BRONZE",
-    )
+def digest(records):
+    return hashlib.sha256(json.dumps(records,sort_keys=True,ensure_ascii=False).encode()).hexdigest()[:24]
+
+
+def journal(cur, source, batch, loaded):
+    cur.execute('INSERT INTO SIDEFLIX.BRONZE.PUBLIC_SOURCE_RUNS VALUES(%s,%s,%s,CURRENT_TIMESTAMP(),%s,%s)',
+                (str(uuid4()),source,batch,loaded,'SUCCESS'))
+
+
+def file_batch(cur, source, target, records):
+    if not records: raise ValueError('Empty required source: '+source)
+    batch=source+'_'+digest(records)
+    path=ROOT/'source/real/landing'/batch/(source+'.jsonl')
+    path.parent.mkdir(parents=True,exist_ok=True)
+    path.write_text(''.join(json.dumps(r,ensure_ascii=False)+'\n' for r in records),encoding='utf-8')
+    cur.execute(f'SELECT count(*) FROM {target} WHERE _batch_id=%s',(batch,))
+    before=cur.fetchone()[0]
+    if before not in (0,len(records)):raise ValueError('Partial batch requires investigation: '+batch)
+    loaded=0
+    if before==0:
+        stage=STAGE+'/'+batch
+        cur.execute(f"PUT 'file://{path.as_posix()}' {stage} AUTO_COMPRESS=TRUE OVERWRITE=FALSE")
+        put=cur.fetchall()
+        print('PUT',source,[r[6] for r in put],flush=True)
+        cur.execute(f'''COPY INTO {target}(raw,_source_file,_loaded_at,_batch_id,source_system)
+            FROM (SELECT $1,METADATA$FILENAME,CURRENT_TIMESTAMP(),'{batch}','{source}' FROM {stage})
+            FILE_FORMAT=(FORMAT_NAME='SIDEFLIX.BRONZE.JSON_LINES')
+            PATTERN='.*[.]jsonl[.]gz' ON_ERROR=ABORT_STATEMENT''')
+        columns=[x[0].lower() for x in cur.description]
+        result=[dict(zip(columns,row)) for row in cur.fetchall()]
+        loaded=sum(int(r.get('rows_loaded',0)) for r in result)
+    cur.execute(f'SELECT count(*) FROM {target} WHERE _batch_id=%s',(batch,))
+    after=cur.fetchone()[0]
+    if after!=len(records):raise ValueError(f'{source}: expected {len(records)}, got {after}')
+    journal(cur,source,batch,loaded)
+    result=dict(source=source,method='PUT_COPY',batch_id=batch,expected=len(records),before=before,loaded=loaded,after=after)
+    print(json.dumps(result),flush=True)
+    return result
+
+
+def api_batch(cur, source, mapping, mode, replay=None):
+    records=[]
+    for i,r in enumerate(mapping):
+        if source=='wikidata':
+            path=ROOT/'source/real/wikidata'/f"{r['wikidata_qid']}.json"
+            url=r['wikidata_url']
+        else:
+            path=ROOT/'source/real/wikimedia'/f"{r['wikidata_qid']}_20261026_20261101.json"
+            url=r['wikimedia_url']
+        if replay:
+            path=ROOT/'source/real/api_runs'/source/replay['batch_id']/(str(i)+'.json')
+        payload=get(url).json() if mode=='live' and not replay else json.loads(path.read_text())
+        if source=='wikidata':
+            ent=payload['entities'][r['wikidata_qid']]
+            ids=[v.get('mainsnak',{}).get('datavalue',{}).get('value') for v in ent['claims'].get('P345',[])]
+            if r['imdb_tconst'] not in ids:raise ValueError('Unexpected IMDb mapping from API')
+        else:
+            items=payload['items']
+            if len(items)!=7 or len({x['timestamp'] for x in items})!=7 or any(x['views']<0 for x in items):
+                raise ValueError('Invalid/missing pageview days')
+        records.append({'url':url,'payload':payload})
+    batch=source+'_'+digest(records)
+    if replay and batch!=replay['batch_id']:raise ValueError('Replay payload checksum mismatch')
+    target=TABLES[source]
+    cur.execute(f'SELECT count(*) FROM {target} WHERE _batch_id=%s',(batch,))
+    before=cur.fetchone()[0]
+    if before not in (0,len(records)):raise ValueError('Partial API snapshot: '+batch)
+    cur.execute('BEGIN')
+    try:
+        for i,r in enumerate(records):
+            saved=ROOT/'source/real/api_runs'/source/batch/(str(i)+'.json')
+            saved.parent.mkdir(parents=True,exist_ok=True)
+            saved.write_text(json.dumps(r['payload'],ensure_ascii=False,indent=2),encoding='utf-8')
+            # Same INSERT SELECT PARSE_JSON as the pack; MERGE makes retry safe.
+            cur.execute(f'''MERGE INTO {target} t USING
+                (SELECT PARSE_JSON(%s) raw,%s file,%s batch,%s source) s
+                ON t._batch_id=s.batch AND t._source_file=s.file
+                WHEN NOT MATCHED THEN INSERT(raw,_source_file,_loaded_at,_batch_id,source_system)
+                VALUES(s.raw,s.file,CURRENT_TIMESTAMP(),s.batch,s.source)''',
+                (json.dumps(r['payload']),r['url'],batch,source))
+        cur.execute(f'SELECT count(*) FROM {target} WHERE _batch_id=%s',(batch,))
+        after=cur.fetchone()[0]
+        if after!=len(records):raise ValueError('API reconciliation failed')
+        loaded=after-before
+        # Journal and API rows commit together.
+        journal(cur,source,batch,loaded)
+        cur.execute('COMMIT')
+    except Exception:
+        cur.execute('ROLLBACK');raise
+    result=dict(source=source,method='API_'+mode,batch_id=batch,expected=len(records),before=before,loaded=loaded,after=after)
+    print(json.dumps(result),flush=True)
+    return result
 
 
 def main():
-    files = sorted(SESSIONS_DIR.glob("sessions_*.json"))
-    print(f"Fichiers locaux trouvés : {len(files)} ({', '.join(f.name for f in files)})")
-    with connect_snowflake() as sf, sf.cursor() as cur:
-        # 1. Dépôt sur le stage (compression gzip automatique ; un fichier déjà présent est ignoré).
-        for f in files:
-            cur.execute(f"PUT 'file://{f.as_posix()}' {STAGE} AUTO_COMPRESS = TRUE OVERWRITE = FALSE")
-            src, target, *_rest = cur.fetchone()
-            status = _rest[-2] if len(_rest) >= 2 else _rest
-            print(f"PUT  {src:<26} -> {target:<29} statut : {status}")
+    p=argparse.ArgumentParser();p.add_argument('--public',action='store_true')
+    p.add_argument('--api-mode',choices=['snapshot','live'],default='snapshot')
+    p.add_argument('--receipt',default='rendu/ingestion_v2_receipt.json')
+    p.add_argument('--replay-receipt',help='Replay the exact API payloads of a previous receipt, without HTTP requests')
+    args=p.parse_args();mapping=list(csv.DictReader((ROOT/'source/content_mapping.csv').open()))
+    results=[]
+    replay={r['source']:r for r in json.loads((ROOT/args.replay_receipt).read_text())} if args.replay_receipt else {}
+    with connect_snowflake() as sf,sf.cursor() as cur:
+        sessions=[]
+        for file in sorted((ROOT/'source/v2/sessions').glob('sessions_*.json')):
+            sessions.extend(json.loads(line) for line in file.read_text().splitlines() if line.strip())
+        if len(sessions)!=32:raise ValueError('Expected 32 simulated input rows')
+        results.append(file_batch(cur,'sessions_simulated','SIDEFLIX.BRONZE.SESSIONS_RAW',sessions))
+        if args.public:
+            imdb=list(csv.DictReader((ROOT/'source/real/imdb/title.basics.selected.tsv').open(),delimiter='\t'))
+            if len(imdb)!=6:raise ValueError('Expected six IMDb records')
+            results.append(file_batch(cur,'imdb',TABLES['imdb'],imdb))
+            selected={r['movielens_id'] for r in mapping};ml=[]
+            for name,kind in [('movies','movie'),('links','link'),('ratings','rating')]:
+                for r in csv.DictReader((ROOT/f'source/real/movielens/ml-latest-small/{name}.csv').open()):
+                    if r['movieId'] in selected:ml.append(dict(r,record_type=kind))
+            if sum(r['record_type']=='rating' for r in ml)!=74:raise ValueError('MovieLens snapshot changed; review expected counts')
+            results.append(file_batch(cur,'movielens',TABLES['movielens'],ml))
+            netflix=[r for r in csv.DictReader((ROOT/'source/real/netflix/all-weeks-global.tsv').open(),delimiter='\t')
+                     if r.get('show_title') in {'Sicario','Get Out'} and r.get('category','').startswith('Films')]
+            if not netflix:raise ValueError('Missing Netflix matching records')
+            results.append(file_batch(cur,'netflix',TABLES['netflix'],netflix))
+            for source in ['wikidata','wikimedia']:
+                results.append(api_batch(cur,source,mapping,'snapshot' if replay else args.api_mode,replay.get(source)))
+    out=ROOT/args.receipt;out.parent.mkdir(parents=True,exist_ok=True)
+    out.write_text(json.dumps(results,indent=2)+'\n')
+    print('ALL_LOADS_RECONCILED',len(results),flush=True)
 
-        # 2. Chargement des fichiers du stage dans la table brute.
-        cur.execute(COPY_SQL)
-        desc = [d[0].lower() for d in cur.description]
-        results = [dict(zip(desc, r)) for r in cur.fetchall()]
-        if results and "file" in desc:
-            for r in results:
-                print(f"COPY {r['file']:<40} statut : {r['status']:<7} lues : {r['rows_parsed']:>2}  chargées : {r['rows_loaded']:>2}")
-        else:
-            print("COPY : " + "; ".join(str(list(r.values())[0]) for r in results))
-
-        # 3. Volumes par fichier dans Bronze.
-        cur.execute(f"""
-            SELECT _source_file, COUNT(*) FROM {TARGET}
-            GROUP BY _source_file ORDER BY _source_file
-        """)
-        rows = cur.fetchall()
-        for name, n in rows:
-            print(f"Bronze {name:<29} : {n} ligne(s)")
-        print(f"{TARGET} contient {sum(n for _, n in rows)} ligne(s) brute(s) au total.")
-
-
-if __name__ == "__main__":
-    main()
+if __name__=='__main__':main()

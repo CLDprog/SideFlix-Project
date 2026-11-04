@@ -1,0 +1,6 @@
+INITIAL {"target": "SIDEFLIX.LAB.CATALOG_INGEST_TEST", "watermark": "1900-01-01T00:00:00+00:00", "extracted": 6, "inserted": 6, "updated": 0, "total": 6, "batch_id": "catalog_5b65581e1c7d494b27ba"}
+REPLAY {"target": "SIDEFLIX.LAB.CATALOG_INGEST_TEST", "watermark": "2026-11-04T12:22:56.965379Z", "extracted": 0, "inserted": 0, "updated": 0, "total": 6, "batch_id": "catalog_4f53cda18c2baa0c0354"}
+CONTROLLED_UPDATE {"target": "SIDEFLIX.LAB.CATALOG_INGEST_TEST", "watermark": "2026-11-04T12:22:56.965379Z", "extracted": 1, "inserted": 0, "updated": 1, "total": 6, "batch_id": "catalog_e661fa32b2812d9e5a8c"}
+RESTORE {"target": "SIDEFLIX.LAB.CATALOG_INGEST_TEST", "watermark": "2026-11-04T15:07:23.827719Z", "extracted": 1, "inserted": 0, "updated": 1, "total": 6, "batch_id": "catalog_6284d8ed34768b772b5d"}
+FINAL_REPLAY {"target": "SIDEFLIX.LAB.CATALOG_INGEST_TEST", "watermark": "2026-11-04T15:07:33.335507Z", "extracted": 0, "inserted": 0, "updated": 0, "total": 6, "batch_id": "catalog_4f53cda18c2baa0c0354"}
+PASS: real PostgreSQL and Snowflake catalogues unchanged; LAB restored

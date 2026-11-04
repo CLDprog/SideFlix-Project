@@ -1,0 +1,1 @@
+{"target": "SIDEFLIX.BRONZE.CATALOG", "watermark": "2026-11-04T12:22:56.965379Z", "extracted": 0, "inserted": 0, "updated": 0, "total": 6, "batch_id": "catalog_4f53cda18c2baa0c0354"}

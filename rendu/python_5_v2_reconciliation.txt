@@ -1,0 +1,18 @@
+PASS: all original manifest file checksums unchanged
+COPY_REPLAY sessions_simulated [('Copy executed with 0 files processed.',)]
+PASS sessions_simulated expected/actual 32 metadata complete; journal matched; replay unchanged
+COPY_REPLAY imdb [('Copy executed with 0 files processed.',)]
+PASS imdb expected/actual 6 metadata complete; journal matched; replay unchanged
+COPY_REPLAY movielens [('Copy executed with 0 files processed.',)]
+PASS movielens expected/actual 86 metadata complete; journal matched; replay unchanged
+COPY_REPLAY netflix [('Copy executed with 0 files processed.',)]
+PASS netflix expected/actual 3 metadata complete; journal matched; replay unchanged
+PASS wikidata expected/actual 6 metadata complete; journal matched; replay unchanged
+PASS wikimedia expected/actual 6 metadata complete; journal matched; replay unchanged
+PASS imdb_unique (6,)
+PASS movielens_ratings (74, 74)
+PASS netflix_grain (3,)
+PASS wikidata_unique (6,)
+PASS wikimedia_days (42, 42)
+PASS simulated_sessions (32, 31, 1)
+ALL_BRONZE_V2_CHECKS_PASS

@@ -1,0 +1,4 @@
+snowflake-connector-python==4.8.0
+cryptography==46.0.5
+requests==2.34.2
+psycopg2-binary==2.9.13

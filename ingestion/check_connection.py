@@ -15,6 +15,9 @@ Lancement : python ingestion/check_connection.py
 import os
 from pathlib import Path
 
+# RSA only: do not discover ambient EC2 instance credentials.
+os.environ['AWS_EC2_METADATA_DISABLED'] = 'true'
+os.environ['SNOWFLAKE_DISABLE_PLATFORM_DETECTION'] = 'true'
 import snowflake.connector
 from cryptography.hazmat.primitives import serialization
 
@@ -34,6 +37,10 @@ def connect_snowflake():
         warehouse="SIDEFLIX_WH",
         database="SIDEFLIX",
         schema="BRONZE",
+        authenticator="SNOWFLAKE_JWT",
+        login_timeout=30,
+        network_timeout=60,
+        session_parameters={"TIMEZONE": "UTC"},
     )
 
 

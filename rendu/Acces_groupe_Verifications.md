@@ -45,3 +45,11 @@ Déroulé :
 Reste à faire par Matis : définir `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER=MATIS_DOUAY` et `SNOWFLAKE_PRIVATE_KEY_FILE` sur son poste, puis lancer `python ingestion/check_connection.py` (attendu : MATIS_DOUAY, SYSADMIN, SIDEFLIX_WH, SIDEFLIX.BRONZE). Tant que ce test n'est pas fait, la connexion de Matis n'est pas déclarée réussie.
 
 Rotation ou retrait : `ALTER USER MATIS_DOUAY UNSET RSA_PUBLIC_KEY;` (ACCOUNTADMIN), par exemple si la clé privée est perdue ou exposée.
+
+## Test réel Python de Matis — 4 novembre 2026
+
+Clé existante réutilisée, aucune rotation. Connexion RSA réussie : MATIS_DOUAY / SYSADMIN / SIDEFLIX_WH / SIDEFLIX.BRONZE ; CATALOG=6, SESSIONS_RAW=32, LOAD_RUNS=3 avant ingestion v2. Sortie brute : python_connexion_matis.txt.
+
+Premier essai avec le connecteur système 5.1.0 interrompu par le contrôle automatique à cause d’une tentative de détection cloud via 169.254.169.254. Correction : environnement .venv isolé, connecteur 4.8.0 du pack, authentification SNOWFLAKE_JWT explicite et options SNOWFLAKE_DISABLE_PLATFORM_DETECTION=true / AWS_EC2_METADATA_DISABLED=true. Le code du connecteur a été inspecté : cette option quitte la détection avant les appels réseau ; test local retournant disabled, puis test Snowflake complet réussi. Aucun accès aux identifiants d’instance n’est nécessaire ou utilisé.
+
+Variables et clé privée restent hors Git dans le dossier local Sideflix-Local-Secrets. Dépendances reproductibles : ingestion/requirements.txt ; fuseau de session SQL UTC.

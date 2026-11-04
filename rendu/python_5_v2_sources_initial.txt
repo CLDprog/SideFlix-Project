@@ -1,0 +1,11 @@
+PUT sessions_simulated ['UPLOADED']
+{"source": "sessions_simulated", "method": "PUT_COPY", "batch_id": "sessions_simulated_6c58e1a654180f3e4b910331", "expected": 32, "before": 0, "loaded": 32, "after": 32}
+PUT imdb ['UPLOADED']
+{"source": "imdb", "method": "PUT_COPY", "batch_id": "imdb_bea94e86ec6fdac6cc69b038", "expected": 6, "before": 0, "loaded": 6, "after": 6}
+PUT movielens ['UPLOADED']
+{"source": "movielens", "method": "PUT_COPY", "batch_id": "movielens_7e24050af79446cb15cf8d00", "expected": 86, "before": 0, "loaded": 86, "after": 86}
+PUT netflix ['UPLOADED']
+{"source": "netflix", "method": "PUT_COPY", "batch_id": "netflix_0286f00f5c7eebccd9debf0a", "expected": 3, "before": 0, "loaded": 3, "after": 3}
+{"source": "wikidata", "method": "API_live", "batch_id": "wikidata_b711503480e8aea3d442f00f", "expected": 6, "before": 0, "loaded": 6, "after": 6}
+{"source": "wikimedia", "method": "API_live", "batch_id": "wikimedia_4a60caa5f861b0a04eeb4fa6", "expected": 6, "before": 0, "loaded": 6, "after": 6}
+ALL_LOADS_RECONCILED 6

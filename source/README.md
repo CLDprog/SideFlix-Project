@@ -6,7 +6,7 @@ Les données brutes `source/real/` sont conservées localement et exclues du Git
 
 Conditions, attributions, grains/périodes et curation documentés dans `docs/sources_and_catalogue.md` et le manifeste. Les données brutes restent locales ; aucune utilisation commerciale ou droit de diffusion des films n’est revendiqué.
 
-`source/v2/sessions/` contient des événements explicitement simulés ; `source/v2/expected_daily_usage.csv` leurs résultats attendus calculés localement. Le chargement et les tests dans le pipeline partagé restent à réaliser. L’original est conservé dans `source/fixtures/reference/`.
+`source/v2/sessions/` contient des événements explicitement simulés ; `source/v2/expected_daily_usage.csv` leurs résultats attendus calculés localement. Le chargement Bronze v2 et le rejeu ont réussi (voir `rendu/Etape_5_V2_Verifications.md`). La transformation dbt v2 reste à adapter. L’original est conservé dans `source/fixtures/reference/`.
 
 ## Charger le catalogue réel (TD 2)
 

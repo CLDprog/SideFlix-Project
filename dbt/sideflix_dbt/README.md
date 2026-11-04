@@ -1,17 +1,17 @@
 # Sideflix dbt
 
-Adaptation des TD 3.2 et 3.3. Sources existantes : SIDEFLIX.BRONZE.CATALOG et SESSIONS_RAW.
+Adapted from labs TD 3.2 and 3.3. Existing sources: SIDEFLIX.BRONZE.CATALOG and SESSIONS_RAW.
 
-Le profil fourni est celui de **dbt Projects on Snowflake / Workspaces** (session courante, sans cle ni mot de passe). Il ne convient pas tel quel a dbt Core sur un poste ou dans Docker : y utiliser un profil local avec variables et sa propre cle, comme au TD 3.1/4.2.
+The provided profile is the one for **dbt Projects on Snowflake / Workspaces** (current session, no key or password). It does not work as is with dbt Core on a workstation or in Docker: there, use a local profile with variables and its own key, as in TD 3.1/4.2.
 
-Silver : vues reconstruites, Gold : table reconstruite. Le hook log_run_results du TD journalise les executions dans SIDEFLIX.LAB.DBT_RESULTS. Aucune modification des sources Bronze.
+Silver: rebuilt views, Gold: rebuilt table. The log_run_results hook from the TD logs runs to SIDEFLIX.LAB.DBT_RESULTS. No changes to the Bronze sources.
 
-Commandes : `dbt run`, puis `dbt docs generate`. Les tests et leur preuve seront completes a l'etape 7, avec `dbt build` puis `dbt source freshness` separement.
+Commands: `dbt run`, then `dbt docs generate`. Tests and their evidence will be completed in step 7, with `dbt build` then `dbt source freshness` separately.
 
-Reference du 30 octobre : A = 2 sessions / 45 min ; B = 1 session / 10 min. Ensemble : 32 lignes brutes = 30 sessions valides + 1 rejet + 1 doublon retire.
+October 30 reference: A = 2 sessions / 45 min; B = 1 session / 10 min. Overall: 32 raw rows = 30 valid sessions + 1 rejected + 1 duplicate removed.
 
-## Version finale v2 (4 novembre)
+## Final version v2 (November 4)
 
-Les lots vérifiés sont fixés dans `vars` de `dbt_project.yml`. Les cinq sources publiques alimentent les vues Silver puis `gold_editorial_weekly`, avec périodes, provenance, absence Netflix explicite et simulation signalée. Gold ne lit que Silver. Voir `rendu/Etape_6_V2_Verifications.md` et `gold_editorial_v2.csv`.
+The verified batches are pinned in the `vars` of `dbt_project.yml`. The five public sources feed the Silver views, then `gold_editorial_weekly`, with periods, provenance, explicit Netflix absence and flagged simulation. Gold reads only from Silver. See `rendu/Etape_6_V2_Verifications.md` and `gold_editorial_v2.csv`.
 
-Core : installer `dbt/requirements.txt`, charger les variables Snowflake/RSA locales, exporter `SNOWFLAKE_DISABLE_PLATFORM_DETECTION=true AWS_EC2_METADATA_DISABLED=true DBT_SEND_ANONYMOUS_USAGE_STATS=false`, puis depuis la racine : `.venv/bin/dbt run --project-dir dbt/sideflix_dbt --profiles-dir dbt/profiles-core`. Pour Workspaces, utiliser son profil existant. Le profil Core n'embarque aucune clé. Le hook distingue désormais les deux runtimes.
+Core: install `dbt/requirements.txt`, load the local Snowflake/RSA variables, export `SNOWFLAKE_DISABLE_PLATFORM_DETECTION=true AWS_EC2_METADATA_DISABLED=true DBT_SEND_ANONYMOUS_USAGE_STATS=false`, then from the root: `.venv/bin/dbt run --project-dir dbt/sideflix_dbt --profiles-dir dbt/profiles-core`. For Workspaces, use its existing profile. The Core profile embeds no key. The hook now distinguishes between the two runtimes.

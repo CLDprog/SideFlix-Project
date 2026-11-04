@@ -1,11 +1,11 @@
-# Étape 8 — lancement selon le TD 4.2
+# Step 8 — launch following TD 4.2
 
-**État au 4 novembre 2026, 17 h 10 : exécuté pour de vrai dans Docker/Airflow sur le PC de Jérémy (Windows, Docker Desktop).** Run de démonstration du 1er novembre puis rejeu réussis, publication unique par date ; run planifié d'une journée sans données correctement en échec, avec retries et callback. Alerte d'échec reçue sur le canal Slack du groupe (8.4) : étape 8 terminée. Preuves : `rendu/Etape_8_V2_Verifications.md`. Les étapes 5–7 cloud/Core sont terminées ; ne pas les refaire. Aucun Terraform nécessaire.
+**Status as of November 4, 2026, 17:10: actually run in Docker/Airflow on Jérémy's PC (Windows, Docker Desktop).** Demo run for November 1 and its replay succeeded, with a single publication per date; scheduled run for a day without data correctly failed, with retries and callback. Failure alert received on the group's Slack channel (8.4): step 8 complete. Evidence: `rendu/Etape_8_V2_Verifications.md`. Cloud/Core steps 5–7 are complete; do not redo them. No Terraform needed.
 
-## Sur le poste de démonstration
+## On the demo machine
 
-1. Ouvrir Docker Desktop et exécuter `docker info` dans le terminal du poste. Si seul l'assistant est bloqué, exécuter les commandes Docker depuis ce terminal.
-2. Depuis la racine du dépôt, préparer les dossiers et le fichier privé :
+1. Open Docker Desktop and run `docker info` in the machine's terminal. If only the assistant is blocked, run the Docker commands from that terminal.
+2. From the repository root, prepare the folders and the private file:
 
 ```sh
 mkdir -p airflow/work airflow/state
@@ -14,13 +14,13 @@ id -u
 id -g
 ```
 
-Renseigner `.env` : compte/utilisateur Snowflake, chemins ABSOLUS de la clé existante, du dépôt et de `airflow/work`, et `SIDEFLIX_TASK_USER=UID:GID` retournés ci-dessus (sous Windows : `1000:1000`, chemins avec des `/`, par exemple `C:/Users/vous/keys`). La clé `rsa_key.p8` reste hors Git et est montée en lecture seule. Ne pas changer ses permissions pour rendre le montage accessible : utiliser le bon UID.
+Fill in `.env`: Snowflake account/user, ABSOLUTE paths to the existing key, the repository and `airflow/work`, and `SIDEFLIX_TASK_USER=UID:GID` as returned above (on Windows: `1000:1000`, paths with `/`, for example `C:/Users/vous/keys`). The `rsa_key.p8` key stays out of Git and is mounted read-only. Do not change its permissions to make the mount accessible: use the right UID.
 
-Les variables PG* de `.env.example` sont prêtes : la base source n'est plus un PostgreSQL à installer sur chaque poste, mais le service `source-db` du Compose (postgres:16.4, même méthode que `docker-compose-databases.yml` du pack 04, identifiants de labo jetables, port 5433 limité à localhost). Au démarrage, le service ponctuel `catalog-seed` y charge le catalogue réel avec `source/03_load_real_catalog.py` (idempotent). Les jobs du DAG l'atteignent par `host.docker.internal:5433`. Les fichiers sources bruts sont dans `source/real/` (dépôt privé du groupe) : rien à télécharger.
+The PG* variables in `.env.example` are ready: the source database is no longer a PostgreSQL instance to install on each machine, but the Compose `source-db` service (postgres:16.4, same method as `docker-compose-databases.yml` from pack 04, throwaway lab credentials, port 5433 restricted to localhost). On startup, the one-shot `catalog-seed` service loads the real catalog into it with `source/03_load_real_catalog.py` (idempotent). The DAG jobs reach it via `host.docker.internal:5433`. The raw source files are in `source/real/` (the group's private repository): nothing to download.
 
-Renseigner un **webhook Slack/Teams du groupe** dans `ALERT_WEBHOOK_URL`. Aucune notification ne sera validée tant que le groupe n'aura pas confirmé sa réception. Le callback vient du pack 07 ; une simple ligne de log sans webhook n'est pas une preuve.
+Set a **group Slack/Teams webhook** in `ALERT_WEBHOOK_URL`. No notification will be validated until the group has confirmed receiving it. The callback comes from pack 07; a mere log line without a webhook is not evidence.
 
-3. Construire et démarrer, depuis la racine :
+3. Build and start, from the root:
 
 ```sh
 docker build -f docker/ingestion.Dockerfile -t sideflix-ingest:1.0.0 .
@@ -29,20 +29,20 @@ docker compose -f airflow/docker-compose.yml up -d --build
 docker compose -f airflow/docker-compose.yml exec airflow /entrypoint airflow dags list-import-errors
 ```
 
-Le conteneur Airflow tourne en root (exception du TD pour le socket Docker) : passer par `/entrypoint` pour la CLI, comme ci-dessus.
+The Airflow container runs as root (the TD's exception for the Docker socket): go through `/entrypoint` for the CLI, as above.
 
-Ouvrir http://localhost:8080. Déclencher `sideflix_daily` avec la configuration **`{"date":"2026-11-01"}`**, puis rejouer la même date. Conserver logs, durée, états des tâches, contrôles de publication et copie sans secret des résultats. Ne pas marquer 8.1–8.4 terminées sur la seule base de la compilation Python ou de `compose config`.
+Open http://localhost:8080. Trigger `sideflix_daily` with the configuration **`{"date":"2026-11-01"}`**, then replay the same date. Keep the logs, duration, task states, publication checks and a secret-free copy of the results. Do not mark 8.1–8.4 as done based solely on Python compilation or `compose config`.
 
-Le DAG reprend DockerOperator/Compose du TD : ingestion réelle (catalogue + cinq sources + sessions), contrôle des lots/date, freshness puis dbt build, publication MERGE. Date UTC et run_id transmis à chaque tâche. Cron 06 h Europe/Paris, retries=2, catchup=False, max_active_runs=1. Airflow est l'unique ordonnanceur. Les jobs sont non-root ; le conteneur Airflow utilise l'exception root du TD pour le socket Docker, exposé seulement sur localhost.
+The DAG reuses the TD's DockerOperator/Compose: real ingestion (catalog + five sources + sessions), batch/date check, freshness then dbt build, MERGE publication. UTC date and run_id passed to each task. Cron 06:00 Europe/Paris, retries=2, catchup=False, max_active_runs=1. Airflow is the only scheduler. The jobs are non-root; the Airflow container uses the TD's root exception for the Docker socket, exposed only on localhost.
 
-## Démonstration et limites
+## Demo and limitations
 
-Les snapshots sont historiques, les sessions simulées s'arrêtent au 1er novembre. Un run automatique demandant une journée absente **échoue** ; aucune donnée du jour n'est inventée. Pour l'oral, spécifier la date ci-dessus. L'image ingestion réutilise les snapshots locaux montés depuis `source/` ; les APIs sont réellement appelées et le reçu du run transmet leurs nouveaux batch_id à dbt sans modifier les variables de référence versionnées.
+The snapshots are historical; the simulated sessions stop on November 1. An automatic run requesting a missing day **fails**; no data for the day is invented. For the oral presentation, specify the date above. The ingestion image reuses the local snapshots mounted from `source/`; the APIs are actually called and the run receipt passes their new batch_id values to dbt without changing the versioned reference variables.
 
-Le script `run_pipeline_job.py build` écrit un marqueur local seulement après réussite de freshness ET build. `publish_daily_usage.py` exige ce marqueur (date/run/invocation correspondants), lit Gold et fait un MERGE par date dans SIDEFLIX.LAB.DAILY_USAGE. Il refuse une journée absente. La cible du fixture ancien reste distincte ; ne pas y mélanger les tests v2.
+The `run_pipeline_job.py build` script writes a local marker only after freshness AND build have succeeded. `publish_daily_usage.py` requires this marker (matching date/run/invocation), reads Gold and runs a MERGE per date into SIDEFLIX.LAB.DAILY_USAGE. It rejects a missing day. The old fixture's target remains separate; do not mix the v2 tests into it.
 
-Après validation de l'étape 8, poursuivre 9.1 (device invalide → test bloqué → notification → correction) et 9.2 (`--crash-on-try 1` après MERGE, retry → une ligne par date). Ces incidents ne sont pas encore déclarés exécutés. Conserver le dernier Gold valide en cas d'échec amont. Vérifier l'heure de disponibilité 07 h avec un run chronométré ; les seuils freshness seuls ne la prouvent pas.
+Once step 8 is validated, continue with 9.1 (invalid device → test blocks → notification → fix) and 9.2 (`--crash-on-try 1` after MERGE, retry → one row per date). These incidents are not yet declared as executed. Keep the last valid Gold in case of an upstream failure. Check the 07:00 availability time with a timed run; freshness thresholds alone do not prove it.
 
-À savoir : dès que le DAG est réactivé, Airflow crée le run planifié de la veille (catchup désactivé). Les sessions simulées s'arrêtant au 1er novembre, ce run échoue au contrôle des sources, sans rien publier : c'est le comportement attendu, à montrer à l'oral.
+Good to know: as soon as the DAG is re-enabled, Airflow creates the scheduled run for the previous day (catchup disabled). Since the simulated sessions stop on November 1, this run fails at the source check without publishing anything: this is the expected behavior, to be shown during the oral presentation.
 
-Arrêt local : `docker compose -f airflow/docker-compose.yml down` (ajouter `-v` pour repartir d'une base source vide, rechargée au prochain démarrage). Le compte Snowflake est un essai ; ne pas recréer les objets Terraform ni modifier REDGRAVE.
+Local shutdown: `docker compose -f airflow/docker-compose.yml down` (add `-v` to start over from an empty source database, reloaded on the next startup). The Snowflake account is a trial; do not recreate the Terraform objects or modify REDGRAVE.

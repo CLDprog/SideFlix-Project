@@ -1,28 +1,28 @@
-# Terraform — warehouse existant, state partagé sur GCS
+# Terraform — existing warehouse, shared state on GCS
 
-Le warehouse `SIDEFLIX_WH` a été créé par le module du TD 4.2 (X-Small, auto-suspend 60 s, auto-resume). Ne jamais le recréer ni lancer `apply` depuis un state vide.
+The `SIDEFLIX_WH` warehouse was created by the TD 4.2 module (X-Small, auto-suspend 60 s, auto-resume). Never recreate it, and never run `apply` from an empty state.
 
-## State : distant, versionné, verrouillé, privé (action 4.2, 4 novembre 2026)
+## State: remote, versioned, locked, private (action 4.2, 4 November 2026)
 
-- Backend actif : `backend.tf`, type `gcs`, bucket `sideflix-tfstate-ml45551`, préfixe `sideflix` (projet Google Cloud dédié `sideflix-tfstate-ml45551`, région europe-west9).
-- Bucket privé (accès public bloqué, accès uniforme), versioning activé ; verrouillage natif du backend GCS (`sideflix/default.tflock`).
-- Migration faite depuis le vrai state de Jérémy, même lignée ; `terraform plan -detailed-exitcode` = 0 après migration. Preuves : `rendu/Etape_4_2_V2_Verifications.md`.
-- Snowflake reste sur AWS ; Google Cloud ne conserve que ce fichier de state.
-- `backend.tf.example` garde la variante S3 préparée auparavant (non retenue : pas d'accès AWS).
+- Active backend: `backend.tf`, type `gcs`, bucket `sideflix-tfstate-ml45551`, prefix `sideflix` (dedicated Google Cloud project `sideflix-tfstate-ml45551`, region europe-west9).
+- Private bucket (public access blocked, uniform access), versioning enabled; native GCS backend locking (`sideflix/default.tflock`).
+- Migrated from Jérémy's actual state, same lineage; `terraform plan -detailed-exitcode` = 0 after migration. Evidence: `rendu/Etape_4_2_V2_Verifications.md`.
+- Snowflake stays on AWS; Google Cloud only holds this state file.
+- `backend.tf.example` keeps the S3 variant prepared earlier (not adopted: no AWS access).
 
-## Lancer Terraform
+## Running Terraform
 
-Prérequis sur le poste : Google Cloud SDK, `gcloud auth application-default login` avec un compte autorisé sur le bucket ; `terraform.tfvars` local (voir `terraform.tfvars.example`) et une clé Snowflake associée à l'utilisateur indiqué.
+Prerequisites on the workstation: Google Cloud SDK, `gcloud auth application-default login` with an account authorized on the bucket; a local `terraform.tfvars` (see `terraform.tfvars.example`) and a Snowflake key associated with the specified user.
 
 ```sh
 terraform init
 terraform fmt -check
 terraform validate
-terraform plan -detailed-exitcode   # 0 = aucun changement, 1 = erreur, 2 = changements à analyser
+terraform plan -detailed-exitcode   # 0 = no changes, 1 = error, 2 = changes to review
 ```
 
-Ne pas appliquer une création, un remplacement ou une destruction inattendue. Pour donner l'accès à un membre : `roles/storage.objectAdmin` sur ce seul bucket pour son compte Google.
+Do not apply any unexpected creation, replacement or destruction. To grant a member access: `roles/storage.objectAdmin` on this bucket only, for their Google account.
 
-## Étapes manuelles (pack 09)
+## Manual steps (pack 09)
 
-Compte Snowflake d'essai et premier admin ; projet Google Cloud et bucket du state ; connexion Google au lancement ; clé publique RSA sur l'utilisateur Snowflake ; utilisateurs du groupe. Ne jamais versionner state, sauvegardes, `terraform.tfvars` ni clés.
+Snowflake trial account and first admin; Google Cloud project and state bucket; Google login at run time; RSA public key on the Snowflake user; the group's users. Never commit state, backups, `terraform.tfvars` or keys.

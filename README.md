@@ -41,7 +41,7 @@ Five **authentic** datasets, each with URL, SHA-256 checksum, period, grain and 
 | Wikidata | Identity (QID), IMDb and Wikipedia links | Response of 4 Nov 2026 |
 | Wikimedia | Wikipedia page views per day (42 observations) | 26 Oct to 1 Nov 2026 |
 
-The **Sideflix sessions are simulated** (`source/v2/sessions/`, 32 rows over three days) and do not count among the five datasets. The expected result, computed independently, is in `source/v2/expected_daily_usage.csv`. The raw snapshots (`source/real/`) allow an exact replay. They stay in this private repository, with read access granted to the professor for grading: the IMDb and Netflix terms do not allow their redistribution, so the repository is not made public as long as these exports are in it, history included.
+The **Sideflix sessions are simulated** (`source/v2/sessions/`, 32 rows over three days) and do not count among the five datasets. The expected result, computed independently, is in `source/v2/expected_daily_usage.csv`. The raw snapshots (`source/real/`) allow an exact replay. They stay in this private repository (group members, plus read-only access for the professor's grading): the IMDb and Netflix terms do not allow their redistribution, so the repository is not made public as long as these exports are in it, history included.
 
 ## Running the pipeline
 

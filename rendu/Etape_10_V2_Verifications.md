@@ -10,7 +10,7 @@ Matis ne dispose que de SYSADMIN pour Sideflix ; création des rôles et moniteu
 
 Préparation du code : variable runtime SNOWFLAKE_ROLE dans helper RSA, profil Core et DAG, défaut historique SYSADMIN préservé jusqu'aux grants ; création inutile de schéma retirée du hook dbt (LAB existe déjà). Vérification syntaxique effectuée ; ces adaptations ne constituent pas encore une exécution au moindre privilège.
 
-Protection vérifiée : aucun .env, fichier de clé privée ou state suivi par Git ; exclusions .gitignore/.dockerignore ; clé montée read-only, webhook passé au runtime, non intégré à l'image. Backend du state : GCS privé/versionné/verrouillé selon les preuves réelles4.2, accessible à Jérémy. Pas de revalidation cloud du bucket depuis Matis. Données Sideflix simulées identifiées ; sources publiques, périodes et attributions dans docs/sources_and_catalogue et manifeste. La remise finale devra exclure exports IMDb/Netflix et historique interne.
+Protection vérifiée : aucun .env, fichier de clé privée ou state suivi par Git ; exclusions .gitignore/.dockerignore ; clé montée read-only, webhook passé au runtime, non intégré à l'image. Backend du state : GCS privé/versionné/verrouillé selon les preuves réelles4.2, accessible à Jérémy. Pas de revalidation cloud du bucket depuis Matis. Données Sideflix simulées identifiées ; sources publiques, périodes et attributions dans docs/sources_and_catalogue et manifeste. Mise à jour du 4 novembre, 23 h : la remise est ce dépôt privé, sans copie distincte ; les exports IMDb/Netflix y restent versionnés (commit 0577f62) pour le rejeu exact, et le dépôt n’est pas rendu public tant qu’ils y figurent, historique compris.
 
 ## 10.2 — configuration et performance réellement relevées
 

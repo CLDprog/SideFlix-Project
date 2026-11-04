@@ -10,7 +10,7 @@ Cinq jeux authentiques collectés et distincts, documentés dans source/sources_
 | Wikidata | Métadonnées et correspondances par P345, six QID et liens d’articles ; données structurées sous CC0, source et révision conservées dans le JSON. |
 | Wikimedia | 42 statistiques quotidiennes publiques (six articles, sept jours), filtre user ; pas de texte d’article. Documentation : https://doc.wikimedia.org/generated-data-platform/aqs/analytics-api/ ; règles API : https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_API_Usage_Guidelines. Timeout, user-agent, cache et respect des erreurs 429. |
 
-Les conditions sont documentées pour ce démonstrateur pédagogique non commercial. Elles ne constituent pas des droits de streaming, ni une autorisation commerciale pour Sideflix. Le dépôt remis reste privé, avec un accès en lecture pour la professeure. Il contient le code, les résultats attribués et les extraits nécessaires au rejeu, et n’est pas rendu public tant qu’il contient les exports IMDb et Netflix ; les dumps complets ne sont pas versionnés.
+Les conditions sont documentées pour ce démonstrateur pédagogique non commercial. Elles ne constituent pas des droits de streaming, ni une autorisation commerciale pour Sideflix. Le dépôt remis reste privé, avec un accès en lecture pour la professeure. Il contient le code, les résultats attribués et les extraits nécessaires au rejeu, et n’est pas rendu public tant qu’il contient les exports IMDb et Netflix, historique compris. L’export Netflix est versionné en entier ; seul le dump IMDb complet ne l’est pas (extrait de six lignes).
 
 ## Sélection de six films
 

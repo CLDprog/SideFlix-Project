@@ -79,7 +79,7 @@ The lineage is generated with `dbt docs generate --project-dir dbt/sideflix_dbt 
 
 *Simulated Sideflix viewing: analysis window from 26 October to 1 November 2026, sessions available from 30 October to 1 November 2026. The external context (ratings, page views, Top 10) is not counted in minutes.*
 
-- **Quality**: `dbt build` 33/33 (11 models, 21 tests), freshness 2/2, reconciliation 32 = 30 valid + 1 quarantined + 1 duplicate.
+- **Quality**: `dbt build` 33/33 (11 models, 21 tests, 1 on-run-end hook), freshness 2/2, reconciliation 32 = 30 valid + 1 quarantined + 1 duplicate.
 - **Replay**: rerunning the same date adds no rows and leaves a single publication per date.
 - **Incident 1**: an invalid `device` value (isolated copy) makes the test fail, blocks Gold and publication, and triggers the Slack alert; recovery by removing only the test batch.
 - **Incident 2**: a crash after the write is caught by the retry; the MERGE keeps a single row per date.

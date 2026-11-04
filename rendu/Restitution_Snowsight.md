@@ -40,7 +40,7 @@ Le rang suit les minutes regardées. Lecture pour le responsable du catalogue : 
 | 2026-11-01 | 13 | 177,4 |
 | Total fenêtre | 30 | 454,2 |
 
-Recalcul depuis l’autre table Gold (`GOLD_CONTENT_DAILY`). Les trois jours sont identiques au résultat attendu calculé hors Snowflake (`source/v2/expected_daily_usage.csv`). Le total est égal à la somme du tableau (30 sessions, 454,2 minutes) et aux 30 sessions valides de la réconciliation (32 lignes = 30 valides + 1 quarantaine + 1 doublon). Aucune session simulée n’existe du 26 au 29 octobre.
+Recalcul depuis l’autre table Gold (`GOLD_CONTENT_DAILY`). Les trois jours sont identiques au résultat attendu calculé hors Snowflake (`source/v2/expected_daily_usage.csv`). Le total est égal à la somme du tableau avant arrondi (30 sessions, 454,2 minutes ; les minutes affichées, arrondies au dixième, totalisent 454,3) et aux 30 sessions valides de la réconciliation (32 lignes = 30 valides + 1 quarantaine + 1 doublon). Aucune session simulée n’existe du 26 au 29 octobre.
 
 ## Réalisation et limites
 

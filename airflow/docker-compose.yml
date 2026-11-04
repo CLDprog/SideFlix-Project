@@ -17,3 +17,43 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     # Same local teaching exception as TD4.2; actual job images are non-root.
     user: '0:0'
+    depends_on:
+      catalog-seed:
+        condition: service_completed_successfully
+
+  # Local "on-prem" source database, same pattern as course pack 04 (postgres:16.4).
+  # Lab credentials from the pack, bound to localhost only: a throw-away local value, not a secret.
+  # It replaces the PostgreSQL that each member had to install, so every machine gets the same catalogue.
+  source-db:
+    image: postgres:16.4
+    environment:
+      POSTGRES_USER: ${PGUSER:-source}
+      POSTGRES_PASSWORD: ${PGPASSWORD:-source_pw}
+      POSTGRES_DB: ${PGDATABASE:-sideflix}
+    ports:
+      - '127.0.0.1:${PGPORT:-5433}:5432'
+    volumes:
+      - source_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # One-shot, idempotent seed with the existing loader (TD 2 / pack 04): reviewed real catalogue.
+  catalog-seed:
+    image: sideflix-ingest:1.0.0
+    depends_on:
+      source-db:
+        condition: service_healthy
+    environment:
+      PGHOST: source-db
+      PGPORT: '5432'
+      PGDATABASE: ${PGDATABASE:-sideflix}
+      PGUSER: ${PGUSER:-source}
+      PGPASSWORD: ${PGPASSWORD:-source_pw}
+    command: ['python', 'source/03_load_real_catalog.py']
+    restart: 'no'
+
+volumes:
+  source_pg_data:

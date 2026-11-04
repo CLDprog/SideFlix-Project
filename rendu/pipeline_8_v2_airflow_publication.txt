@@ -1,0 +1,20 @@
+Sideflix - etape 8 v2 : controle Snowflake apres les runs Airflow (lecture seule, poste de Jeremy)
+
+Controle execute le 2026-11-04 16:11 UTC | role SYSADMIN
+
+SIDEFLIX.LAB.DAILY_USAGE (une ligne attendue par date)
+   2026-10-30 | 3 | 55.000000 | matis_stage8_precheck | 1 | 2026-11-04 15:24:25
+   2026-11-01 | 13 | 177.400000 | demo_20261101_run2_replay | 1 | 2026-11-04 16:10:07
+Dates en double : 0
+
+Volumes Bronze par table et source_system
+   CATALOG        imdb=6 lignes/1 lot(s)
+   SESSIONS_RAW   sessions_simulated=32 lignes/1 lot(s); sideflix_simulated=32 lignes/1 lot(s)
+   IMDB_RAW       imdb=6 lignes/1 lot(s)
+   MOVIELENS_RAW  movielens=86 lignes/1 lot(s)
+   NETFLIX_RAW    netflix=3 lignes/1 lot(s)
+   WIKIDATA_RAW   wikidata=6 lignes/1 lot(s)
+   WIKIMEDIA_RAW  wikimedia=6 lignes/1 lot(s)
+
+Journal PUBLIC_SOURCE_RUNS depuis 16:00 UTC
+   colonnes : RUN_ID, SOURCE_SYSTEM, BATCH_ID, STARTED_AT, ROWS_LOADED, STATUS

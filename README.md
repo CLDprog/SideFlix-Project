@@ -19,8 +19,8 @@ Plateforme fictive de streaming indépendant inspirée de Netflix réel. Hypoth�
 | Étape 5 v2 | Terminée : cinq sources réelles et 32 sessions simulées chargées, catalogue synchronisé, rejeu sans nouvelle ligne et test de mise à jour en LAB réussis. Voir `rendu/Etape_5_V2_Verifications.md`. |
 | Étape 6 v2 | 11 modèles exécutés en Core, contexte des cinq sources et chiffres métier vérifiés. Voir `rendu/Etape_6_V2_Verifications.md`. |
 | Étape 7 v2 | Build 33/33 (21 tests), fraîcheur 2/2, exemples métier indépendants vérifiés. Voir `rendu/Etape_7_V2_Verifications.md`. |
-| Étape 8 v2 | Images/DAG/Compose/publication préparés selon TD4.2 ; procédure `airflow/README.md`. Exécution Docker bloquée par accès API refusé, webhook du groupe manquant. Étape non terminée. |
-| Suite | Valider Docker/Airflow, puis incidents, gouvernance/coûts et remise finale propre. |
+| Étape 8 v2 | Exécutée dans Docker/Airflow (TD 4.2) sur le PC de Jérémy : run du 1er novembre et rejeu réussis (build 33/33, une ligne publiée par date), run planifié sans données en échec attendu avec retries. Base source en conteneur, snapshots partagés. Reste 8.4 : alerte Slack réelle. Voir `rendu/Etape_8_V2_Verifications.md`. |
+| Suite | 8.4 (webhook Slack), puis incidents 9.1/9.2, gouvernance/coûts et remise finale propre. |
 
 La reprise porte sur les données et leurs adaptations ; le socle technique est réutilisé. Le Framework impose cinq jeux authentiques : IMDb, MovieLens, Netflix Top 10, Wikidata et Wikimedia. Les sessions Sideflix sont **simulées** et ne comptent pas parmi ces cinq jeux. Notes, consultations et classements externes ne sont pas des minutes regardées sur Sideflix.
 

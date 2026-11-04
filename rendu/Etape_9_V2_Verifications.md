@@ -38,3 +38,9 @@ Correction ciblée exécutée après fin du run et des retries : suppression des
 Cause : catégorie device hors des valeurs autorisées sur une copie isolée. Impact évité : publication de données non validées. Détection : accepted_values et échec Airflow après retries, alerte HTTP200. Reprise : retrait de la seule copie fautive puis run normal. Prévention : test bloquant avant Gold/publication ; options d'incident désactivées par défaut.
 
 Preuves brutes : `incident_9_1_logs/` (ingestion, contrôle, trois builds), `incident_9_1_failed_and_cleanup.json` (états, comparaison avant/après, nettoyage), `incident_9_v2_before.json` (référence). Aucun incident9.2 exécuté.
+
+## 9.1 terminée — reprise vérifiée, 4 novembre 2026
+
+Matis confirme la réception dans Slack de l'alerte de dbt_build, tentative3, à18h13 Paris (preuve `incident_9_1_slack_confirmation.txt`). Le run correctif `matis_9_1_fixed`, sans option d'incident, a réussi ses quatre tâches ; dbt build PASS33/WARN0/ERROR0/SKIP0. Contrôle Snowflake réel : publication du1er novembre unique,13sessions/177,4minutes, run_id correctif ;30sessions Silver uniques ; aucune TEST_BAD_DEVICE ni catégorie invalid ; copie de test absente ;14résultats Gold quotidiens strictement identiques à l'avant-incident ;6œuvres éditoriales et30sessions au total. Les19empreintes restent conformes au manifeste. Les modifications d'horodatages seules ont été remises à la version Git.
+
+Preuves de reprise : `incident_9_1_recovery.json` et `incident_9_1_recovery_logs/`. Les étapes panne/détection/blocage/notification/correction/reprise sont maintenant toutes vérifiées pour9.1. Étape9 globale encore en cours : prochaine action9.2, crash après écriture avec retry, non encore exécuté.

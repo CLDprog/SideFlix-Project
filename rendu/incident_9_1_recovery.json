@@ -1,0 +1,53 @@
+{
+  "run_id": "matis_9_1_fixed",
+  "state": "success",
+  "tasks": [
+    [
+      "check_sources",
+      "success",
+      1
+    ],
+    [
+      "dbt_build",
+      "success",
+      1
+    ],
+    [
+      "ingest_sources",
+      "success",
+      1
+    ],
+    [
+      "publish_daily_usage",
+      "success",
+      1
+    ]
+  ],
+  "slack_receipt": "confirmed by Matis for failed run",
+  "publication": {
+    "columns": [
+      "USAGE_DATE",
+      "VALID_SESSIONS",
+      "MINUTES_WATCHED",
+      "PUBLISHED_AT",
+      "RUN_ID",
+      "VALIDATION_ID",
+      "ATTEMPT"
+    ],
+    "rows": [
+      [
+        "2026-11-01",
+        13,
+        "177.400000",
+        "2026-11-04 17:17:30.986000+00:00",
+        "matis_9_1_fixed",
+        "7a50a155-cd58-4421-a170-23780653c2fc",
+        1
+      ]
+    ]
+  },
+  "gold_daily_identical_to_before": true,
+  "silver_valid_unique": 30,
+  "bad_device_remaining": 0,
+  "editorial_rows": 6
+}

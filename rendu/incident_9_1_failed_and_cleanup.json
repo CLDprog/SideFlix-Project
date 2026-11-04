@@ -26,7 +26,7 @@
   "test_batch": "sessions_simulated_96d78fad181a1ed6db07727b",
   "reference_batch": "sessions_simulated_6c58e1a654180f3e4b910331",
   "slack_http_status": 200,
-  "channel_receipt_confirmation": "pending",
+  "channel_receipt_confirmation": "confirmed by Matis; Slack message at 18:13 Europe/Paris for matis_9_1_bad_device attempt 3",
   "publication_unchanged": true,
   "gold_daily_unchanged": true,
   "editorial_unchanged": true,

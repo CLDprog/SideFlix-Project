@@ -1,0 +1,5 @@
+Réception confirmée par Matis dans la conversation, le 4 novembre 2026.
+Message reçu à 18 h 13 (Paris) :
+Sideflix sideflix_daily.dbt_build FAILED, run matis_9_1_bad_device, attempt 3; logs: http://localhost:8080/dags/sideflix_daily/runs/matis_9_1_bad_device/tasks/dbt_build?try_number=3
+
+Une autre alerte reçue concerne le run planifié sans données ; elle est distincte de l’incident qualité.

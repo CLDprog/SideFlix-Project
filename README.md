@@ -13,8 +13,10 @@ Plateforme fictive de streaming indépendant inspirée de Netflix réel. Hypoth�
 | Reprise Framework, étape 2.1 | Cinq jeux publics collectés localement ; manifeste, mapping six films et catalogue réel CSV préparés. Conditions/attributions, périodes/grains et curation documentés dans `docs/sources_and_catalogue.md` ; étape 2 validée en conception. |
 | Étape 2.2 | Architecture v2 vérifiée contre les sources, le cas d’usage et les méthodes des TD ; réalisation cloud v2 encore à exécuter. |
 | Étape 3.2 v2 | Catalogue réel chargé et vérifié dans PostgreSQL local ; référence fictive sauvegardée, replay sans changement, contraintes et trigger testés. |
+| Étape 4.3 v2 | Cinq tables Bronze/métadonnées préparées dans Snowflake ; sept contrôles réels OK, prototype conservé. |
+| Étape 4.2 v2 | State distant à vérifier depuis le poste détenant le state actuel ; procédure dans `terraform/README.md`. Étape 4 encore ouverte. |
 | Étape 3.3 v2 | Sessions simulées préparées et contrôlées ; 32 brutes, 30 valides. Résultats attendus en CSV. |
-| Suite | Charger le catalogue réel, étendre Bronze/ingestions et dbt, puis tests, Docker/Airflow, deux incidents/reprises, droits/coûts et rendu/live. Aucune exécution cloud v2 n’est revendiquée. |
+| Suite | Clôturer le point state Terraform de 4.2, puis ingérer les cinq sources et adapter dbt, tests, Docker/Airflow, incidents et rendu. Les nouveaux jeux ne sont pas encore chargés en Bronze. |
 
 La reprise porte sur les données et leurs adaptations ; le socle technique est réutilisé. Le Framework impose cinq jeux authentiques : IMDb, MovieLens, Netflix Top 10, Wikidata et Wikimedia. Les sessions Sideflix sont **simulées** et ne comptent pas parmi ces cinq jeux. Notes, consultations et classements externes ne sont pas des minutes regardées sur Sideflix.
 

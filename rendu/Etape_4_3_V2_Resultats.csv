@@ -1,0 +1,8 @@
+CONTROLE,OBTENU,ATTENDU,STATUT
+catalog_metadata,5.000000,5,OK
+legacy_catalog,6.000000,6,OK
+legacy_gold_minutes,55.000000,55,OK
+legacy_sessions,32.000000,32,OK
+raw_metadata_columns,25.000000,25,OK
+real_source_tables,5.000000,5,OK
+sessions_metadata,5.000000,5,OK

@@ -1,0 +1,12 @@
+# Exemple S3 du resource pack 09, adapte au projet. Inactif tant que ce fichier garde .example.
+# Le detenteur du state existant cree une fois le bucket prive/versionne et configure son acces AWS.
+# Remplacer le nom de bucket par le nom effectivement cree, puis renommer en backend.tf.
+terraform {
+  backend "s3" {
+    bucket       = "sideflix-tfstate-ml45551"
+    key          = "sideflix/terraform.tfstate"
+    region       = "eu-west-3"
+    encrypt      = true
+    use_lockfile = true
+  }
+}

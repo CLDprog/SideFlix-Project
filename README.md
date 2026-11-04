@@ -10,8 +10,8 @@ Plateforme fictive de streaming indépendant inspirée de Netflix réel. Hypoth�
 | --- | --- |
 | Ancien prototype, étapes 3–5 | Catalogue fictif PostgreSQL, 32 lignes JSON, Snowflake et Terraform réalisés par le groupe ; ingestion/replay vérifiés. Scripts préservés. |
 | Étape 6 | Projet dbt et preuves de son exécution Workspaces intégrés au dépôt : 6 contenus, 30 sessions valides, un rejet, un doublon ; Gold de référence 55 min. Tests de l’étape 7 encore à réaliser. |
-| Reprise Framework, étape 2.1 | Cinq jeux publics collectés localement ; manifeste, mapping six films et catalogue réel CSV préparés. Conditions/attributions et références de curation encore à compléter. |
-| Étape 2.2 | Architecture v2 préparée dans Notion, à vérifier avec l’implémentation. |
+| Reprise Framework, étape 2.1 | Cinq jeux publics collectés localement ; manifeste, mapping six films et catalogue réel CSV préparés. Conditions/attributions, périodes/grains et curation documentés dans `docs/sources_and_catalogue.md` ; étape 2 validée en conception. |
+| Étape 2.2 | Architecture v2 vérifiée contre les sources, le cas d’usage et les méthodes des TD ; réalisation cloud v2 encore à exécuter. |
 | Étape 3.3 v2 | Sessions simulées préparées et contrôlées ; 32 brutes, 30 valides. Résultats attendus en CSV. |
 | Suite | Charger le catalogue réel, étendre Bronze/ingestions et dbt, puis tests, Docker/Airflow, deux incidents/reprises, droits/coûts et rendu/live. Aucune exécution cloud v2 n’est revendiquée. |
 

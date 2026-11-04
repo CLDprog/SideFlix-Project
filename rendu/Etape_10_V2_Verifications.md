@@ -1,5 +1,7 @@
 # Étape 10 — en cours, intervention administrative nécessaire
 
+**Mise à jour du 4 novembre 2026, 19 h 20 (Jérémy) : intervention administrative faite et vérifiée.** Rôles limités créés, refus réels prouvés, run Airflow normal exécuté sous SIDEFLIX_RUNNER par un utilisateur de service dédié, moniteur de ressources rattaché, crédits et stockage réels relevés (dernière section). Reste à confirmer l'activation des notifications e-mail du moniteur dans le profil Snowsight de Jérémy.
+
 4 novembre2026. Étapes1–9 terminées et vérifiées avant cette étape. Aucun Terraform exécuté ni objet REDGRAVE modifié.
 
 ## 10.1 — sécurité et gouvernance
@@ -37,3 +39,39 @@ Procédure courte dans `governance/README.md` : pause DAG, down sans suppression
 ## Reste avant clôture
 
 Jérémy exécute le script administratif et fournit sorties de grants/monitor, crédits et stockage. Ensuite Matis peut vérifier analyste seul (GoldSELECT oui, BronzeSELECT et GoldINSERT non), reconstruire les images et exécuter un run normal sous SIDEFLIX_RUNNER. Étape10 non terminée avant ces preuves ;10.2 reste bloquée sur coûts réels/moniteur,10.1 sur rôles/tests.
+
+## Intervention administrative et validations réelles : 4 novembre 2026, 19 h 10 à 19 h 20 (Jérémy)
+
+Exécutée depuis le PC de Jérémy, en ACCOUNTADMIN par connexion par clé (aucun mot de passe), avec `governance/10_admin_setup.sql` de Matis sans modification, puis `governance/10b_pipeline_user.sql`. Aucun objet REDGRAVE ni ressource Terraform modifié. Sortie complète : `Etape_10_admin_outputs.txt`.
+
+### Ajout : utilisateur de service dédié au pipeline
+
+Le script de Matis n'accordait SIDEFLIX_RUNNER qu'à MATIS_DOUAY. Sur le poste de démonstration de Jérémy, les jobs se connectaient avec un utilisateur disposant d'ACCOUNTADMIN : ils n'auraient pas réellement tourné au moindre privilège. `10b_pipeline_user.sql` crée donc `SIDEFLIX_PIPELINE` (TYPE=SERVICE, rôle par défaut SIDEFLIX_RUNNER, aucun rôle secondaire, pas de mot de passe), avec une nouvelle paire de clés générée par `gen_key.py` du TD 2. La clé privée reste hors Git (`C:/Users/jerem/sideflix_keys`), montée en lecture seule ; empreinte enregistrée `SHA256:ypAUUv/nAeoxCH8PpvzT6RXVnr5hlHhxwjStY1dPhNg=`.
+
+### 10.1 : autorisations et refus réels (`Etape_10_access_tests.txt`, 11 contrôles, 11 conformes)
+
+| Contexte | Action | Attendu | Obtenu |
+| --- | --- | --- | --- |
+| SIDEFLIX_ANALYST seul, `USE SECONDARY ROLES NONE` | SELECT Gold | autorisé | autorisé (3 lignes) |
+| idem | SELECT Bronze, SELECT Silver | refusé | refusé (schéma non autorisé) |
+| idem | INSERT Gold de 0 ligne | refusé | refusé (INSERT non accordé) |
+| SIDEFLIX_PIPELINE, rôle SIDEFLIX_RUNNER, secondaires vides | SELECT Bronze et Gold | autorisé | autorisé |
+| idem | USE ROLE ACCOUNTADMIN / SYSADMIN | refusé | refusé (rôle non attribué) |
+| idem | CREATE SCHEMA, lecture ACCOUNT_USAGE, lecture base REDGRAVE | refusé | refusé |
+
+Run Airflow normal `runner_normal_20261101` (`Etape_10_runner_run.txt`) après reconstruction des deux images et `SNOWFLAKE_USER=SIDEFLIX_PIPELINE`, `SNOWFLAKE_ROLE=SIDEFLIX_RUNNER` dans le `.env` privé : quatre tâches en succès en 1 min 29 s ; 94 requêtes Snowflake, toutes par SIDEFLIX_PIPELINE avec le rôle SIDEFLIX_RUNNER, aucune en erreur ; 6 lots identiques, 0 nouvelle ligne ; freshness puis build PASS=33 ; publication 13 sessions, 177,4 minutes, une seule ligne pour le 2026-11-01. Le DAG ne tourne donc plus avec un rôle administrateur.
+
+### 10.2 : coûts réels, projection et moniteur
+
+Crédits réellement consommés par SIDEFLIX_WH (ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY, relevé à 18 h 10 UTC, latence possible de quelques heures) : 0,164 crédit le 3 novembre, 1,277 le 4 novembre jusqu'à 19 h 00 UTC, soit **1,44 crédit** au total (compute + services cloud). Ce sont surtout des runs de développement et d'incidents répétés, pas le rythme cible.
+
+Stockage SIDEFLIX (TABLE_STORAGE_METRICS) : 0,48 Mo actifs, 25,1 Mo en time travel (réécritures Bronze par COPY/MERGE), 3,5 Ko en fail-safe. Volume négligeable, facturé au To par mois : pas de montant inventé.
+
+Projection 30 jours, à partir du run réel sous SIDEFLIX_RUNNER : requêtes actives de 18:13:54 à 18:15:05 (71 s) plus 60 s d'auto-suspend, soit environ 131 s de warehouse par run quotidien. 30 × 131/3600 h × 1,35 crédit/h (X-Small Gen2, table de consommation citée plus haut) ≈ **1,5 crédit par mois**. Hypothèses : un run par jour, aucune autre requête ; chaque réveil supplémentaire coûte au minimum 60 s.
+
+Moniteur `SIDEFLIX_MONTHLY` créé et rattaché : quota 10 crédits par mois, notifications à 50 et 80 %, suspension à 100 %, niveau WAREHOUSE ; `SHOW WAREHOUSES` : SIDEFLIX_WH X-Small, auto-suspend 60 s, auto-resume, resource_monitor SIDEFLIX_MONTHLY. Le quota laisse une marge large au-dessus de la projection (1,5) et de la consommation de développement observée. Aucune consommation artificielle pour déclencher un seuil. Les notifications e-mail d'un moniteur sont envoyées aux administrateurs du compte qui les ont activées dans leur profil Snowsight : activation à confirmer par Jérémy.
+
+### Suite
+
+Le plan Terraform reste à relire depuis le backend GCS avant tout futur apply, pour ne pas retirer le rattachement manuel du moniteur. MATIS_DOUAY dispose aussi des deux rôles limités (rôles secondaires par défaut neutralisés) pour ses propres runs.
+

@@ -2,7 +2,7 @@
 
 4 novembre 2026, Matis. Étapes 5, 6 et 7 terminées et preuves poussées ; **étape 8 non terminée**.
 
-**Mise à jour du 4 novembre, 17 h 10 (Jérémy)** : exécution réelle dans Docker/Airflow réussie sur le PC de Jérémy (dernière section). 8.1, 8.2, 8.3 et 8.5 validées ; 8.4 reste ouverte jusqu'à la réception d'une alerte sur le webhook Slack du groupe.
+**Mise à jour du 4 novembre, 17 h 40 (Jérémy) : étape 8 terminée.** Exécution réelle dans Docker/Airflow réussie sur le PC de Jérémy et alerte d'échec reçue dans le canal Slack du groupe (deux dernières sections). 8.1 à 8.5 validées.
 
 ## Travail préparé selon TD 4.2 / packs 06 et 07
 
@@ -66,7 +66,7 @@ Contrôle Snowflake indépendant après les runs : `SIDEFLIX.LAB.DAILY_USAGE` co
 - 8.2 Airflow démarré avec le Compose du TD, `list-import-errors` : aucune erreur.
 - 8.3 dépendances ingest, check, build puis publish respectées ; le contrôle bloque la suite en cas d'échec.
 - 8.5 publication par MERGE : une ligne par date après rejeu.
-- 8.4 planning (cron 06 h Europe/Paris, catchup désactivé, un run à la fois), retries (3 tentatives observées) et journaux prouvés. **Reste ouverte** : réception réelle d'une alerte sur le webhook Slack du groupe.
+- 8.4 planning (cron 06 h Europe/Paris, catchup désactivé, un run à la fois), retries (3 tentatives observées) et journaux prouvés ; alerte réellement reçue sur Slack : voir la section suivante.
 
 ### Limites
 
@@ -77,4 +77,16 @@ Sur ce poste, les jobs utilisent l'utilisateur de service Snowflake existant de 
 - `airflow_8_v2_windows_runs.txt` : versions, images, services Compose, absence d'erreur d'import, planification, états et horaires des tâches des trois runs.
 - `airflow_8_v2_windows_task_logs.txt` : extraits des journaux de chaque tentative (erreur de template corrigée, lots, contrôles, build, publication, callback).
 - `pipeline_8_v2_airflow_publication.txt` : contrôle Snowflake en lecture seule après les runs.
+
+## 8.4 : échec final notifié sur Slack, 4 novembre 2026, 17 h 31 (Paris)
+
+Canal `#sideflix-alertes` de l'espace Slack du groupe, application « Sideflix Airflow » avec un Incoming Webhook (méthode du pack 07 : `on_failure_callback` qui poste un JSON `{"text": ...}`). L'URL est saisie par Jérémy dans `airflow/.env`, exclu de Git ; elle n'apparaît dans aucun fichier versionné ni dans les journaux.
+
+Échec réel provoqué : run manuel `alert_test_20261103` avec `{"date":"2026-11-03"}`, journée sans sessions simulées. L'ingestion réussit (6 lots identiques, 0 ligne), `check_sources` échoue à ses 3 tentatives (« No simulated sessions for requested UTC day »), build et publication passent en upstream_failed, donc rien n'est publié. Après la dernière tentative, le callback journalise `ALERT_DELIVERED_HTTP 200`.
+
+Réception confirmée à 17 h 32 dans le canal : « Sideflix sideflix_daily.check_sources FAILED, run alert_test_20261103, attempt 3; logs: http://localhost:8080/dags/sideflix_daily/runs/alert_test_20261103/tasks/check_sources?try_number=3 ».
+
+Preuves : `airflow_8_4_alerte_slack.txt` (états, extraits de journaux sans secret) et `slack_8_4_alerte_recue.png` (capture du message reçu).
+
+Pour un autre poste : l'URL est transmise en message privé et collée dans son propre `airflow/.env`.
 

@@ -1,0 +1,38 @@
+Sideflix - etape 8.4 : echec final notifie sur Slack (4 novembre 2026, PC de Jeremy)
+Run manuel alert_test_20261103, conf {"date":"2026-11-03"} : journee sans sessions simulees, echec reel du controle des sources.
+L'URL du webhook est dans airflow/.env (hors Git) et n'apparait dans aucun journal.
+
+== Etats (UTC)
+alert_test_20261103 failed start 2026-11-04T16:31:05.567031+00:00 end 2026-11-04T16:32:44.978188+00:00
+demo_20261101_run2_replay success start 2026-11-04T16:09:07.586686+00:00 end 2026-11-04T16:10:09.140174+00:00
+demo_20261101_run1 success start 2026-11-04T16:06:45.401629+00:00 end 2026-11-04T16:08:32.346528+00:00
+scheduled__2026-11-04T05:00:00+00:00 failed start 2026-11-04T16:05:09.123193+00:00 end 2026-11-04T16:06:44.356216+00:00
+== alert_test_20261103
+   ingest_sources success try None 2026-11-04T16:31:05.924444+00:00 2026-11-04T16:31:46.172574+00:00
+   check_sources failed try None 2026-11-04T16:32:37.209320+00:00 2026-11-04T16:32:43.199214+00:00
+   dbt_build upstream_failed try None 2026-11-04T16:32:43.454538+00:00 2026-11-04T16:32:43.454538+00:00
+   publish_daily_usage upstream_failed try None 2026-11-04T16:32:44.549963+00:00 2026-11-04T16:32:44.549963+00:00
+
+== Extraits des journaux
+### alert_test_20261103/task_id=check_sources/attempt=1.log
+AssertionError: No simulated sessions for requested UTC day; use an available demonstration date
+
+### alert_test_20261103/task_id=check_sources/attempt=2.log
+AssertionError: No simulated sessions for requested UTC day; use an available demonstration date
+
+### alert_test_20261103/task_id=check_sources/attempt=3.log
+AssertionError: No simulated sessions for requested UTC day; use an available demonstration date
+ALERT_DELIVERED_HTTP 200
+
+### alert_test_20261103/task_id=ingest_sources/attempt=1.log
+{"target": "SIDEFLIX.BRONZE.CATALOG", "watermark": "2026-11-04T16:02:41.133415Z", "extracted": 0, "inserted": 0, "updated": 0, "total": 6, "batch_id": "catalog_4f53cda18c2baa0c0354"}
+{"source": "sessions_simulated", "method": "PUT_COPY", "batch_id": "sessions_simulated_6c58e1a654180f3e4b910331", "expected": 32, "before": 32, "loaded": 0, "after": 32}
+{"source": "imdb", "method": "PUT_COPY", "batch_id": "imdb_bea94e86ec6fdac6cc69b038", "expected": 6, "before": 6, "loaded": 0, "after": 6}
+{"source": "movielens", "method": "PUT_COPY", "batch_id": "movielens_7e24050af79446cb15cf8d00", "expected": 86, "before": 86, "loaded": 0, "after": 86}
+{"source": "netflix", "method": "PUT_COPY", "batch_id": "netflix_0286f00f5c7eebccd9debf0a", "expected": 3, "before": 3, "loaded": 0, "after": 3}
+{"source": "wikidata", "method": "API_live", "batch_id": "wikidata_b711503480e8aea3d442f00f", "expected": 6, "before": 6, "loaded": 0, "after": 6}
+{"source": "wikimedia", "method": "API_live", "batch_id": "wikimedia_4a60caa5f861b0a04eeb4fa6", "expected": 6, "before": 6, "loaded": 0, "after": 6}
+
+== Reception
+Message recu a 17 h 32 (Paris) dans #sideflix-alertes, application "Sideflix Airflow" : capture slack_8_4_alerte_recue.png
+Texte : Sideflix sideflix_daily.check_sources FAILED, run alert_test_20261103, attempt 3; logs: http://localhost:8080/dags/sideflix_daily/runs/alert_test_20261103/tasks/check_sources?try_number=3

@@ -1,6 +1,6 @@
 # Étape 8 — lancement selon le TD 4.2
 
-**État au 4 novembre 2026, 17 h 10 : exécuté pour de vrai dans Docker/Airflow sur le PC de Jérémy (Windows, Docker Desktop).** Run de démonstration du 1er novembre puis rejeu réussis, publication unique par date ; run planifié d'une journée sans données correctement en échec, avec retries et callback. Reste 8.4 : réception d'une alerte sur le webhook Slack du groupe. Preuves : `rendu/Etape_8_V2_Verifications.md`. Les étapes 5–7 cloud/Core sont terminées ; ne pas les refaire. Aucun Terraform nécessaire.
+**État au 4 novembre 2026, 17 h 10 : exécuté pour de vrai dans Docker/Airflow sur le PC de Jérémy (Windows, Docker Desktop).** Run de démonstration du 1er novembre puis rejeu réussis, publication unique par date ; run planifié d'une journée sans données correctement en échec, avec retries et callback. Alerte d'échec reçue sur le canal Slack du groupe (8.4) : étape 8 terminée. Preuves : `rendu/Etape_8_V2_Verifications.md`. Les étapes 5–7 cloud/Core sont terminées ; ne pas les refaire. Aucun Terraform nécessaire.
 
 ## Sur le poste de démonstration
 

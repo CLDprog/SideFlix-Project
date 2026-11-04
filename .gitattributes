@@ -1,0 +1,7 @@
+# Source snapshots and simulated inputs must stay byte-identical on every OS
+# (SHA-256 checked against source/sources_manifest.csv): no end-of-line conversion.
+source/real/** -text
+source/v2/** -text
+source/fixtures/** -text
+source/sessions/** -text
+source/*.csv -text

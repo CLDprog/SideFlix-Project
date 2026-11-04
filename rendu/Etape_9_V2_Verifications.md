@@ -44,3 +44,21 @@ Preuves brutes : `incident_9_1_logs/` (ingestion, contrôle, trois builds), `inc
 Matis confirme la réception dans Slack de l'alerte de dbt_build, tentative3, à18h13 Paris (preuve `incident_9_1_slack_confirmation.txt`). Le run correctif `matis_9_1_fixed`, sans option d'incident, a réussi ses quatre tâches ; dbt build PASS33/WARN0/ERROR0/SKIP0. Contrôle Snowflake réel : publication du1er novembre unique,13sessions/177,4minutes, run_id correctif ;30sessions Silver uniques ; aucune TEST_BAD_DEVICE ni catégorie invalid ; copie de test absente ;14résultats Gold quotidiens strictement identiques à l'avant-incident ;6œuvres éditoriales et30sessions au total. Les19empreintes restent conformes au manifeste. Les modifications d'horodatages seules ont été remises à la version Git.
 
 Preuves de reprise : `incident_9_1_recovery.json` et `incident_9_1_recovery_logs/`. Les étapes panne/détection/blocage/notification/correction/reprise sont maintenant toutes vérifiées pour9.1. Étape9 globale encore en cours : prochaine action9.2, crash après écriture avec retry, non encore exécuté.
+
+## 9.2 terminée — crash réel et retry vérifié
+
+Run `matis_9_2_crash`, 4 novembre2026, conf `incident=crash_after_write`. Ingestion, contrôle et dbt réussis. Tentative1 de publication : `MERGE_PUBLISHED 2026-11-01 13 177.400000`, puis `Simulated crash AFTER write (TD4.2)`. Pendant up_for_retry, lecture Snowflake réellement effectuée : une seule ligne, mêmes13sessions/177,4min, run_id courant et attempt1. Tentative2 automatique : succès et `PUBLICATION_UNIQUE_DATE_PASS`. Le DAG entier finit success.
+
+Contrôle final indépendant : toujours une seule ligne pour le1er novembre,13sessions/177,4min, attempt2 ; aucune date dupliquée dans DAILY_USAGE,30sessions Silver et aucune anomalie résiduelle ;19/19empreintes conformes. L'écriture initiale n'a donc pas été additionnée une seconde fois. Un INSERT additif aurait créé une seconde ligne ; le MERGE sur usage_date met à jour la ligne existante. Aucune alerte d'échec final n'est attendue pour9.2, puisque le retry réussit.
+
+Cause : panne volontaire après validation de l'écriture mais avant confirmation de succès. Impact potentiel : répétition de l'écriture après perte de confirmation. Détection : première tentative Airflow échouée et logs explicites. Reprise : retry automatique ; prévention : MERGE idempotent sur la date et contrôles de doublons. L'option de crash ne s'applique qu'au run configuré ; un run normal ne l'active pas.
+
+Preuves : `incident_9_2_after_first_write.json`, `incident_9_2_recovered.json`, `incident_9_2_logs/` (deux tentatives de publication et tâches amont).
+
+## 9.3 terminée — procédure documentaire
+
+Procédure courte dans `Procedure_9_3_Fichier_Manquant.md` : restaurer le seul fichier concerné, vérifier l'empreinte, relancer la même date, contrôler chiffres/publication. Précision : le collecteur peut retélécharger certains fichiers ; sinon l'échec survient dès ingest_sources, ou lors de check_sources pour un lot incomplet. Publication bloquée dans les deux cas. Pas de troisième simulation annoncée.
+
+## Reste9.4
+
+Exécuter deux runs normaux de la même date/snapshots, comparer clés, volumes, contextes et publication ; conserver les preuves et vérifier que les injections ne sont pas actives. Le poste et Docker doivent rester allumés. Ne pas clôturer l'étape9 avant cette dernière validation.

@@ -1,0 +1,34 @@
+{
+  "observed_tasks": [
+    [
+      "check_sources",
+      "success",
+      1
+    ],
+    [
+      "dbt_build",
+      "success",
+      1
+    ],
+    [
+      "ingest_sources",
+      "success",
+      1
+    ],
+    [
+      "publish_daily_usage",
+      "up_for_retry",
+      1
+    ]
+  ],
+  "publication_rows": [
+    [
+      "2026-11-01",
+      13,
+      "177.400000",
+      "matis_9_2_crash",
+      1
+    ]
+  ],
+  "row_count": 1
+}

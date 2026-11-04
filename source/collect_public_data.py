@@ -43,7 +43,7 @@ def save_json(path, obj):
 def write_csv(path, rows):
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open('w', newline='', encoding='utf-8') as f:
-        w = csv.DictWriter(f, fieldnames=list(rows[0]))
+        w = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator='\n')
         w.writeheader()
         w.writerows(rows)
 
@@ -166,6 +166,16 @@ def main():
                      bytes=p.stat().st_size, verified_at_utc=NOW,
                      provenance_note='verified local copy; original download time unknown' if ds=='movielens' else 'public source snapshot')
                 for ds,p,url in files]
+    # Retain reviewed annotations when reusing the exact same snapshot.
+    prior_path = ROOT/'sources_manifest.csv'
+    if prior_path.exists():
+        prior = {r['file']: r for r in csv.DictReader(prior_path.open())}
+        extra = ['grain', 'period_start', 'period_end', 'terms_url',
+                 'usage_attribution', 'gold_destination']
+        for row in manifest:
+            previous = prior.get(row['file'], {})
+            for field in extra:
+                row[field] = previous.get(field, '') if previous.get('sha256') == row['sha256'] else ''
     write_csv(ROOT/'sources_manifest.csv', manifest)
     print('COLLECTION_COMPLETE', len({r['dataset'] for r in manifest}), 'datasets', flush=True)
 

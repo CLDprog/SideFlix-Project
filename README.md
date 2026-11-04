@@ -68,7 +68,7 @@ SELECT * FROM SIDEFLIX.LAB.DAILY_USAGE ORDER BY usage_date;                     
 SELECT * FROM SIDEFLIX.GOLD.GOLD_EDITORIAL_WEEKLY ORDER BY editorial_rank;          -- classement et contexte
 ```
 
-Le lineage se génère avec `dbt docs generate --project-dir dbt/sideflix_dbt --profiles-dir dbt/profiles-core`. Arrêt, reprise et nettoyage : [governance/README.md](governance/README.md).
+Le lineage se génère avec `dbt docs generate --project-dir dbt/sideflix_dbt --profiles-dir dbt/profiles-core` ; graphe : [docs/dbt_lineage.png](docs/dbt_lineage.png). Arrêt, reprise et nettoyage : [governance/README.md](governance/README.md).
 
 ## Résultats et fiabilité
 

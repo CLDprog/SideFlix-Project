@@ -25,4 +25,21 @@
 | Arrêt, reprise, nettoyage | `governance/README.md`, `airflow/README.md` | Pause du DAG, down sans -v, suspension du warehouse, redémarrage |
 | Architecture | `docs/architecture_v2.md`, `docs/architecture_v2.png` | Schéma fidèle aux composants exécutés |
 
-Contributions : Matis Douay (collecte des sources, Bronze v2, ingestion, dbt v2, tests, incidents, préparation de l’étape 10), Jérémy Caillaud (socle Snowflake, Terraform et state GCS, accès du groupe, exécution Docker/Airflow et alerte Slack, intervention administrative et validations de l’étape 10, livrables), Rayan Faher Bonne (à compléter par le groupe). Historique détaillé : `git log` et la roadmap Notion interne.
+## Runs et versions (preuves d’exécution)
+
+| Run Airflow | Poste | Jour traité | Résultat | Preuve |
+| --- | --- | --- | --- | --- |
+| `scheduled__2026-11-04T05:00:00+00:00` (4/11, 16:05 UTC) | Jérémy | 2026-11-03 | Échec attendu au contrôle des sources après 3 tentatives, rien publié | `rendu/airflow_8_v2_windows_runs.txt` |
+| `demo_20261101_run1` (4/11, 16:06 UTC) | Jérémy | 2026-11-01 | Succès : 6 lots sans nouvelle ligne, build 33/33, 13 sessions / 177,4 min publiées | `rendu/airflow_8_v2_windows_task_logs.txt` |
+| `demo_20261101_run2_replay` (4/11, 16:09 UTC) | Jérémy | 2026-11-01 | Rejeu : 0 nouvelle ligne, une seule publication | `rendu/pipeline_8_v2_airflow_publication.txt` |
+| `alert_test_20261103` (4/11, 16:31 UTC) | Jérémy | 2026-11-03 | Échec réel, alerte reçue sur Slack | `rendu/airflow_8_4_alerte_slack.txt` |
+| `matis_9_1_bad_device` puis `matis_9_1_fixed` (4/11) | Matis | 2026-11-01 | Test qualité en échec, Gold protégée, alerte, reprise 33/33 | `rendu/incident_9_1_failed_and_cleanup.json`, `rendu/incident_9_1_recovery.json` |
+| `matis_9_2_crash` (4/11) | Matis | 2026-11-01 | Crash après écriture, retry, une ligne par date | `rendu/incident_9_2_recovered.json` |
+| `matis_9_replay1`, `matis_9_replay2` (4/11) | Matis | 2026-11-01 | Deux runs normaux stables | `rendu/incident_9_4_replay.json` |
+| `runner_normal_20261101` (4/11, 18:13 UTC) | Jérémy | 2026-11-01 | Succès sous SIDEFLIX_RUNNER : 94 requêtes, 0 erreur, build 33/33 | `rendu/Etape_10_runner_run.txt` |
+
+Versions exécutées : Python 3.12.7 (images), Airflow 3.3.2 avec apache-airflow-providers-docker 4.5.9, dbt Core 1.11.16 et dbt-snowflake 1.11.6, snowflake-connector-python 4.8.0, PostgreSQL 16.4, Docker 29.9.2 (poste de Jérémy) et 29.3.1 (poste de Matis), Terraform 1.16.6 avec le provider snowflakedb/snowflake 2.22.1.
+
+Documentation dbt et lineage : `dbt docs generate --static` exécuté sous le rôle SIDEFLIX_RUNNER ; graphe dans `docs/dbt_lineage.png`.
+
+Contributions : Matis Douay (collecte des sources, Bronze v2, ingestion, dbt v2, tests, incidents, préparation de l’étape 10), Jérémy Caillaud (socle Snowflake, Terraform et state GCS, accès du groupe, exécution Docker/Airflow et alerte Slack, intervention administrative et validations de l’étape 10, livrables), Rayan Faher Bonne ([à compléter par le groupe]). Historique détaillé : `git log` et la roadmap Notion interne.

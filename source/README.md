@@ -7,3 +7,7 @@ Les données brutes `source/real/` sont conservées localement et exclues du Git
 Conditions, attributions, grains/périodes et curation documentés dans `docs/sources_and_catalogue.md` et le manifeste. Les données brutes restent locales ; aucune utilisation commerciale ou droit de diffusion des films n’est revendiqué.
 
 `source/v2/sessions/` contient des événements explicitement simulés ; `source/v2/expected_daily_usage.csv` leurs résultats attendus calculés localement. Le chargement et les tests dans le pipeline partagé restent à réaliser. L’original est conservé dans `source/fixtures/reference/`.
+
+## Charger le catalogue réel (TD 2)
+
+Base PostgreSQL locale `sideflix` existante, variables PG* standard (hôte 127.0.0.1 par défaut). Depuis la racine : `python source/03_load_real_catalog.py`. Le script conserve le catalogue précédent une seule fois dans `lab.catalog_reference`, ajoute identifiant IMDb/provenance, puis applique un UPSERT. Un rejeu identique ne modifie pas `updated_at`. Les anciens scripts numérotés 01/02 restent ceux du fixture historique. Preuve : `rendu/Etape_3_2_V2_Verifications.md`. Ce chargement local n’est pas une ingestion Snowflake.

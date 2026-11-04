@@ -1,6 +1,6 @@
 # Index des preuves : exigence, fichiers, résultat
 
-4 novembre 2026. Chaque ligne relie une exigence du Framework et du barème aux fichiers du dépôt qui la prouvent. Les rapports `rendu/Etape_*_V2_Verifications.md` détaillent commandes, résultats et limites ; les fichiers bruts sont les sorties réelles, sans secret. Les preuves de l’ancien prototype (fichiers sans « V2 ») restent dans le dépôt interne comme historique et ne font pas partie du rendu.
+4 novembre 2026. Chaque ligne relie une exigence du Framework et du barème aux fichiers du dépôt qui la prouvent. Les rapports `rendu/Etape_*_V2_Verifications.md` détaillent commandes, résultats et limites ; les fichiers bruts sont les sorties réelles, sans secret. Les preuves de l’ancien prototype (fichiers sans « V2 ») restent dans le dépôt comme historique ; elles ne servent pas de preuves au rendu final.
 
 | Exigence | Où la vérifier | Ce que l’on y voit |
 | --- | --- | --- |
@@ -47,7 +47,7 @@ Contributions : Matis Douay (collecte des sources, Bronze v2, ingestion, dbt v2,
 
 ## Audit explicite du barème C1 à C8 — relecture finale du 4 novembre
 
-Cette table relie les critères aux preuves disponibles. La vérification du dépôt interne ne prouve ni l'accès du jury au dépôt de remise distinct, ni l'existence d'une vidéo ou de slides exportées.
+Cette table relie les critères aux preuves disponibles. Ce contrôle ne prouve ni l'accès effectif de la professeure à ce dépôt privé, ni l'export des slides.
 
 | Critère | Réalisation et preuve | État de la vérification |
 | --- | --- | --- |
@@ -57,9 +57,9 @@ Cette table relie les critères aux preuves disponibles. La vérification du dé
 | C4 Choix proportionnés,10pts | `docs/architecture_v2.md` : choix, limites et alternatives rechargement complet/BigQuery ; `rendu/Etape_10_Mesures.json` : Query Profile réel | Documentation et mesure disponibles ; aucune optimisation décorative |
 | C5 Cloud contrôlé/IaC,10pts | Terraform warehouse, plan0 et state privé/versionné/verrouillé4.2 ; exécution/calcul Snowflake8/10 | Prouvé ; AWS pour données + GCS uniquement state, second fournisseur explicitement signalé |
 | C6 Fiabilité/exploitation,10pts | Tests7, alertes8/9, deux incidents réellement repris et rejoués9, cron/retries/logs | Prouvé ; scénarios et reprises dans `rendu/Etape_9_V2_Verifications.md` |
-| C7 Accès/secrets/coûts,5pts | Tests autorisés/refusés, utilisateur de service limité, consommation observée/projection, moniteur et arrêt10 | Preuves10 disponibles ; audit de la copie finale encore bloqué sur son accès |
+| C7 Accès/secrets/coûts,5pts | Tests autorisés/refusés, utilisateur de service limité, consommation observée/projection, moniteur et arrêt10 | Preuves10 disponibles ; dépôt privé, accès de la professeure en lecture à vérifier |
 | C8 Slides et groupe,5pts | Architecture et lineage, contributions README, résultats Gold ; restitution Snowsight (`rendu/Restitution_Snowsight.md`) ; conducteur à valider à trois | Tableau et graphique Snowsight capturés le 4/11 ; export des 14 slides et répétition non vérifiés ici |
 
 Compléments des supports : Session1.2p.6 exige slides, architecture, Git avec README et vidéo non notée mais à remettre ; preuves d'exécution facultatives comme livrable séparé. Session4.2p.39 : plusieurs sources/méthodes,1cloud, chacun porte une partie, documentation dbt. Le Framework ajoute le run en direct et les deux incidents réellement démontrés ; la vidéo ne remplace pas le direct. Conserver explicitement l'ambiguïté entreprise réelle/Sideflix fictif et la présence du backend GCS ; ne pas présenter le rachat comme un fait réel.
 
-**Points de remise encore ouverts au 4 novembre, 22 h 40 :** export des 14 slides, relecture et partage (Jérémy) ; accès à `CLDprog/Sideflix-Oral-Defense` (404 pour `matisdy`) et synchronisation des derniers fichiers ; ajout de la vidéo au dépôt de remise ou à la plateforme ; confirmation de dépôt sur la plateforme avant 23 h 59. Faits : vidéo enregistrée sur le Mac de Matis (deux fichiers, 1 min 50 et 1 min 21 : run sans date bloqué au contrôle des sources, puis run du 1er novembre) ; la seconde, celle du run réussi, est versionnée à la racine de ce dépôt (`Enregistrement de l’écran 2026-11-04 à 20.47.48.mov`, commit 88065d5) ; restitution Snowsight exécutée sous SIDEFLIX_ANALYST et capturée (`rendu/Restitution_Snowsight.md`, requêtes `docs/snowsight_rayan.sql`, sorties `rendu/Restitution_SQL_Verification.json`).
+**Points de remise encore ouverts au 4 novembre, 23 h :** le dépôt remis est celui-ci, `CLDprog/SideFlix-Project`, sans copie distincte. Il est privé : son propriétaire, Jérémy, invite la professeure en lecture (`matisdy` n’a que le droit d’écriture). Il n’est pas rendu public tant qu’il contient les exports IMDb et Netflix, historique compris. Restent aussi l’export des 14 slides, leur relecture et leur partage (Jérémy), et la confirmation de dépôt sur la plateforme avant 23 h 59. Faits : vidéo enregistrée sur le Mac de Matis (deux fichiers, 1 min 50 et 1 min 21 : run sans date bloqué au contrôle des sources, puis run du 1er novembre) ; la seconde, celle du run réussi, est versionnée à la racine de ce dépôt (`Enregistrement de l’écran 2026-11-04 à 20.47.48.mov`, commit 88065d5, lien dans le README) ; restitution Snowsight exécutée sous SIDEFLIX_ANALYST et capturée (`rendu/Restitution_Snowsight.md`, requêtes `docs/snowsight_rayan.sql`, sorties `rendu/Restitution_SQL_Verification.json`).

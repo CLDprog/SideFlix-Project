@@ -2,6 +2,8 @@
 
 Conservé pour l'historique du groupe ; ne fait pas partie du rendu. Le README à jour est à la racine.
 
+**Mise à jour du 4 novembre, 23 h (Matis) :** ce dépôt, `CLDprog/SideFlix-Project`, est le dépôt remis à la professeure : privé, avec un accès en lecture, sans copie distincte. Les snapshots `source/real/` y sont versionnés depuis le commit 0577f62. Les mentions ci-dessous d'une copie distincte, de snapshots ignorés par Git ou d'un dépôt « pas encore final » sont historiques.
+
 
 Plateforme fictive de streaming indépendant inspirée de Netflix réel. Hypothèses : 10 000 abonnés à 7,99 €/mois, 100 contenus et 6 salariés. La revente à Netflix est une porte de sortie hypothétique.
 

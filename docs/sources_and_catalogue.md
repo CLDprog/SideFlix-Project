@@ -4,13 +4,13 @@ Cinq jeux authentiques collectés et distincts, documentés dans source/sources_
 
 | Jeu | Usage et règle |
 | --- | --- |
-| IMDb | Référence du titre/type/année/durée ; durée du contenu, jamais du visionnage. Dump officiel non commercial, échantillon brut conservé localement, non distribué par Git. Attribution : Information courtesy of IMDb (https://www.imdb.com). Used with permission. Usage soumis aux conditions IMDb, aucune permission commerciale revendiquée. |
+| IMDb | Référence du titre/type/année/durée ; durée du contenu, jamais du visionnage. Dump officiel non commercial : seul un extrait brut de six lignes est versionné, dans le dépôt privé et pour le rejeu, sans publication. Attribution : Information courtesy of IMDb (https://www.imdb.com). Used with permission. Usage soumis aux conditions IMDb, aucune permission commerciale revendiquée. |
 | MovieLens | 74 notes pour les six films ; moyenne et nombre de notes comme contexte historique. Attribution : F. Maxwell Harper and Joseph A. Konstan, 2015, The MovieLens Datasets: History and Context, ACM TiiS 5(4), article 19, https://doi.org/10.1145/2827872. Recherche/non-commercial, pas d’approbation GroupLens implicite ; README original conservé. |
-| Netflix | Benchmark hebdomadaire historique ; source officielle Tudum et statistiques attribuées à Netflix. Aucun droit de redistribution générale n’est affirmé ; export brut exclu du Git. Correspondance certaine : Sicario (2015), fiche https://www.netflix.com/be-fr/title/80046311. Les non-appariements restent NULL/statut explicite. |
+| Netflix | Benchmark hebdomadaire historique ; source officielle Tudum et statistiques attribuées à Netflix. Aucun droit de redistribution générale n’est affirmé ; l’export brut est versionné dans le dépôt privé pour le rejeu, sans publication. Correspondance certaine : Sicario (2015), fiche https://www.netflix.com/be-fr/title/80046311. Les non-appariements restent NULL/statut explicite. |
 | Wikidata | Métadonnées et correspondances par P345, six QID et liens d’articles ; données structurées sous CC0, source et révision conservées dans le JSON. |
 | Wikimedia | 42 statistiques quotidiennes publiques (six articles, sept jours), filtre user ; pas de texte d’article. Documentation : https://doc.wikimedia.org/generated-data-platform/aqs/analytics-api/ ; règles API : https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_API_Usage_Guidelines. Timeout, user-agent, cache et respect des erreurs 429. |
 
-Les conditions sont documentées pour ce démonstrateur pédagogique non commercial. Elles ne constituent pas des droits de streaming, ni une autorisation commerciale pour Sideflix. La remise contient code et résultats utiles attribués ; les dumps bruts restent hors dépôt public. Le résultat de collecte n’est pas encore un résultat Gold cloud.
+Les conditions sont documentées pour ce démonstrateur pédagogique non commercial. Elles ne constituent pas des droits de streaming, ni une autorisation commerciale pour Sideflix. Le dépôt remis reste privé, avec un accès en lecture pour la professeure. Il contient le code, les résultats attribués et les extraits nécessaires au rejeu, et n’est pas rendu public tant qu’il contient les exports IMDb et Netflix ; les dumps complets ne sont pas versionnés.
 
 ## Sélection de six films
 

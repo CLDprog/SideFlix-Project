@@ -10,6 +10,7 @@ from docker.types import Mount
 REPO=os.environ['SIDEFLIX_REPO_DIR']
 WORK=os.environ['SIDEFLIX_WORK_DIR']
 ENV={k:os.environ.get(k,'') for k in ['SNOWFLAKE_ACCOUNT','SNOWFLAKE_USER','PGHOST','PGPORT','PGDATABASE','PGUSER','PGPASSWORD']}
+ENV['SNOWFLAKE_ROLE']=os.environ.get('SNOWFLAKE_ROLE') or 'SYSADMIN'
 ENV.update(SNOWFLAKE_PRIVATE_KEY_FILE='/secrets/rsa_key.p8',SNOWFLAKE_DISABLE_PLATFORM_DETECTION='true',
     AWS_EC2_METADATA_DISABLED='true',DBT_SEND_ANONYMOUS_USAGE_STATS='false',
     DBT_TARGET_PATH='/tmp/dbt-target',DBT_LOG_PATH='/tmp/dbt-logs')

@@ -21,7 +21,8 @@ Plateforme fictive de streaming indépendant inspirée de Netflix réel. Hypoth�
 | Étape 7 v2 | Build 33/33 (21 tests), fraîcheur 2/2, exemples métier indépendants vérifiés. Voir `rendu/Etape_7_V2_Verifications.md`. |
 | Étape 8 v2 | Terminée. Exécutée dans Docker/Airflow (TD 4.2) sur le PC de Jérémy : run du 1er novembre et rejeu réussis (build 33/33, une ligne publiée par date), journée sans données en échec bloquant avec retries, alerte reçue sur Slack. Base source en conteneur, snapshots partagés. Voir `rendu/Etape_8_V2_Verifications.md`. |
 | Étape 9 v2 | Terminée : incident qualité bloquant, alerte reçue et reprise ; crash après écriture et retry sans doublon ; procédure fichier manquant ; deux runs normaux stables. Voir `rendu/Etape_9_V2_Verifications.md`. |
-| Suite | Gouvernance/sécurité/coûts, puis livrables et remise finale propre. |
+| Étape 10 | En cours : mesure Query Profile réelle et procédure arrêt/reprise documentées ; scripts administratifs prêts dans `governance/`. Rôles limités, crédits réels et moniteur nécessitent Jérémy en ACCOUNTADMIN. Voir `rendu/Etape_10_V2_Verifications.md`. |
+| Suite | Clôturer10 après intervention administrative et run sous rôle limité, puis livrables et remise finale propre. |
 
 La reprise porte sur les données et leurs adaptations ; le socle technique est réutilisé. Le Framework impose cinq jeux authentiques : IMDb, MovieLens, Netflix Top 10, Wikidata et Wikimedia. Les sessions Sideflix sont **simulées** et ne comptent pas parmi ces cinq jeux. Notes, consultations et classements externes ne sont pas des minutes regardées sur Sideflix.
 

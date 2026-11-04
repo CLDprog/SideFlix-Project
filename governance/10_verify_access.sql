@@ -1,0 +1,11 @@
+-- After Jeremy's grants. Run each statement separately and preserve allowed/denied output.
+USE ROLE SIDEFLIX_ANALYST;
+USE SECONDARY ROLES NONE;
+USE WAREHOUSE SIDEFLIX_WH;
+SELECT CURRENT_USER(),CURRENT_ROLE(),CURRENT_SECONDARY_ROLES();
+SELECT * FROM SIDEFLIX.GOLD.GOLD_CONTENT_DAILY LIMIT 3; -- expected allowed
+SELECT * FROM SIDEFLIX.BRONZE.SESSIONS_RAW LIMIT 1; -- expected denied
+-- Zero-row INSERT: even an accidental permission grant cannot change the data here.
+INSERT INTO SIDEFLIX.GOLD.GOLD_CONTENT_DAILY
+ SELECT * FROM SIDEFLIX.GOLD.GOLD_CONTENT_DAILY WHERE 1=0; -- expected denied
+USE ROLE SYSADMIN;

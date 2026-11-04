@@ -33,7 +33,7 @@ def connect_snowflake():
             format=serialization.PrivateFormat.PKCS8,
             encryption_algorithm=serialization.NoEncryption(),
         ),
-        role="SYSADMIN",
+        role=os.environ.get("SNOWFLAKE_ROLE", "SYSADMIN"),
         warehouse="SIDEFLIX_WH",
         database="SIDEFLIX",
         schema="BRONZE",

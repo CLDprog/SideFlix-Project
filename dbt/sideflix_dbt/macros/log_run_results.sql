@@ -4,7 +4,7 @@
   {% if execute and results | length > 0 %}
     {% set table = target.database ~ '.LAB.DBT_RESULTS' %}
     {% set runtime = 'core' if target.name == 'core' else 'snowflake' %}
-    {% do run_query('create schema if not exists ' ~ target.database ~ '.LAB') %}
+    {# LAB already exists from stage4; the runner does not need CREATE SCHEMA. #}
     {% do run_query('create table if not exists ' ~ table ~ ' (
         invocation_id varchar, run_at timestamp_tz, command varchar, runtime varchar,
         node varchar, resource_type varchar, status varchar,

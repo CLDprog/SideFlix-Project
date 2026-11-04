@@ -1,0 +1,83 @@
+# Action 4.2 (v2) - migration du state Terraform vers un backend GCS, 2026-11-04 entre 15 h 00 et 15 h 20 (Paris)
+# Poste de Jérémy (détenteur du state), dossier Sideflix/terraform, Terraform v1.16.6, Google Cloud SDK 592.0.0.
+# Sorties réelles, raccourcies aux lignes utiles. Aucun identifiant, aucune clé, aucun contenu du state.
+
+## Prérequis Google Cloud
+> gcloud auth login ; gcloud auth application-default login   (faits par Jérémy)
+> gcloud projects create sideflix-tfstate-ml45551 --name='Sideflix Terraform state'
+.done.
+> gcloud billing projects link sideflix-tfstate-ml45551 --billing-account=<compte d'essai>
+billingEnabled: true
+> gcloud services enable storage.googleapis.com --project=sideflix-tfstate-ml45551
+storage.googleapis.com (activé)
+
+## Bucket du state (étape manuelle)
+> gcloud storage buckets create gs://sideflix-tfstate-ml45551 --location=europe-west9 --uniform-bucket-level-access --public-access-prevention
+> gcloud storage buckets update gs://sideflix-tfstate-ml45551 --versioning
+> gcloud storage buckets describe gs://sideflix-tfstate-ml45551
+default_storage_class: STANDARD
+location: EUROPE-WEST9
+public_access_prevention: enforced
+soft_delete_policy: retentionDurationSeconds: '604800'
+uniform_bucket_level_access: true
+versioning_enabled: true
+
+## Sauvegarde du state avant migration (hors dépôt, hors OneDrive)
+C:\Users\jerem\sideflix_state_backup\terraform.tfstate.avant_migration_gcs_20261104
+taille 4667 octets ; SHA256 identique à l'original ; serial 1 ; lineage daa6063d-8c2e-cd7e-0406-9b68ef081ac6 ; 1 ressource
+
+## Migration
+> terraform init -migrate-state -force-copy -input=false
+Successfully configured the backend "gcs"! Terraform will automatically
+use this backend unless the backend configuration changes.
+Terraform has been successfully initialized!
+code retour : 0
+
+> gcloud storage ls -l gs://sideflix-tfstate-ml45551/**
+      4667  2026-11-04T14:04:36Z  gs://sideflix-tfstate-ml45551/sideflix/default.tfstate
+> terraform state pull   (lineage/serial seulement)
+serial : 2 | lineage : daa6063d-8c2e-cd7e-0406-9b68ef081ac6 | ressources : 1   (même lignée que le state local)
+> terraform state list
+module.sideflix_warehouse.snowflake_warehouse.this
+Fichier local : terraform.tfstate vidé (0 octet) ; terraform.tfstate.backup (4667 octets) conservé, exclu de Git.
+
+## Contrôles de clôture
+> terraform fmt -check -recursive
+code retour : 0
+> terraform validate -no-color
+Success! The configuration is valid.
+code retour : 0
+> terraform plan -detailed-exitcode -no-color -input=false
+module.sideflix_warehouse.snowflake_warehouse.this: Refreshing state... [id=SIDEFLIX_WH]
+No changes. Your infrastructure matches the configuration.
+code retour : 0
+
+## Verrouillage
+Test déterministe : dépôt d'un verrou factice à l'emplacement du verrou du backend, puis plan.
+> gcloud storage cp <verrou factice> gs://sideflix-tfstate-ml45551/sideflix/default.tflock
+> terraform plan -lock-timeout=0s
+Acquiring state lock. This may take a few moments...
+Error: Error acquiring the state lock
+Error message: writing
+"gs://sideflix-tfstate-ml45551/sideflix/default.tflock" failed: googleapi:
+Error 412: At least one of the pre-conditions you specified did not hold.,
+Lock Info:
+  Path:      gs://sideflix-tfstate-ml45551/sideflix/default.tflock
+  Operation: TestVerrou
+  Info:      verrou factice pour le test 4.2
+code retour : 1
+> gcloud storage rm gs://sideflix-tfstate-ml45551/sideflix/default.tflock   (retrait du verrou factice)
+> terraform plan -detailed-exitcode
+No changes. Your infrastructure matches the configuration.
+code retour : 0
+
+## Versioning et historique des verrous
+> gcloud storage ls -a -l gs://sideflix-tfstate-ml45551/sideflix/
+8 versions non courantes de default.tflock : chaque plan a pris puis libéré le verrou (14:04 à 14:08 UTC)
+       181  2026-11-04T14:04:35Z  .../sideflix/default.tfstate#1793801075645956   (state initial vide du backend)
+      4667  2026-11-04T14:04:36Z  .../sideflix/default.tfstate#1793801076488536   (state migré, version courante)
+
+## Accès
+Lecture anonyme de https://storage.googleapis.com/sideflix-tfstate-ml45551/sideflix/default.tfstate : refusée, HTTP 403
+Liste anonyme des objets du bucket : refusée, HTTP 401
+IAM du projet : roles/owner = compte de Jérémy uniquement ; bucket hérite des droits du projet (legacy roles projet).

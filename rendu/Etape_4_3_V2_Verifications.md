@@ -21,3 +21,7 @@ Les cinq nouveaux jeux ne sont pas encore chargés : étape 5 non commencée. La
 ## Étape 4 encore ouverte
 
 Le warehouse Terraform existant est conservé. L’exigence de state d’équipe inscrite en 4.2 n’est pas encore vérifiée : le state actuel est uniquement sur le poste de Jérémy. Exemple S3 et procédure préparés dans terraform/backend.tf.example et terraform/README.md ; aucun backend/bucket créé ici. Le détenteur du vrai state doit migrer puis vérifier plan sans changement, accès/versioning/verrouillage. Aucun apply avec state vide. Étape 4.3 terminée, étape 4.2 À vérifier ; l’étape 4 complète reste En cours avant passage à 5.
+
+## Mise à jour du 4 novembre 2026 (Jérémy)
+
+L’action 4.2 est terminée : state migré vers un backend GCS privé, versionné et verrouillé, plan sans changement (code 0). L’étape 4 est close. Voir `rendu/Etape_4_2_V2_Verifications.md`.

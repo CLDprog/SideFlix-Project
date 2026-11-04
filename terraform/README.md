@@ -1,15 +1,28 @@
-# Terraform — entrepot existant, state a proteger
+# Terraform — warehouse existant, state partagé sur GCS
 
-Le warehouse SIDEFLIX_WH est deja cree par le module du TD 4.2 (X-Small, auto-suspend 60 s, auto-resume). Ne pas le recreer et ne pas lancer apply depuis un state vide.
+Le warehouse `SIDEFLIX_WH` a été créé par le module du TD 4.2 (X-Small, auto-suspend 60 s, auto-resume). Ne jamais le recréer ni lancer `apply` depuis un state vide.
 
-Le state existant est sur le poste de Jeremy. La reprise v2 demande un backend d’equipe prive, versionne et verrouille comme le guide 09 du pack. Le fichier backend.tf.example adapte son exemple S3, dans le meme cloud AWS eu-west-3. Il n’est pas actif et aucun bucket n’a ete cree par cette preparation.
+## State : distant, versionné, verrouillé, privé (action 4.2, 4 novembre 2026)
 
-## Action du detenteur du state
+- Backend actif : `backend.tf`, type `gcs`, bucket `sideflix-tfstate-ml45551`, préfixe `sideflix` (projet Google Cloud dédié `sideflix-tfstate-ml45551`, région europe-west9).
+- Bucket privé (accès public bloqué, accès uniforme), versioning activé ; verrouillage natif du backend GCS (`sideflix/default.tflock`).
+- Migration faite depuis le vrai state de Jérémy, même lignée ; `terraform plan -detailed-exitcode` = 0 après migration. Preuves : `rendu/Etape_4_2_V2_Verifications.md`.
+- Snowflake reste sur AWS ; Google Cloud ne conserve que ce fichier de state.
+- `backend.tf.example` garde la variante S3 préparée auparavant (non retenue : pas d'accès AWS).
 
-1. Sur le poste contenant le vrai state : verifier l’acces AWS et creer une fois le bucket S3 prive, acces public bloque, versioning actif. Le nom propose doit etre libre ; sinon le remplacer dans l’exemple. Limiter les acces au state et au fichier .tflock. Garder credentials et state hors de Git.
-2. Sauvegarder localement le state existant hors du depot. Copier backend.tf.example en backend.tf avec le nom reel du bucket. Authentification AWS au runtime, aucune cle dans HCL.
-3. Executer terraform init -migrate-state depuis ce repertoire avec le vrai state ; verifier la migration avant de retirer la copie locale de secours.
-4. Executer terraform fmt -check, terraform validate puis terraform plan -detailed-exitcode : attendu No changes/code 0 ; ne pas appliquer si creation/remplacement/destruction proposee. Verifier versioning, verrouillage et acces du backend.
-5. Consigner uniquement les resultats non sensibles dans Notion/rendu et partager la configuration validee. Ne pas publier le contenu du state ni les identifiants AWS.
+## Lancer Terraform
 
-Ce controle n’a pas ete execute sur le poste courant : ni state de Jeremy ni acces AWS disponibles. L’etape 4.2 reste a verifier ; la presence du fichier d’exemple ne prouve pas une migration. La creation initiale du bucket est une etape manuelle du pack, pas une nouvelle architecture de production. Ne pas detruire les ressources avant correction.
+Prérequis sur le poste : Google Cloud SDK, `gcloud auth application-default login` avec un compte autorisé sur le bucket ; `terraform.tfvars` local (voir `terraform.tfvars.example`) et une clé Snowflake associée à l'utilisateur indiqué.
+
+```sh
+terraform init
+terraform fmt -check
+terraform validate
+terraform plan -detailed-exitcode   # 0 = aucun changement, 1 = erreur, 2 = changements à analyser
+```
+
+Ne pas appliquer une création, un remplacement ou une destruction inattendue. Pour donner l'accès à un membre : `roles/storage.objectAdmin` sur ce seul bucket pour son compte Google.
+
+## Étapes manuelles (pack 09)
+
+Compte Snowflake d'essai et premier admin ; projet Google Cloud et bucket du state ; connexion Google au lancement ; clé publique RSA sur l'utilisateur Snowflake ; utilisateurs du groupe. Ne jamais versionner state, sauvegardes, `terraform.tfvars` ni clés.

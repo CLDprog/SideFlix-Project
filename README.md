@@ -14,9 +14,9 @@ Plateforme fictive de streaming indépendant inspirée de Netflix réel. Hypoth�
 | Étape 2.2 | Architecture v2 vérifiée contre les sources, le cas d’usage et les méthodes des TD ; réalisation cloud v2 encore à exécuter. |
 | Étape 3.2 v2 | Catalogue réel chargé et vérifié dans PostgreSQL local ; référence fictive sauvegardée, replay sans changement, contraintes et trigger testés. |
 | Étape 4.3 v2 | Cinq tables Bronze/métadonnées préparées dans Snowflake ; sept contrôles réels OK, prototype conservé. |
-| Étape 4.2 v2 | State distant à vérifier depuis le poste détenant le state actuel ; procédure dans `terraform/README.md`. Étape 4 encore ouverte. |
+| Étape 4.2 v2 | State Terraform migré vers un backend GCS privé, versionné et verrouillé ; plan sans changement (code 0). Étape 4 terminée. Preuves : `rendu/Etape_4_2_V2_Verifications.md`. |
 | Étape 3.3 v2 | Sessions simulées préparées et contrôlées ; 32 brutes, 30 valides. Résultats attendus en CSV. |
-| Suite | Clôturer le point state Terraform de 4.2, puis ingérer les cinq sources et adapter dbt, tests, Docker/Airflow, incidents et rendu. Les nouveaux jeux ne sont pas encore chargés en Bronze. |
+| Suite | Étape 5 : ingérer les cinq sources et les sessions simulées, puis adapter dbt, tests, Docker/Airflow, incidents et rendu. Les nouveaux jeux ne sont pas encore chargés en Bronze. |
 
 La reprise porte sur les données et leurs adaptations ; le socle technique est réutilisé. Le Framework impose cinq jeux authentiques : IMDb, MovieLens, Netflix Top 10, Wikidata et Wikimedia. Les sessions Sideflix sont **simulées** et ne comptent pas parmi ces cinq jeux. Notes, consultations et classements externes ne sont pas des minutes regardées sur Sideflix.
 
@@ -28,7 +28,7 @@ La reprise porte sur les données et leurs adaptations ; le socle technique est 
 - `source/v2/sessions/` et `expected_daily_usage.csv` : simulation finale isolée et résultats attendus.
 - `ingestion/` : code de Jérémy conservé, watermark/MERGE et PUT/COPY des TD 2/3.3. Il traite encore l’ancien prototype.
 - `dbt/sideflix_dbt/` : modèles Silver/Gold déjà exécutés sur le prototype ; profil fourni réservé à Workspaces.
-- `terraform/` : warehouse existant ; utiliser son véritable state, jamais recréer depuis un state vide.
+- `terraform/` : warehouse existant ; state partagé sur GCS (`backend.tf`), jamais recréer depuis un state vide. Voir `terraform/README.md`.
 - `rendu/` : preuves de travail internes, pas un paquet final de remise.
 
 Schéma détaillé : [architecture v2](docs/architecture_v2.md).

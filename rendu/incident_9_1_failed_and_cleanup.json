@@ -1,0 +1,35 @@
+{
+  "run_id": "matis_9_1_bad_device",
+  "state": "failed",
+  "tasks": [
+    [
+      "check_sources",
+      "success",
+      1
+    ],
+    [
+      "dbt_build",
+      "failed",
+      3
+    ],
+    [
+      "ingest_sources",
+      "success",
+      1
+    ],
+    [
+      "publish_daily_usage",
+      "upstream_failed",
+      0
+    ]
+  ],
+  "test_batch": "sessions_simulated_96d78fad181a1ed6db07727b",
+  "reference_batch": "sessions_simulated_6c58e1a654180f3e4b910331",
+  "slack_http_status": 200,
+  "channel_receipt_confirmation": "pending",
+  "publication_unchanged": true,
+  "gold_daily_unchanged": true,
+  "editorial_unchanged": true,
+  "test_copy_rows_removed": 32,
+  "reference_rows_after_cleanup": 32
+}

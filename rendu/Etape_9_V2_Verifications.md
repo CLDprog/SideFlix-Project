@@ -24,3 +24,17 @@ Les injections restent désactivées dans tous les runs sans option `incident`. 
 ## Statut
 
 Options préparées et syntaxe Python vérifiée. Incidents non exécutés à ce stade ; réception des alertes et reprise restent à prouver. Prochaine action : reconstruire l'image ingestion dans le terminal de Matis, laisser Airflow charger le DAG modifié, puis déclencher uniquement 9.1. Conserver logs/états/notifications/avant-après dans rendu et actualiser Notion après résultats réels.
+
+## 9.1 — panne effectivement exécutée, reprise normale encore attendue
+
+Run `matis_9_1_bad_device`, sur Docker/Airflow du Mac, 4 novembre 2026. Ingestion et check_sources réussis. Les trois tentatives de dbt_build échouent exclusivement sur `accepted_values_silver_sessions_device__web__mobile__tv` (1 valeur fautive) : PASS=28, ERROR=1, SKIP=4. Les deux tables Gold et leurs tests sont SKIP ; `publish_daily_usage` est upstream_failed, tentative0. Après le dernier échec, callback `ALERT_DELIVERED_HTTP 200` ; confirmation visuelle dans le canal encore à obtenir.
+
+Comparaison Snowflake intégrale avec `incident_9_v2_before.json` : Gold quotidienne, Gold éditoriale (timestamps compris) et publication du 1er novembre strictement inchangées. La session TEST_BAD_DEVICE/invalid a été constatée dans Silver, exclusivement issue du lot de démonstration `sessions_simulated_96d78fad181a1ed6db07727b`.
+
+Correction ciblée exécutée après fin du run et des retries : suppression des 32 lignes de cette seule copie de test en Bronze. Le lot original de32lignes est préservé. Les fichiers de référence n'ont pas été modifiés ; les19empreintes du manifeste restent identiques. Les seuls horodatages réécrits par le collecteur ont été remis à la version du dépôt après comparaison de toutes les autres valeurs. Le journal d'ingestion de ce lot reste comme preuve historique ; la copie de données de test a été retirée.
+
+**Prochaine action obligatoire :** déclencher le run normal `matis_9_1_fixed` avec `{"date":"2026-11-01"}` pour reconstruire Silver depuis le lot original et valider le retour au vert. Ne pas utiliser le même run_id que la panne. L'étape9.1 reste en cours tant que cette reprise et ses chiffres ne sont pas vérifiés. Ne pas déclencher9.2 avant.
+
+Cause : catégorie device hors des valeurs autorisées sur une copie isolée. Impact évité : publication de données non validées. Détection : accepted_values et échec Airflow après retries, alerte HTTP200. Reprise : retrait de la seule copie fautive puis run normal. Prévention : test bloquant avant Gold/publication ; options d'incident désactivées par défaut.
+
+Preuves brutes : `incident_9_1_logs/` (ingestion, contrôle, trois builds), `incident_9_1_failed_and_cleanup.json` (états, comparaison avant/après, nettoyage), `incident_9_v2_before.json` (référence). Aucun incident9.2 exécuté.

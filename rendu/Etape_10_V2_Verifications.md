@@ -1,6 +1,6 @@
 # Étape 10 — en cours, intervention administrative nécessaire
 
-**Mise à jour du 4 novembre 2026, 19 h 20 (Jérémy) : intervention administrative faite et vérifiée.** Rôles limités créés, refus réels prouvés, run Airflow normal exécuté sous SIDEFLIX_RUNNER par un utilisateur de service dédié, moniteur de ressources rattaché, crédits et stockage réels relevés (dernière section). Reste à confirmer l'activation des notifications e-mail du moniteur dans le profil Snowsight de Jérémy.
+**Mise à jour du 4 novembre 2026, 19 h 20 (Jérémy) : intervention administrative faite et vérifiée.** Rôles limités créés, refus réels prouvés, run Airflow normal exécuté sous SIDEFLIX_RUNNER par un utilisateur de service dédié, moniteur de ressources rattaché, crédits et stockage réels relevés (dernière section). Notifications e-mail du moniteur activées par Jérémy dans son profil Snowsight le 4 novembre à 19 h 50 : **étape 10 terminée.**
 
 4 novembre2026. Étapes1–9 terminées et vérifiées avant cette étape. Aucun Terraform exécuté ni objet REDGRAVE modifié.
 
@@ -69,7 +69,7 @@ Stockage SIDEFLIX (TABLE_STORAGE_METRICS) : 0,48 Mo actifs, 25,1 Mo en time trav
 
 Projection 30 jours, à partir du run réel sous SIDEFLIX_RUNNER : requêtes actives de 18:13:54 à 18:15:05 (71 s) plus 60 s d'auto-suspend, soit environ 131 s de warehouse par run quotidien. 30 × 131/3600 h × 1,35 crédit/h (X-Small Gen2, table de consommation citée plus haut) ≈ **1,5 crédit par mois**. Hypothèses : un run par jour, aucune autre requête ; chaque réveil supplémentaire coûte au minimum 60 s.
 
-Moniteur `SIDEFLIX_MONTHLY` créé et rattaché : quota 10 crédits par mois, notifications à 50 et 80 %, suspension à 100 %, niveau WAREHOUSE ; `SHOW WAREHOUSES` : SIDEFLIX_WH X-Small, auto-suspend 60 s, auto-resume, resource_monitor SIDEFLIX_MONTHLY. Le quota laisse une marge large au-dessus de la projection (1,5) et de la consommation de développement observée. Aucune consommation artificielle pour déclencher un seuil. Les notifications e-mail d'un moniteur sont envoyées aux administrateurs du compte qui les ont activées dans leur profil Snowsight : activation à confirmer par Jérémy.
+Moniteur `SIDEFLIX_MONTHLY` créé et rattaché : quota 10 crédits par mois, notifications à 50 et 80 %, suspension à 100 %, niveau WAREHOUSE ; `SHOW WAREHOUSES` : SIDEFLIX_WH X-Small, auto-suspend 60 s, auto-resume, resource_monitor SIDEFLIX_MONTHLY. Le quota laisse une marge large au-dessus de la projection (1,5) et de la consommation de développement observée. Aucune consommation artificielle pour déclencher un seuil. Les notifications e-mail d'un moniteur sont envoyées aux administrateurs du compte qui les ont activées dans leur profil Snowsight : activées par Jérémy le 4 novembre à 19 h 50.
 
 ### Suite
 

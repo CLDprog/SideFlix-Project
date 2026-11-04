@@ -42,4 +42,4 @@ Versions exécutées : Python 3.12.7 (images), Airflow 3.3.2 avec apache-airflow
 
 Documentation dbt et lineage : `dbt docs generate --static` exécuté sous le rôle SIDEFLIX_RUNNER ; graphe dans `docs/dbt_lineage.png`.
 
-Contributions : Matis Douay (collecte des sources, Bronze v2, ingestion, dbt v2, tests, incidents, préparation de l’étape 10), Jérémy Caillaud (socle Snowflake, Terraform et state GCS, accès du groupe, exécution Docker/Airflow et alerte Slack, intervention administrative et validations de l’étape 10, livrables), Rayan Faher Bonne ([à compléter par le groupe]). Historique détaillé : `git log` et la roadmap Notion interne.
+Contributions : Matis Douay (collecte des sources, Bronze v2, ingestion, dbt v2, tests, incidents, préparation de l’étape 10), Jérémy Caillaud (socle Snowflake, Terraform et state GCS, accès du groupe, exécution Docker/Airflow et alerte Slack, intervention administrative et validations de l’étape 10, livrables), Rayan Faher Bonne (couche de consommation : restitution Snowsight depuis Gold avec le rôle analyste en lecture seule, présentée pendant la démonstration). Historique détaillé : `git log` et la roadmap Notion interne.

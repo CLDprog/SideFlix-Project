@@ -73,6 +73,12 @@ Le lineage se génère avec `dbt docs generate --project-dir dbt/sideflix_dbt --
 ## Résultats et fiabilité
 
 - **Classement au 1er novembre** : Whiplash en tête (7 sessions, 112,7 minutes), devant Moonlight, Sicario, Frances Ha, Room et Get Out. Les 14 lignes contenu/jour sont identiques au calcul indépendant.
+- **Restitution Snowsight** (rôle analyste, lecture seule de Gold) : tableau du classement avec le contexte daté des sources, graphique en barres et contrôle journalier (30 sessions, 454,2 minutes sur la fenêtre). Captures et requêtes : [rendu/Restitution_Snowsight.md](rendu/Restitution_Snowsight.md).
+
+![Minutes regardées par contenu dans Snowsight. Visionnages Sideflix simulés, fenêtre du 26 octobre au 1er novembre 2026, sessions disponibles du 30 octobre au 1er novembre](rendu/restitution_snowsight/2_graphique_minutes.jpg)
+
+*Visionnages Sideflix simulés : fenêtre d’analyse du 26 octobre au 1er novembre 2026, sessions disponibles du 30 octobre au 1er novembre 2026. Le contexte externe (notes, consultations, Top 10) n’est pas compté en minutes.*
+
 - **Qualité** : `dbt build` 33/33 (11 modèles, 21 tests), fraîcheur 2/2, réconciliation 32 = 30 valides + 1 quarantaine + 1 doublon.
 - **Rejeu** : relancer la même date n’ajoute aucune ligne et laisse une seule publication par date.
 - **Incident 1** : une valeur `device` invalide (copie isolée) fait échouer le test, bloque Gold et la publication, déclenche l’alerte Slack ; reprise par retrait du seul lot de test.

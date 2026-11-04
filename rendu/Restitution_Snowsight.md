@@ -1,47 +1,47 @@
-# Restitution Snowsight : tableau et graphique depuis Gold
+# Snowsight reporting — Gold table and chart
 
-4 novembre 2026, 22 h 30 (Paris). Feuille Snowsight `sideflix_restitution_gold.sql` (Workspaces) exécutée sous le seul rôle `SIDEFLIX_ANALYST` (`USE SECONDARY ROLES NONE`, lecture de Gold uniquement), warehouse `SIDEFLIX_WH`. Requêtes reproductibles : [`docs/snowsight_rayan.sql`](../docs/snowsight_rayan.sql). Sorties exactes de la même exécution, avec identifiants de requête : [`Restitution_SQL_Verification.json`](Restitution_SQL_Verification.json). Une feuille Snowsight est privée : les captures ci-dessous en sont l’export pour le jury.
+4 November 2026, 22:30 Paris. Snowsight Workspaces file `sideflix_restitution_gold.sql`, executed with **SIDEFLIX_ANALYST only** (`USE SECONDARY ROLES NONE`, read-only Gold access), warehouse SIDEFLIX_WH. Reproducible queries: [`docs/snowsight_rayan.sql`](../docs/snowsight_rayan.sql). Exact outputs from the same execution, including query IDs: [`Restitution_SQL_Verification.json`](Restitution_SQL_Verification.json). A Snowsight worksheet is private; these screenshots export the results for the jury.
 
-**Légende.** Visionnages Sideflix **simulés**. Fenêtre d’analyse du 26 octobre au 1er novembre 2026 ; sessions disponibles du 30 octobre au 1er novembre 2026 (jour UTC de début de session). Les notes MovieLens, les consultations Wikipédia et les rangs Netflix sont un contexte externe daté, affiché à côté du rang : ce ne sont pas des minutes regardées sur Sideflix et ils n’entrent pas dans le classement.
+**Legend.** Sideflix viewing is **simulated**. Analysis window: 26 October–1 November 2026; sessions exist from 30 October–1 November (UTC session-start day). MovieLens ratings, Wikipedia pageviews and Netflix ranks are dated external context beside the rank. They are not Sideflix minutes and do not affect the ranking.
 
-## Graphique : minutes regardées par contenu
+## Chart — minutes watched by content
 
-![Graphique en barres Snowsight : minutes simulées par titre, de Whiplash à Get Out](restitution_snowsight/2_graphique_minutes.jpg)
+![Snowsight bar chart: simulated minutes by title, Whiplash through Get Out](restitution_snowsight/2_graphique_minutes.jpg)
 
-Barres, X = `TITLE`, Y = `MINUTES_WATCHED`, tri décroissant. Snowsight applique l’agrégat « Sum » sur une seule ligne par titre : la valeur affichée est celle de Gold.
+Bars: X=`TITLE`, Y=`MINUTES_WATCHED`, descending order. Snowsight applies Sum to one row per title, so the displayed value is Gold's value.
 
-## Tableau : classement éditorial et contexte des sources
+## Table — editorial ranking and source context
 
-![Tableau Snowsight, partie 1 : rang, titre, sessions, minutes, fenêtre, sessions simulées](restitution_snowsight/1a_tableau_classement.jpg)
-![Tableau Snowsight, partie 2 : notes MovieLens, vues Wikipédia, Netflix Top 10](restitution_snowsight/1b_tableau_contexte.jpg)
-![Tableau Snowsight, partie 3 : statut Netflix, sources, horodatage Gold](restitution_snowsight/1c_tableau_sources_publication.jpg)
+![Snowsight table part 1: rank, title, sessions, minutes, window and simulation flag](restitution_snowsight/1a_tableau_classement.jpg)
+![Snowsight table part 2: MovieLens ratings, Wikipedia pageviews and Netflix Top 10](restitution_snowsight/1b_tableau_contexte.jpg)
+![Snowsight table part 3: Netflix status, source metadata and Gold build timestamp](restitution_snowsight/1c_tableau_sources_publication.jpg)
 
-| Rang | Titre | Sessions valides | Minutes | MovieLens : note (nombre, période) | Vues Wikipédia (26/10–1/11) | Netflix Top 10 |
+| Rank | Title | Valid sessions | Minutes | MovieLens rating (count, period) | Wikipedia views (26 Oct–1 Nov) | Netflix Top 10 |
 | --- | --- | ---: | ---: | --- | ---: | --- |
-| 1 | Whiplash | 7 | 112,7 | 4,04 (38, 2015–2018) | 15 551 | non observé ou non apparié |
-| 2 | Moonlight | 6 | 85,3 | 5,00 (1, 2016) | 14 329 | non observé ou non apparié |
-| 3 | Sicario | 4 | 75,3 | 3,55 (11, 2016–2018) | 26 671 | rang 5, semaine du 9/03/2025, appariement confirmé |
-| 4 | Frances Ha | 5 | 70,5 | 2,50 (1, 2018) | 3 614 | non observé ou non apparié |
-| 5 | Room | 4 | 66,1 | 3,56 (8, 2016–2018) | 9 312 | non observé ou non apparié |
-| 6 | Get Out | 4 | 44,4 | 3,63 (15, 2017–2018) | 37 554 | non observé ou non apparié |
+| 1 | Whiplash | 7 | 112.7 | 4.04 (38, 2015–2018) | 15,551 | Not observed or not matched |
+| 2 | Moonlight | 6 | 85.3 | 5.00 (1, 2016) | 14,329 | Not observed or not matched |
+| 3 | Sicario | 4 | 75.3 | 3.55 (11, 2016–2018) | 26,671 | Rank 5, week of 9 March 2025, confirmed match |
+| 4 | Frances Ha | 5 | 70.5 | 2.50 (1, 2018) | 3,614 | Not observed or not matched |
+| 5 | Room | 4 | 66.1 | 3.56 (8, 2016–2018) | 9,312 | Not observed or not matched |
+| 6 | Get Out | 4 | 44.4 | 3.63 (15, 2017–2018) | 37,554 | Not observed or not matched |
 
-Le rang suit les minutes regardées. Lecture pour le responsable du catalogue : Whiplash est le premier candidat à la mise en avant ; Get Out, le plus consulté sur Wikipédia, reste dernier en minutes Sideflix, ce qui montre que le contexte externe ne remplace pas l’usage de la plateforme. Avec six contenus et trois jours simulés, le classement illustre la décision sans valeur statistique.
+Rank follows minutes watched. For the catalog manager, Whiplash is the first candidate to feature. Get Out has the most Wikipedia views but ranks last in Sideflix minutes: external context does not replace platform usage. Six items and three simulated days illustrate a decision without statistical significance.
 
-`PUBLIE_UTC` est l’horodatage de construction de Gold. Snowsight l’affiche dans le fuseau de la session (11:48:51 −08:00), soit 19:48:51 UTC : Gold a été reconstruit par le run Airflow `manual__2026-11-04T19:47:52` de la vidéo, avec des valeurs identiques à la référence.
+`PUBLIE_UTC` is Gold's build timestamp. Snowsight displays it in the session timezone (11:48:51 −08:00), equivalent to 19:48:51 UTC. Gold was rebuilt by video run `manual__2026-11-04T19:47:52` with values identical to the reference.
 
-## Contrôle journalier indépendant
+## Independent daily check
 
-![Contrôle Snowsight : sessions et minutes par jour UTC et total de la fenêtre](restitution_snowsight/3_controle_journalier.jpg)
+![Snowsight check: sessions and minutes by UTC day, with window total](restitution_snowsight/3_controle_journalier.jpg)
 
-| Jour UTC | Sessions valides | Minutes |
+| UTC day | Valid sessions | Minutes |
 | --- | ---: | ---: |
-| 2026-10-30 | 3 | 55,0 |
-| 2026-10-31 | 14 | 221,8 |
-| 2026-11-01 | 13 | 177,4 |
-| Total fenêtre | 30 | 454,2 |
+| 2026-10-30 | 3 | 55.0 |
+| 2026-10-31 | 14 | 221.8 |
+| 2026-11-01 | 13 | 177.4 |
+| Window total | 30 | 454.2 |
 
-Recalcul depuis l’autre table Gold (`GOLD_CONTENT_DAILY`). Les trois jours sont identiques au résultat attendu calculé hors Snowflake (`source/v2/expected_daily_usage.csv`). Le total est égal à la somme du tableau avant arrondi (30 sessions, 454,2 minutes ; les minutes affichées, arrondies au dixième, totalisent 454,3) et aux 30 sessions valides de la réconciliation (32 lignes = 30 valides + 1 quarantaine + 1 doublon). Aucune session simulée n’existe du 26 au 29 octobre.
+Recalculated from the other Gold table, GOLD_CONTENT_DAILY. All three days match the expectation calculated outside Snowflake (`source/v2/expected_daily_usage.csv`). The total matches the table before rounding (30 sessions, 454.2 minutes; its displayed one-decimal per-title values sum to 454.3), and the reconciliation's 30 valid sessions (32 raw = 30 valid + one quarantined + one duplicate). No simulated session exists from 26–29 October.
 
-## Réalisation et limites
+## Execution and limitations
 
-Requêtes préparées pour Rayan (attribution du groupe, 4/11 à 19 h 50), puis exécutées et capturées par Matis Douay (session assistée par Claude Code). Le pipeline n’a pas été relancé pour cette restitution : lecture seule de Gold. Les captures ont 800 px de large (panneau de navigateur) ; les valeurs exactes sont dans le JSON.
+Queries were prepared for Rayan (group assignment on 4 November at 19:50), then executed and captured by Matis Douay in a Claude Code-assisted session. Reporting did not rerun the pipeline: read-only Gold access. Screenshots are 800 pixels wide (browser panel); exact values are in the JSON. Original screenshot labels and query aliases are retained as execution evidence, even where their interface language is French.

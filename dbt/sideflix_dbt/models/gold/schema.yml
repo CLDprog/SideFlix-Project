@@ -1,13 +1,28 @@
 version: 2
 models:
   - name: gold_content_daily
-    description: "Sessions distinctes et minutes visionnees par contenu et par jour UTC."
+    description: "Distinct sessions and minutes watched per content item and UTC day."
     columns:
       - name: usage_date
-        description: "Date UTC de debut des sessions."
+        description: "UTC date when sessions started."
       - name: content_id
-        description: "Contenu visionne."
+        description: "Viewed content identifier."
       - name: valid_sessions
-        description: "COUNT DISTINCT session_id parmi les sessions Silver."
+        description: "COUNT DISTINCT session_id among valid Silver sessions."
       - name: minutes_watched
-        description: "Somme watched_seconds / 60 ; doublons et rejets exclus."
+        description: "SUM(watched_seconds) / 60; duplicates and rejected rows excluded."
+  - name: gold_editorial_weekly
+    description: "Editorial ranking over the seven-day analysis window, with dated external context and an explicit simulated-usage flag."
+    columns:
+      - name: analysis_date
+        description: "Inclusive last UTC day of the seven-day ranking window."
+      - name: content_id
+        description: "Stable content identifier; one row per ranked content item."
+      - name: editorial_rank
+        description: "Order by simulated minutes watched descending, valid sessions descending, then content identifier."
+      - name: sideflix_sessions_simulated
+        description: "Always true: Sideflix playback events are simulated and are not an authentic external dataset."
+      - name: external_sources
+        description: "Public datasets used as context; their metrics do not contribute to simulated minutes."
+      - name: published_at_utc
+        description: "Timestamp when the Gold model was rebuilt, stored in a UTC session."

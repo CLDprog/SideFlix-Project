@@ -1,17 +1,30 @@
 # Sideflix dbt
 
-Adapted from labs TD 3.2 and 3.3. Existing sources: SIDEFLIX.BRONZE.CATALOG and SESSIONS_RAW.
+This project follows TD 3.2/3.3 and resource packs 03 and 07. Bronze sources are the PostgreSQL catalogue, simulated Sideflix sessions and five authentic public datasets: IMDb, MovieLens, Netflix Top 10, Wikidata and Wikimedia.
 
-The provided profile is the one for **dbt Projects on Snowflake / Workspaces** (current session, no key or password). It does not work as is with dbt Core on a workstation or in Docker: there, use a local profile with variables and its own key, as in TD 3.1/4.2.
+## Models and quality
 
-Silver: rebuilt views, Gold: rebuilt table. The log_run_results hook from the TD logs runs to SIDEFLIX.LAB.DBT_RESULTS. No changes to the Bronze sources.
+Nine Silver views clean, type, quarantine and deduplicate inputs while retaining batch and provenance metadata. Two Gold tables provide daily usage and the editorial ranking. Each external source is aggregated to its intended grain before joining, preventing inflated session counts. The ranking uses simulated Sideflix minutes; historical external metrics provide separately dated context.
 
-Commands: `dbt build`, then `dbt source freshness` separately, and `dbt docs generate` for the lineage. Tests and their evidence were completed in step 7: `dbt build` 33/33 (11 models, 21 tests, 1 on-run-end hook), freshness 2/2 (see `rendu/Etape_7_V2_Verifications.md`).
+The demonstrated build has **11 models, 21 tests and one logging hook** (33 successful results). Freshness checks cover the catalogue and selected session batch. Raw input contains 32 rows: 30 valid sessions, one rejected row and one duplicate. For 1 November 2026, daily Gold totals are **13 sessions and 177.4 minutes**. The seven-day window totals 30 sessions and 454.2 minutes.
 
-October 30 reference: A = 2 sessions / 45 min; B = 1 session / 10 min. Overall: 32 raw rows = 30 valid sessions + 1 rejected + 1 duplicate removed.
+## Run with dbt Core or Docker
 
-## Final version v2 (November 4)
+From the repository root, use `dbt/profiles-core/profiles.yml`. Supply `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_PRIVATE_KEY_FILE` and `SNOWFLAKE_ROLE=SIDEFLIX_RUNNER` through private environment variables. The runtime role is limited; it does not administer the account. Bronze and LAB tables must first be created with the setup scripts documented in the root README.
 
-The verified batches are pinned in the `vars` of `dbt_project.yml`. The five public sources feed the Silver views, then `gold_editorial_weekly`, with periods, provenance, explicit Netflix absence and flagged simulation. Gold reads only from Silver. See `rendu/Etape_6_V2_Verifications.md` and `gold_editorial_v2.csv`.
+```sh
+python -m pip install -r dbt/requirements.txt
+dbt source freshness --project-dir dbt/sideflix_dbt --profiles-dir dbt/profiles-core
+dbt build --project-dir dbt/sideflix_dbt --profiles-dir dbt/profiles-core
+dbt docs generate --static --project-dir dbt/sideflix_dbt --profiles-dir dbt/profiles-core
+```
 
-Core: install `dbt/requirements.txt`, load the local Snowflake/RSA variables, export `SNOWFLAKE_DISABLE_PLATFORM_DETECTION=true AWS_EC2_METADATA_DISABLED=true DBT_SEND_ANONYMOUS_USAGE_STATS=false`, then from the root: `.venv/bin/dbt run --project-dir dbt/sideflix_dbt --profiles-dir dbt/profiles-core`. For Workspaces, use its existing profile. The Core profile embeds no key. The hook now distinguishes between the two runtimes.
+The default `vars` pin the reviewed source batches and analysis date. Airflow supplies the actual receipt batch IDs and selected date when it runs the same project. The `log_run_results` hook records each model/test result in `SIDEFLIX.LAB.DBT_RESULTS`.
+
+For **dbt Projects on Snowflake / Workspaces only**, the separate `profiles.yml` in this directory follows the session-based course configuration. It is not a local dbt Core credential profile.
+
+## Lineage and reliability
+
+The generated dbt documentation includes source, model, column and test metadata. The architecture and lineage images are linked in the root README. The raw incident logs and evidence index show that invalid device data blocks Gold and publication, while retrying a crash after the publication write preserves one row per date.
+
+An older prototype was preserved in LAB during development. Its historical verification is optional on a fresh installation and is separate from the required final-data checks.

@@ -1,30 +1,30 @@
-# Collecte v2 — vérifications réelles
+# V2 collection — executed checks
 
-Collecte locale du 4 novembre 2026. Aucune publication ni modification PostgreSQL/Snowflake.
+Local collection on 4 November 2026. No publication or PostgreSQL/Snowflake changes were performed in this collection step.
 
-- Cinq jeux distincts : IMDb, MovieLens, Netflix Top 10, Wikidata, Wikimedia.
-- Catalogue technique : Whiplash (2014), Moonlight (2016), Frances Ha (2012), Room (2015), Sicario (2015), Get Out (2017).
-- IMDb : six enregistrements authentiques conservés sans fabrication, type movie et durée positive. Le script filtre le flux gzip officiel ; aucun gros dump n’est conservé.
-- MovieLens : 9 742 films/liens, 100 836 notes ; clés uniques, aucune référence de film orpheline ; notes autorisées 0,5–5 par pas de 0,5 ; unicité utilisateur/film. 74 notes pour les six films retenus.
-- Wikidata : six fiches, correspondance IMDb P345 vérifiée, QID et article anglais conservés.
-- Wikimedia : six articles × sept jours = 42 observations, timestamps uniques et vues non négatives. Période 26 octobre–1er novembre 2026, all-access/user. Réponses brutes JSON conservées. Une erreur HTTP 429 a été reprise avec délai et sans refetch des snapshots déjà présents.
-- Netflix : 8 884 lignes. Sicario est présent semaine du 9 mars 2025, rang 5 ; identité du film 2015 corroborée par la fiche Netflix officielle 80046311. Get Out est une piste non encore marquée vérifiée dans le mapping. Les périodes Netflix sont historiques, distinctes des événements simulés.
-- Empreintes de tous les fichiers du manifeste recontrôlées avec succès.
-- Simulation finale isolée : source/v2/sessions, 32 brutes = 30 sessions valides + un rejet + un doublon ; résultats par jour dans expected_daily_usage.csv. Source de visionnage explicitement sideflix_simulated. Référence du 30 octobre : A=45 min/2 sessions, B=10 min/1 session.
-- Prototype original copié sans modification dans source/fixtures/reference ; les fichiers existants sont aussi conservés à leur emplacement initial.
+- Five distinct datasets: IMDb, MovieLens, Netflix Top 10, Wikidata and Wikimedia.
+- Technical catalog: Whiplash (2014), Moonlight (2016), Frances Ha (2012), Room (2015), Sicario (2015) and Get Out (2017).
+- IMDb: six authentic records retained unchanged, each with type `movie` and positive runtime. The script filters the official gzip stream; the full dump is not retained.
+- MovieLens: 9,742 movies/links and 100,836 ratings; unique keys, no orphan movie references, ratings from 0.5 to 5 in 0.5 increments and unique user/movie pairs. There are 74 ratings for the six selected movies.
+- Wikidata: six entities, verified IMDb P345 mappings, retained QIDs and English article references.
+- Wikimedia: six articles × seven days = 42 observations, unique timestamps and nonnegative views. Period: 26 October–1 November 2026, all-access/user. Raw JSON responses retained. An HTTP 429 was retried after a delay without fetching existing snapshots again.
+- Netflix: 8,884 rows. Sicario appears in the week of 9 March 2025 at rank 5; the identity of the 2015 movie is corroborated by official Netflix title 80046311. Get Out was not marked as a verified mapping. These historical periods differ from the simulated viewing events.
+- All manifest file checksums were checked successfully.
+- Isolated final simulation: `source/v2/sessions`, 32 raw rows = 30 valid sessions + one rejection + one duplicate. Daily expectations are in `expected_daily_usage.csv`; viewing provenance is explicitly `sideflix_simulated`. The 30 October reference is A=45 minutes/2 sessions and B=10 minutes/1 session.
+- The original prototype was copied unchanged to `source/fixtures/reference`; the original files were also retained in this historical collection step. These obsolete prototype fixtures were subsequently removed from the final delivery tree.
 
 ## Reproduction
 
-Depuis Sideflix, avec requests installé selon l’environnement du cours :
+From the repository root, with `requests` installed as in the course:
 
 ```sh
 python source/collect_public_data.py
 ```
 
-Le script réutilise les réponses API et le sous-ensemble IMDb conservés. Le collecteur télécharge MovieLens et Netflix si absents aux chemins indiqués. Conserver les snapshots exacts ; une extraction ultérieure peut changer.
+The script reuses retained API responses and the IMDb subset. It downloads MovieLens and Netflix if their expected files are missing. Keep the exact snapshots: a later extraction can differ.
 
-## Restant avant validation complète (état du contrôle initial, conservé comme historique)
+## Historical collection follow-up
 
-Documenter dans le manifeste les conditions d’usage/attribution et la période/granularité de chaque jeu ; compléter les références de curation du catalogue indépendant. Les six films sont une sélection technique, pas une preuve de droits de diffusion. L’échantillon IMDb ne doit pas être redistribué sans vérification de ses conditions.
+The initial check still required documenting terms, attribution, period and grain in the manifest, and adding catalog curation references. The six movies are a technical selection, not proof of distribution rights. IMDb redistribution requires checking its terms.
 
-Accès GitHub rétabli après ce contrôle initial : dépôt du groupe cloné et ajouts intégrés en préservant ingestion/Terraform. Les données brutes, d’abord conservées localement, sont versionnées dans ce dépôt privé depuis le commit 0577f62 pour le rejeu exact, sans publication ; code, mapping, manifeste et simulation sont aussi partagés. Le commit publié est consigné dans Notion. Ne pas considérer ces vérifications locales comme une exécution cloud de la v2.
+GitHub access was restored after that initial check. The group repository was cloned and additions preserved existing ingestion/Terraform work. Raw snapshots, initially local, were versioned in the private repository from commit `0577f62` for exact replay, without public redistribution; code, mapping, manifest and simulation were shared as well. The published commit was recorded in Notion. These local collection checks do not themselves prove a V2 cloud run. See the later step reports for completed ingestion and processing.

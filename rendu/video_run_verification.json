@@ -1,0 +1,26 @@
+{
+  "run_id": "manual__2026-11-04T19:47:52.946628+00:00",
+  "origin": "Unmodified local Airflow task logs; the screen recording ends before publication completes.",
+  "events": [
+    {
+      "timestamp": "2026-11-04T19:48:37.947436Z",
+      "task": "check_sources",
+      "event": "SOURCE_CHECKS_PASS 2026-11-01 manual__2026-11-04T19:47:52.946628+00:00"
+    },
+    {
+      "timestamp": "2026-11-04T19:48:56.527649Z",
+      "task": "dbt_build",
+      "event": "19:48:56  Done. PASS=33 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=33"
+    },
+    {
+      "timestamp": "2026-11-04T19:48:59.671021Z",
+      "task": "publish_daily_usage",
+      "event": "MERGE_PUBLISHED 2026-11-01 13 177.400000 run_id manual__2026-11-04T19:47:52.946628+00:00 attempt 1"
+    },
+    {
+      "timestamp": "2026-11-04T19:48:59.892357Z",
+      "task": "publish_daily_usage",
+      "event": "PUBLICATION_UNIQUE_DATE_PASS"
+    }
+  ]
+}

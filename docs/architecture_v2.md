@@ -1,30 +1,30 @@
-# Architecture v2 : pipeline réellement exécuté (4 novembre 2026)
+# Architecture v2: executed pipeline, 4 November 2026
 
-Conserve le cas d’usage : sessions valides et minutes par contenu/jour UTC, classement sur sept jours pour le responsable du catalogue. Les sources publiques ajoutent du contexte réel ; elles ne deviennent pas des sessions Sideflix.
+The catalogue manager uses valid sessions and minutes per content item and UTC day, plus a seven-day ranking. Public sources provide real context; their observations are never treated as Sideflix viewing sessions.
 
-![Architecture Sideflix v2](architecture_v2.png)
+![Sideflix architecture v2](architecture_v2.png)
 
-Source du schéma (Mermaid, `architecture_v2.mmd`) :
+The editable diagram is [architecture_v2.mmd](architecture_v2.mmd):
 
 ```mermaid
 flowchart LR
   subgraph SRC["Sources"]
-    FILES["Fichiers réels<br/>IMDb, MovieLens, Netflix Top 10"]
-    SESS["Sessions Sideflix SIMULÉES<br/>JSON, 32 lignes"]
-    PG[("PostgreSQL source-db<br/>catalogue IMDb, 6 contenus")]
-    API["API réelles<br/>Wikidata, Wikimedia"]
+    FILES["Real files: IMDb, MovieLens, Netflix Top 10"]
+    SESS["SIMULATED Sideflix sessions: JSON, 32 rows"]
+    PG[("PostgreSQL source-db: IMDb catalogue, 6 titles")]
+    API["Real APIs: Wikidata, Wikimedia"]
   end
-  subgraph ING["Ingestion Python, image Docker sideflix-ingest"]
-    C["PUT, stage, COPY INTO<br/>TD 2 partie A"]
-    W["Watermark + MERGE<br/>TD 2 partie B"]
-    R["requests, JSON en VARIANT<br/>pack 05"]
+  subgraph ING["Python ingestion: sideflix-ingest Docker image"]
+    C["PUT, stage, COPY INTO: TD 2 part A"]
+    W["Watermark + MERGE: TD 2 part B"]
+    R["requests, JSON in VARIANT: pack 05"]
   end
-  subgraph SF["Snowflake, AWS eu-west-3, warehouse SIDEFLIX_WH (X-Small)"]
-    B["Bronze<br/>brut + lot, fichier, horodatage"]
-    S["Silver, dbt<br/>9 vues, quarantaine, dédoublonnage"]
-    T{{"21 tests dbt bloquants<br/>+ fraîcheur des sources"}}
-    G["Gold, dbt<br/>GOLD_CONTENT_DAILY<br/>GOLD_EDITORIAL_WEEKLY"]
-    P["LAB.DAILY_USAGE<br/>publication par MERGE"]
+  subgraph SF["Snowflake: AWS eu-west-3, SIDEFLIX_WH warehouse, X-Small"]
+    B["Bronze: raw data, batch, file, timestamp"]
+    S["Silver, dbt: 9 views, quarantine, deduplication"]
+    T{{"21 blocking dbt tests + source freshness"}}
+    G["Gold, dbt: GOLD_CONTENT_DAILY and GOLD_EDITORIAL_WEEKLY"]
+    P["LAB.DAILY_USAGE: publication by MERGE"]
   end
   FILES --> C
   SESS --> C
@@ -32,25 +32,27 @@ flowchart LR
   PG --> W --> B
   API --> R --> B
   B --> S --> T --> G --> P
-  G --> SN["Snowsight<br/>classement des contenus"]
-  AF["Airflow 3.3, DockerOperator<br/>06 h Paris, 2 retries, 1 run à la fois"] -. "ingest, check, dbt build, publish" .-> ING
-  AF -. "échec final" .-> SL["Slack #sideflix-alertes"]
-  TF["Terraform<br/>SIDEFLIX_WH, state sur GCS privé,<br/>versionné, verrouillé"] -. "infrastructure" .-> SF
-  RB["Rôles : SIDEFLIX_RUNNER (pipeline)<br/>SIDEFLIX_ANALYST (lecture Gold)<br/>moniteur 10 crédits/mois"] -. "accès et budget" .-> SF
+  G --> SN["Snowsight: content ranking"]
+  AF["Airflow 3.3, DockerOperator: 06:00 Paris, 2 retries, 1 active run"] -. "ingest, check, dbt build, publish" .-> ING
+  AF -. "final failure" .-> SL["Slack #sideflix-alertes"]
+  TF["Terraform: SIDEFLIX_WH, private versioned GCS state with locking"] -. "infrastructure" .-> SF
+  RB["SIDEFLIX_RUNNER, SIDEFLIX_ANALYST, 10-credit monthly monitor"] -. "access and budget" .-> SF
   classDef sim fill:#fde7e2,stroke:#b5381f,color:#15171c;
   classDef cloud fill:#e6eef8,stroke:#2563a6,color:#15171c;
   class SESS sim;
   class B,S,G,P cloud;
 ```
 
-PostgreSQL, fichiers, Docker et Airflow restent locaux. Snowflake stocke et calcule sur AWS Paris. Airflow demeure l’unique ordonnanceur ; la publication dépend des contrôles et utilise un MERGE. Date/intervalle et run_id explicites, journaux et alerte sur échec final. Terraform réutilise le warehouse existant ; son state est stocké sur un backend GCS privé, versionné et verrouillé (Google Cloud ne sert qu'au state, les données restent dans Snowflake sur AWS).
+PostgreSQL, input files, Docker and Airflow run locally. Snowflake stores and processes the data on AWS in Paris. Airflow is the sole scheduler; publication depends on successful checks and uses a MERGE. Each run has an explicit date or interval and run ID, task logs, and an alert on final failure. Terraform manages the existing warehouse; its state uses a private, versioned GCS backend with locking. Google Cloud holds only the state; pipeline data stays in Snowflake on AWS.
 
-Batch quotidien adapté à une décision hebdomadaire ; watermark pour les changements PostgreSQL ; COPY pour fichiers ; requests/JSON pour APIs. Méthodes des TD et du pack, sans Kafka/CDC/Iceberg supplémentaire. Gold lit Silver, préagrège les contextes avant jointures et conserve périodes/provenance. Affichage clair de la simulation et de la fraîcheur.
+Daily batch processing supports a weekly editorial decision. A watermark captures PostgreSQL changes, stage/COPY handles files, and requests/JSON handles APIs. These are methods from the TDs and resource pack. Gold reads Silver, aggregates context before joining, and retains source periods and provenance. Simulation and data freshness are explicitly labelled.
 
-État au 4 novembre 2026 : schéma mis à jour d'après les composants réellement exécutés (étapes 5 à 10). La base source PostgreSQL est le service `source-db` du Compose (méthode du pack 04). Le pipeline tourne dans Airflow sous le rôle limité SIDEFLIX_RUNNER (utilisateur de service SIDEFLIX_PIPELINE). Étapes manuelles et prérequis : compte Snowflake et clé RSA par utilisateur, webhook Slack du groupe dans le `.env` privé, bucket GCS du state Terraform, notifications e-mail du moniteur dans Snowsight.
+The diagram describes the components executed in implementation steps 5–10. PostgreSQL is the Compose service `source-db` (pack 04). Airflow runs the pipeline with the limited `SIDEFLIX_RUNNER` role; the service account is `SIDEFLIX_PIPELINE`. Manual prerequisites are a Snowflake account and RSA key per user, the group Slack webhook in the private `.env`, the Terraform state bucket, and monitor email notification settings in Snowsight.
 
-## Choix et alternatives à ce volume
+## Proportionate choices and alternatives
 
-Un rechargement complet du catalogue serait une alternative simple pour six œuvres. Le watermark/MERGE est retenu pour mettre en application le TD2B et ne transférer que les modifications ; sa limite est le besoin d'un updated_at fiable, sans gestion des suppressions dans ce prototype. Le stage/COPY convient aux snapshots fichiers ; requests/VARIANT conserve les réponses API avant typage en Silver. Ces méthodes répondent à trois formes de sources, sans flux streaming nécessaire à une décision hebdomadaire.
+Reloading the full catalogue would be simple for six titles. Watermark/MERGE applies TD 2B and transfers only changes; it requires a reliable `updated_at` and does not handle deletions in this prototype. Stage/COPY suits file snapshots; requests/VARIANT retains API responses before Silver typing. These methods cover three source forms; a weekly decision does not require streaming.
 
-BigQuery, présenté dans les supports, constitue une alternative de stockage/calcul cloud. Snowflake est retenu parce que les TD et le compte du groupe fournissent déjà stage/COPY, SQL/VARIANT, RSA et dbt ; changer de plateforme demanderait d'adapter ces éléments sans bénéfice démontré pour ce petit cas. Les vues Silver et tables Gold reconstruites restent proportionnées au volume ; aucun clustering, moteur de recommandation ou composant streaming ajouté. Le traitement des données utilise AWS via Snowflake ; GCS conserve uniquement le state Terraform, ce qui est une limite explicite à la formulation «1cloud» de la checklist.
+BigQuery, covered in the course, is an alternative for cloud storage and compute. Snowflake was chosen because the TDs and group account already provide stage/COPY, SQL/VARIANT, RSA authentication and dbt. Switching would require adapting these components without a demonstrated benefit at this scale. Silver views and rebuilt Gold tables remain proportionate to the volume.
+
+The data pipeline uses AWS through Snowflake. GCS holds Terraform state only; this auxiliary second provider must be disclosed when discussing the checklist's “1 cloud” wording. The project adds no Kafka, CDC, Iceberg, clustering or recommendation engine.

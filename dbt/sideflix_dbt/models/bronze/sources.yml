@@ -3,12 +3,10 @@ sources:
 - name: bronze
   database: SIDEFLIX
   schema: BRONZE
-  description: Catalogue réel, cinq sources publiques authentiques et sessions Sideflix
-    explicitement simulées.
+  description: Real catalogue, five authentic public sources and explicitly simulated Sideflix sessions.
   tables:
   - name: catalog
-    description: Catalogue PostgreSQL charge par watermark et MERGE ; une ligne par
-      contenu.
+    description: PostgreSQL catalogue loaded using a watermark and MERGE; one row per content item.
     config:
       loaded_at_field: _loaded_at
       freshness:
@@ -19,8 +17,7 @@ sources:
           count: 26
           period: hour
   - name: sessions_raw
-    description: Historique JSON brut ; dbt sélectionne uniquement le lot simulé v2
-      déclaré dans vars.
+    description: Raw JSON history; dbt selects only the simulated batch declared in vars.
     config:
       loaded_at_field: _loaded_at
       freshness:
@@ -33,27 +30,27 @@ sources:
         filter: source_system='sessions_simulated' AND _batch_id='{{ var("batch_sessions_simulated")
           }}'
   - name: imdb_raw
-    description: Source publique imdb ; provenance et lot conservés.
+    description: Public source imdb; provenance and batch metadata retained.
     config:
       loaded_at_field: _loaded_at
       freshness: null
   - name: movielens_raw
-    description: Source publique movielens ; provenance et lot conservés.
+    description: Public source movielens; provenance and batch metadata retained.
     config:
       loaded_at_field: _loaded_at
       freshness: null
   - name: netflix_raw
-    description: Source publique netflix ; provenance et lot conservés.
+    description: Public source netflix; provenance and batch metadata retained.
     config:
       loaded_at_field: _loaded_at
       freshness: null
   - name: wikidata_raw
-    description: Source publique wikidata ; provenance et lot conservés.
+    description: Public source wikidata; provenance and batch metadata retained.
     config:
       loaded_at_field: _loaded_at
       freshness: null
   - name: wikimedia_raw
-    description: Source publique wikimedia ; provenance et lot conservés.
+    description: Public source wikimedia; provenance and batch metadata retained.
     config:
       loaded_at_field: _loaded_at
       freshness: null

@@ -1,92 +1,81 @@
-# Étape 8 v2 — préparation et blocages
+# Step 8 V2 — Docker/Airflow execution and alert verification
 
-4 novembre 2026, Matis. Étapes 5, 6 et 7 terminées et preuves poussées ; **étape 8 non terminée**.
+**Completed on 4 November 2026 at 17:40 Paris time (Jérémy).** Docker/Airflow ran successfully on Jérémy's PC and the group Slack channel received an actual failure alert. Substeps 8.1–8.5 were validated. Earlier local preparation and access limitations are distinguished below.
 
-**Mise à jour du 4 novembre, 17 h 40 (Jérémy) : étape 8 terminée.** Exécution réelle dans Docker/Airflow réussie sur le PC de Jérémy et alerte d'échec reçue dans le canal Slack du groupe (deux dernières sections). 8.1 à 8.5 validées.
+## Implementation from lab 4.2 and packs 06/07
 
-## Travail préparé selon TD 4.2 / packs 06 et 07
+- `docker/ingestion.Dockerfile`, `docker/dbt.Dockerfile`: pack Python 3.12.7 base, pinned dependencies, non-root jobs, no copied secrets, `.dockerignore`.
+- `airflow/docker-compose.yml`, `airflow/Dockerfile`, `airflow/dags/sideflix_daily.py`: lab standalone Airflow/DockerOperator. Ingest → source checks → freshness/build → publication. Cron at 06:00 Paris, two retries, catchup disabled, one active run; explicit UTC date/run_id. RSA mount is read-only; snapshots and receipts remain on the workstation.
+- Adapted pack webhook callback; URL supplied through private runtime configuration, never Git.
+- `ingestion/run_pipeline_job.py` reuses the collector, watermark/MERGE and loader. The receipt passes verified batches to dbt; publication requires successful build and freshness checks.
+- `ingestion/publish_daily_usage.py` adapts the lab's publish_daily_sales: reads validated Gold and MERGEs by date into LAB.DAILY_USAGE. Its after-write crash option was prepared for step 9.2 and not triggered in this step.
 
-- `docker/ingestion.Dockerfile`, `docker/dbt.Dockerfile` : base Python 3.12.7 du pack, dépendances fixées, jobs non-root, aucun secret copié, `.dockerignore`.
-- `airflow/docker-compose.yml`, `airflow/Dockerfile`, `airflow/dags/sideflix_daily.py` : Airflow standalone/DockerOperator du TD. Ingestion → contrôles → freshness/build → publication. Cron 06 h Paris, deux retries, catchup désactivé, un run à la fois ; date UTC et run_id explicites. Montage RSA en lecture seule, snapshots et reçus de run sur le poste.
-- Callback webhook du pack adapté ; URL attendue dans l'environnement privé, jamais dans Git. Réception non testée : webhook du groupe non fourni.
-- `ingestion/run_pipeline_job.py` : réutilise collecteur, watermark/MERGE et chargeur existants ; reçu du run transmet les lots vérifiés à dbt. Publication autorisée seulement après build et fraîcheur réussis.
-- `ingestion/publish_daily_usage.py` : adaptation du publish_daily_sales du TD ; lit uniquement Gold validée et MERGE par date dans LAB.DAILY_USAGE. Option de crash après écriture préparée pour 9.2, pas déclenchée ici.
+Python compilation and static Compose checks passed but did not themselves validate images or the DAG. The initial local dbt-wrapper check could not resolve the executable because PATH omitted `.venv/bin`; this was fixed by resolving the executable in the same Python environment. Publication without a validation marker was correctly refused.
 
-Compilation Python et analyse statique Compose réussies ; **cela ne valide pas les images ni le DAG**. Le premier précontrôle local du wrapper dbt a échoué à résoudre l'exécutable (PATH sans `.venv/bin`) ; corrigé par résolution du binaire dans le même environnement Python. La publication sans marqueur de validation a bien été refusée. Les résultats locaux finaux sont consignés dans les fichiers ci-dessous ; ce ne sont pas des preuves Docker/Airflow.
+## Historical local prechecks and access limitation
 
-## Résultats locaux obtenus
+Local Python/Core ingestion and source checks succeeded for six batches. The APIs were called again with identical batch hashes and no added rows. Freshness and parameterized dbt build passed 33/33. Publishing 30 October twice produced three sessions / 55 minutes and one row per date. The editorial reference date was then restored to 1 November. These are local prechecks, not container evidence.
 
-Ingestion et contrôle des six lots réussis ; APIs réellement rappelées, mêmes empreintes de lot, zéro nouvelle ligne. Freshness puis dbt build à date paramétrée : 33/33 réussis. Publication du 30 octobre exécutée deux fois : 3 sessions /55 minutes et une seule ligne par date à chaque passage. Ces résultats sont obtenus en Python/Core local, pas dans Docker/Airflow. La date éditoriale de référence est ensuite rétablie au 1er novembre.
+The assistant's `docker info` initially returned `permission denied while trying to connect to the docker API at unix:///Users/matisdouay/.docker/run/docker.sock`. Socket/key permissions were not bypassed. Actual Docker execution later used Jérémy's workstation. No ACCOUNTADMIN or Terraform intervention was required for this step.
 
-## Blocages exacts
+Historical precheck evidence:
 
-_Historique : le blocage Docker est levé depuis le 4 novembre à 17 h (exécution sur le PC de Jérémy, dernière section). Le webhook a ensuite été configuré et l'alerte d'échec reçue dans `#sideflix-alertes` (section 8.4)._
+- `docker_8_v2_access.txt`: actual daemon refusal.
+- `docker_8_v2_compose_static.txt`: static configuration analysis without loading secrets.
+- `pipeline_8_v2_local_ingest.txt`, `pipeline_8_v2_local_check.txt`, `pipeline_8_v2_local_build.txt`, `pipeline_8_v2_local_publish.txt`: local Python/Core checks.
+- `pipeline_8_v2_restore_reference.txt`: editorial reference date restored after the parameterized-date check.
 
-`docker info` renvoie : `permission denied while trying to connect to the docker API at unix:///Users/matisdouay/.docker/run/docker.sock`.
+The communicated dates were submission on 4 November and oral defense on 6 November at 13:00 Paris. The submission platform/deadline was not independently accessible during this verification.
 
-Il faut un terminal du poste ayant accès à Docker Desktop, puis exécuter la procédure `airflow/README.md`. Ne pas contourner les permissions du socket ou modifier les droits de la clé. Si l'assistant reste restreint, exécuter les commandes Docker dans le terminal du poste et conserver les sorties. Il faut également un webhook Slack/Teams du groupe et une preuve de réception pour terminer 8.4. Aucune intervention ACCOUNTADMIN/Terraform nécessaire à cette étape.
+## Actual Docker/Airflow execution — Jérémy's PC, 4 November, 17:05–17:10 Paris
 
-## Preuves / suite
+Docker Desktop 29.9.2 (Linux engine) on Windows, lab standalone Airflow 3.3.2, following `airflow/README.md`.
 
-- `docker_8_v2_access.txt` : refus réel du daemon.
-- `docker_8_v2_compose_static.txt` : configuration analysée, sans chargement des secrets.
-- `pipeline_8_v2_local_ingest.txt`, `pipeline_8_v2_local_check.txt`, `pipeline_8_v2_local_build.txt`, `pipeline_8_v2_local_publish.txt` : précontrôles Python/Core, à distinguer des runs conteneurisés.
-- `pipeline_8_v2_restore_reference.txt` : restauration du tableau éditorial à la date de référence versionnée après le test à date paramétrée.
+### Portability corrections
 
-_Historique, réalisé ensuite (sections suivantes, puis `Etape_9_V2_Verifications.md` et `Etape_10_V2_Verifications.md`) :_ prochaine action prévue : suivre `airflow/README.md`, construire les images et exécuter un run Airflow puis son rejeu ; contrôler planning/durée/logs, publication unique et réception du webhook. Terminer ensuite les deux incidents 9.1/9.2 avant gouvernance/coûts et remise finale propre. Ne pas annoncer ces étapes achevées.
+- `source/real/` snapshots were shared in the private repository (`0577f62`, Matis). Windows Git line-ending conversion initially changed 14 of 19 file checksums although Git blobs were correct. `.gitattributes` disabled conversion for source data (`8cf1f97`); all 19 checksums then matched the manifest.
+- Added Compose `source-db` (`postgres:16.4`, pack 04's database-container method, disposable lab credentials, port 5433 bound to localhost) and one-shot `catalog-seed` using the existing `source/03_load_real_catalog.py`: `CATALOGUE_OK rows=6 distinct_imdb=6 changed=6`. No separately installed PostgreSQL or personal database password is needed.
+- Passed `PGPORT` to jobs and added `extra_hosts host.docker.internal` for portability beyond Docker Desktop.
+- Fixed manual-run Jinja rendering. The original `dag_run.conf.get('date', data_interval_end...)` eagerly evaluated a default even when a date was supplied, while Airflow 3 manual runs have no data interval. A conditional now evaluates the fallback only when needed. Attempts 1 and 2 retain the template error; attempt 3 succeeded after correction.
 
-Échéances communiquées : rendu le 4 novembre, oral le 6 novembre à 13 h Paris. L'heure limite de remise n'a pas pu être vérifiée : aucune URL/session de la plateforme pédagogique identifiée ici ; vérifier sur cette plateforme avant l'envoi final.
+### Results (evidence timestamps are UTC)
 
-## Exécution réelle Docker/Airflow : PC de Jérémy, 4 novembre 2026, 17 h 05 à 17 h 10 (Paris)
-
-Docker Desktop 29.9.2 (moteur Linux) sous Windows, Airflow 3.3.2 standalone du TD, procédure `airflow/README.md`. Le blocage précédent ne venait que de l'accès de l'assistant au daemon Docker sur le poste de Matis.
-
-### Préparation pour que tout poste du groupe puisse lancer le pipeline
-
-- Snapshots `source/real/` partagés dans le dépôt privé (commit 0577f62, Matis). Sous Windows, Git convertissait les fins de ligne : 14 fichiers sur 19 n'avaient plus l'empreinte du manifeste alors que les versions dans Git étaient justes. Ajout de `.gitattributes` (aucune conversion pour les données sources, commit 8cf1f97) ; contrôle : 19/19 empreintes identiques au manifeste.
-- Base source : service `source-db` ajouté au Compose (postgres:16.4, méthode de `docker-compose-databases.yml` du pack 04, identifiants de labo jetables, port 5433 limité à localhost) et service ponctuel `catalog-seed` qui exécute le chargeur existant `source/03_load_real_catalog.py` : `CATALOGUE_OK rows=6 distinct_imdb=6 changed=6`. Plus besoin d'un PostgreSQL installé ni d'un mot de passe personnel.
-- DAG : `PGPORT` transmis aux jobs et `extra_hosts host.docker.internal` (portabilité hors Docker Desktop).
-- Correction du DAG : le premier run manuel échouait au rendu du template (`dag_run.conf.get('date', data_interval_end...)`). La valeur par défaut d'un `get` est évaluée même quand la date est fournie, et un run manuel Airflow 3 n'a pas d'intervalle de données. Remplacé par une condition évaluée seulement si la date manque. Les tentatives 1 et 2 de ce run gardent l'erreur dans leurs journaux ; la tentative 3, après correction, a réussi.
-
-### Résultats (horaires UTC dans les preuves)
-
-| Run | Jour traité | Résultat | Durée | Détail vérifié dans les journaux |
+| Run | Processed day | Result | Duration | Verified log details |
 | --- | --- | --- | --- | --- |
-| `scheduled__2026-11-04T05:00:00+00:00`, créé automatiquement à la réactivation du DAG (cron 06 h Paris, catchup désactivé) | 2026-11-03 (veille) | échec attendu | 1 min 35 s | Ingestion réussie : catalogue 6 mises à jour sans changement de valeur (horodatages du nouveau conteneur source), 6 lots identiques à l'étape 5, 0 nouvelle ligne. `check_sources` en échec à 3 tentatives (2 retries) : « No simulated sessions for requested UTC day ». `dbt_build` et `publish_daily_usage` en upstream_failed : rien n'est publié. Callback exécuté : « ALERT NOT DELIVERED: missing ALERT_WEBHOOK_URL ». |
-| `demo_20261101_run1`, manuel `{"date":"2026-11-01"}` | 2026-11-01 | succès | 1 min 04 s (tentative réussie) | 6 lots, mêmes batch_id qu'à l'étape 5, 0 nouvelle ligne ; catalogue 0 extraction ; `SOURCE_CHECKS_PASS` ; freshness 2/2 ; `dbt build` PASS=33 WARN=0 ERROR=0 ; `MERGE_PUBLISHED 2026-11-01 13 177.400000`. |
-| `demo_20261101_run2_replay`, même date | 2026-11-01 | succès | 1 min 01 s | Mêmes contrôles, 0 nouvelle ligne, build 33/33, publication mise à jour sur la même ligne. |
+| `scheduled__2026-11-04T05:00:00+00:00`, automatically created when the DAG was enabled (06:00 Paris, catchup disabled) | 2026-11-03 | Expected failure | 1 min 35 s | Ingestion succeeded: six catalog timestamp updates from the new source container, unchanged values; six identical step 5 batches, zero added rows. `check_sources` failed on all three attempts: “No simulated sessions for requested UTC day”. Build/publication were upstream_failed, with nothing published. Callback: “ALERT NOT DELIVERED: missing ALERT_WEBHOOK_URL”. |
+| `demo_20261101_run1`, manual `{"date":"2026-11-01"}` | 2026-11-01 | Success | 1 min 04 s for the successful attempt | Six batches with step 5 batch IDs; zero added rows/catalog extraction; `SOURCE_CHECKS_PASS`; freshness 2/2; build PASS=33 WARN=0 ERROR=0; `MERGE_PUBLISHED 2026-11-01 13 177.400000`. |
+| `demo_20261101_run2_replay`, same date | 2026-11-01 | Success | 1 min 01 s | Same checks; no added rows; build 33/33; publication updated the same row. |
 
-Contrôle Snowflake indépendant après les runs : `SIDEFLIX.LAB.DAILY_USAGE` contient une seule ligne pour le 2026-11-01 (13 sessions, 177,4 minutes, run_id du rejeu) et aucune date en double. Valeur attendue calculée indépendamment (`source/v2/expected_daily_usage.csv`) : 13 sessions, 177,4 minutes. Volumes Bronze inchangés.
+Independent Snowflake read after the runs: SIDEFLIX.LAB.DAILY_USAGE contains exactly one row for 1 November (13 sessions, 177.4 minutes, replay run_id), with no duplicate dates. This matches `source/v2/expected_daily_usage.csv`. Bronze volumes remain unchanged.
 
-Échéance de 07 h : un run complet dure environ 1 minute pour un déclenchement à 06 h Paris. Mesure locale sur une seule journée simulée, sans contention.
+The 07:00 target is consistent with an approximately one-minute run scheduled at 06:00 Paris. This is a local measurement on one simulated day without contention, not a production SLA proof.
 
-### Statut des sous-étapes
+### Validated substeps
 
-- 8.1 images testées : `sideflix-ingest:1.0.0` et `sideflix-dbt:1.0.0` construites et exécutées par Airflow, jobs non-root.
-- 8.2 Airflow démarré avec le Compose du TD, `list-import-errors` : aucune erreur.
-- 8.3 dépendances ingest, check, build puis publish respectées ; le contrôle bloque la suite en cas d'échec.
-- 8.5 publication par MERGE : une ligne par date après rejeu.
-- 8.4 planning (cron 06 h Europe/Paris, catchup désactivé, un run à la fois), retries (3 tentatives observées) et journaux prouvés ; alerte réellement reçue sur Slack : voir la section suivante.
+- 8.1: images `sideflix-ingest:1.0.0` and `sideflix-dbt:1.0.0` built and executed by Airflow; non-root jobs.
+- 8.2: lab Compose started; `list-import-errors` returned no errors.
+- 8.3: ingest → check → build → publish dependencies respected; checks block downstream tasks on failure.
+- 8.5: MERGE publication retains one row per date after replay.
+- 8.4: 06:00 Europe/Paris schedule, catchup disabled, one active run, three observed attempts (two retries), logs and actual Slack delivery verified below.
 
-### Limites
+### Limitations and later follow-up
 
-Sur ce poste, les jobs utilisent l'utilisateur de service Snowflake existant de Jérémy (`REDGRAVE_AIRFLOW`, rôle SYSADMIN imposé par les scripts) ; un utilisateur dédié à moindre privilège relève de l'étape 10. Le conteneur Airflow tourne en root (exception du TD pour le socket Docker). Les sessions simulées s'arrêtent au 1er novembre : un run planifié pour une autre journée échoue volontairement. Effet de bord constaté : à chaque run, le collecteur réécrit les horodatages de contrôle de `source/sources_manifest.csv` et `source/catalog_real.csv` dans le dépôt monté (empreintes inchangées, 19/19). Ces fichiers ont été remis à la version du dépôt après vérification ; à terme, écrire ces horodatages dans `airflow/work` éviterait de modifier des fichiers suivis par Git.
+These step 8 runs used Jérémy's existing `REDGRAVE_AIRFLOW` user with SYSADMIN as then required by the scripts. Dedicated least-privilege execution was subsequently verified in step 10. Airflow itself runs as root for Docker socket access, following the lab exception. Simulated sessions end on 1 November; scheduled runs for absent dates intentionally fail.
 
-### Preuves
+The collector rewrites check timestamps in the mounted tracked files `source/sources_manifest.csv` and `source/catalog_real.csv`. Their values/checksums were checked (19/19) and timestamp-only changes restored after these runs. Moving those operational timestamps to `airflow/work` would avoid tracked-file changes.
 
-- `airflow_8_v2_windows_runs.txt` : versions, images, services Compose, absence d'erreur d'import, planification, états et horaires des tâches des trois runs.
-- `airflow_8_v2_windows_task_logs.txt` : extraits des journaux de chaque tentative (erreur de template corrigée, lots, contrôles, build, publication, callback).
-- `pipeline_8_v2_airflow_publication.txt` : contrôle Snowflake en lecture seule après les runs.
+Actual run evidence:
 
-## 8.4 : échec final notifié sur Slack, 4 novembre 2026, 17 h 31 (Paris)
+- `airflow_8_v2_windows_runs.txt`: versions, images, services, import check, scheduling, task states/times.
+- `airflow_8_v2_windows_task_logs.txt`: attempt logs, corrected template error, batches, checks, build, publication and callback.
+- `pipeline_8_v2_airflow_publication.txt`: independent read-only Snowflake verification.
 
-Canal `#sideflix-alertes` de l'espace Slack du groupe, application « Sideflix Airflow » avec un Incoming Webhook (méthode du pack 07 : `on_failure_callback` qui poste un JSON `{"text": ...}`). L'URL est saisie par Jérémy dans `airflow/.env`, exclu de Git ; elle n'apparaît dans aucun fichier versionné ni dans les journaux.
+## 8.4 — actual final failure delivered to Slack, 4 November, 17:31 Paris
 
-Échec réel provoqué : run manuel `alert_test_20261103` avec `{"date":"2026-11-03"}`, journée sans sessions simulées. L'ingestion réussit (6 lots identiques, 0 ligne), `check_sources` échoue à ses 3 tentatives (« No simulated sessions for requested UTC day »), build et publication passent en upstream_failed, donc rien n'est publié. Après la dernière tentative, le callback journalise `ALERT_DELIVERED_HTTP 200`.
+Group channel `#sideflix-alertes`, application “Sideflix Airflow”, Incoming Webhook using pack 07's `on_failure_callback` with JSON `{"text": ...}`. Jérémy entered the URL in ignored `airflow/.env`; it is absent from tracked files and logs.
 
-Réception confirmée à 17 h 32 dans le canal : « Sideflix sideflix_daily.check_sources FAILED, run alert_test_20261103, attempt 3; logs: http://localhost:8080/dags/sideflix_daily/runs/alert_test_20261103/tasks/check_sources?try_number=3 ».
+Actual failing manual run: `alert_test_20261103`, configuration `{"date":"2026-11-03"}`, a day without simulated sessions. Ingestion succeeded (six identical batches, no rows); `check_sources` failed on all three attempts. Build and publication were upstream_failed, so nothing was published. After the final attempt the callback logged `ALERT_DELIVERED_HTTP 200`.
 
-Preuves : `airflow_8_4_alerte_slack.txt` (états, extraits de journaux sans secret) et `slack_8_4_alerte_recue.png` (capture du message reçu).
+Receipt was confirmed at 17:32 in the channel: Sideflix `sideflix_daily.check_sources` FAILED, run `alert_test_20261103`, attempt 3, with the local task-log link.
 
-Pour un autre poste : l'URL est transmise en message privé et collée dans son propre `airflow/.env`.
-
+Evidence: `airflow_8_4_alerte_slack.txt` (states and secret-free log excerpts) and `slack_8_4_alerte_recue.png` (received-message screenshot). Other group workstations configure their own private `airflow/.env` with the webhook, shared privately.

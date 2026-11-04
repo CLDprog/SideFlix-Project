@@ -1,5 +1,5 @@
-# Profil Workspaces du TD 3.2 : utilise la session Snowflake courante.
-# Ce profil sans secrets est reserve a dbt Projects on Snowflake.
+# TD 3.2 Workspaces profile: uses the current Snowflake session.
+# This credential-free profile is only for dbt Projects on Snowflake.
 sideflix:
   target: dev
   outputs:

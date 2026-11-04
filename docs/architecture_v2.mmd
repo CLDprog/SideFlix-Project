@@ -1,21 +1,21 @@
 flowchart LR
   subgraph SRC["Sources"]
-    FILES["Fichiers réels<br/>IMDb, MovieLens, Netflix Top 10"]
-    SESS["Sessions Sideflix SIMULÉES<br/>JSON, 32 lignes"]
-    PG[("PostgreSQL source-db<br/>catalogue IMDb, 6 contenus")]
-    API["API réelles<br/>Wikidata, Wikimedia"]
+    FILES["Real files: IMDb, MovieLens, Netflix Top 10"]
+    SESS["SIMULATED Sideflix sessions: JSON, 32 rows"]
+    PG[("PostgreSQL source-db: IMDb catalogue, 6 titles")]
+    API["Real APIs: Wikidata, Wikimedia"]
   end
-  subgraph ING["Ingestion Python, image Docker sideflix-ingest"]
-    C["PUT, stage, COPY INTO<br/>TD 2 partie A"]
-    W["Watermark + MERGE<br/>TD 2 partie B"]
-    R["requests, JSON en VARIANT<br/>pack 05"]
+  subgraph ING["Python ingestion: sideflix-ingest Docker image"]
+    C["PUT, stage, COPY INTO: TD 2 part A"]
+    W["Watermark + MERGE: TD 2 part B"]
+    R["requests, JSON in VARIANT: pack 05"]
   end
-  subgraph SF["Snowflake, AWS eu-west-3, warehouse SIDEFLIX_WH (X-Small)"]
-    B["Bronze<br/>brut + lot, fichier, horodatage"]
-    S["Silver, dbt<br/>9 vues, quarantaine, dédoublonnage"]
-    T{{"21 tests dbt bloquants<br/>+ fraîcheur des sources"}}
-    G["Gold, dbt<br/>GOLD_CONTENT_DAILY<br/>GOLD_EDITORIAL_WEEKLY"]
-    P["LAB.DAILY_USAGE<br/>publication par MERGE"]
+  subgraph SF["Snowflake: AWS eu-west-3, SIDEFLIX_WH warehouse, X-Small"]
+    B["Bronze: raw data, batch, file, timestamp"]
+    S["Silver, dbt: 9 views, quarantine, deduplication"]
+    T{{"21 blocking dbt tests + source freshness"}}
+    G["Gold, dbt: GOLD_CONTENT_DAILY and GOLD_EDITORIAL_WEEKLY"]
+    P["LAB.DAILY_USAGE: publication by MERGE"]
   end
   FILES --> C
   SESS --> C
@@ -23,11 +23,11 @@ flowchart LR
   PG --> W --> B
   API --> R --> B
   B --> S --> T --> G --> P
-  G --> SN["Snowsight<br/>classement des contenus"]
-  AF["Airflow 3.3, DockerOperator<br/>06 h Paris, 2 retries, 1 run à la fois"] -. "ingest, check, dbt build, publish" .-> ING
-  AF -. "échec final" .-> SL["Slack #sideflix-alertes"]
-  TF["Terraform<br/>SIDEFLIX_WH, state sur GCS privé,<br/>versionné, verrouillé"] -. "infrastructure" .-> SF
-  RB["Rôles : SIDEFLIX_RUNNER (pipeline)<br/>SIDEFLIX_ANALYST (lecture Gold)<br/>moniteur 10 crédits/mois"] -. "accès et budget" .-> SF
+  G --> SN["Snowsight: content ranking"]
+  AF["Airflow 3.3, DockerOperator: 06:00 Paris, 2 retries, 1 active run"] -. "ingest, check, dbt build, publish" .-> ING
+  AF -. "final failure" .-> SL["Slack #sideflix-alertes"]
+  TF["Terraform: SIDEFLIX_WH, private versioned GCS state with locking"] -. "infrastructure" .-> SF
+  RB["SIDEFLIX_RUNNER, SIDEFLIX_ANALYST, 10-credit monthly monitor"] -. "access and budget" .-> SF
   classDef sim fill:#fde7e2,stroke:#b5381f,color:#15171c;
   classDef cloud fill:#e6eef8,stroke:#2563a6,color:#15171c;
   class SESS sim;

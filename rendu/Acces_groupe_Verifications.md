@@ -1,55 +1,41 @@
-# Accès des membres du groupe au compte Snowflake (3 novembre 2026)
+# Group access to the Snowflake account
 
-Session de Jérémy Caillaud, avec assistance de l'IA. Objectif : permettre à Matis et Rayan de reprendre les étapes 6 et 7 (dbt) dans le compte Snowflake où se trouvent les objets Sideflix, sans partager la clé ni le mot de passe de Jérémy.
+3 November 2026, Jérémy Caillaud's AI-assisted session. Purpose: let Matis and Rayan resume dbt steps 6/7 in the Snowflake account containing Sideflix without sharing Jérémy's private key or password.
 
-## Réalisé
+## Initial setup and executed checks
 
-- `ingestion/03_create_team_users.sql`, exécuté dans Snowsight avec ACCOUNTADMIN : utilisateurs `MATIS_DOUAY` et `RAYAN_FAHER_BONNE` (type PERSON, mot de passe temporaire à changer à la première connexion, rôle par défaut SYSADMIN, warehouse `SIDEFLIX_WH`, contexte `SIDEFLIX.BRONZE`), puis `GRANT ROLE SYSADMIN` à chacun.
-- Les mots de passe temporaires ont été saisis uniquement dans la feuille Snowsight au moment de l'exécution ; ils ne figurent dans aucun fichier du projet et ont été transmis par un canal privé.
+Executed `ingestion/03_create_team_users.sql` in Snowsight as ACCOUNTADMIN: users MATIS_DOUAY and RAYAN_FAHER_BONNE, type PERSON, temporary password requiring a first-login change, default SYSADMIN, warehouse SIDEFLIX_WH, context SIDEFLIX.BRONZE; granted SYSADMIN to each. Temporary passwords were entered only in the executing Snowsight worksheet, shared privately and never stored in project files.
 
-## Contrôle effectivement exécuté
-
-| Contrôle | Attendu | Obtenu | Preuve |
+| Check | Expected | Observed | Evidence |
 | --- | --- | --- | --- |
-| Rôle de MATIS_DOUAY | USAGE sur SYSADMIN, accordé par ACCOUNTADMIN | identique | `rendu/snowflake_acces_groupe_show_grants.csv` |
-| Rôle de RAYAN_FAHER_BONNE | USAGE sur SYSADMIN, accordé par ACCOUNTADMIN | identique | idem |
+| MATIS_DOUAY role | USAGE on SYSADMIN, granted by ACCOUNTADMIN | Match | `rendu/snowflake_acces_groupe_show_grants.csv` |
+| RAYAN_FAHER_BONNE role | USAGE on SYSADMIN, granted by ACCOUNTADMIN | Match | Same file |
 
-## À faire par chaque membre
+Each member signs into Snowsight using the central Notion access instructions, changes the password and enables MFA if required. For Python/dbt, each generates their own RSA pair using lab 2 `gen_key.py`, sending **only the public key** to Jérémy for registration with `ALTER USER ... SET RSA_PUBLIC_KEY = '...'`.
 
-1. Se connecter à Snowsight (lien sur la page centrale Notion, section « Accès Snowflake »), changer le mot de passe, activer la MFA si Snowflake la demande.
-2. Pour les scripts Python (étape 5) et dbt (étape 6) : générer sa propre paire de clés avec `gen_key.py` (TD 2) et envoyer **uniquement la clé publique** à Jérémy, qui l'ajoute avec `ALTER USER ... SET RSA_PUBLIC_KEY = '...'`.
+Initial limitations: SYSADMIN exceeds least privilege (C7); limited roles were subsequently implemented and tested in step 10. Users depend on Jérémy's trial account, expected to end around 21 November 2026. Snowsight saves worksheets automatically, so entered temporary passwords must be cleared after execution.
 
-## Limites
+## Matis's RSA registration, 4 November 2026
 
-- SYSADMIN donne plus de droits que nécessaire (critère C7) ; un rôle limité à SIDEFLIX pourra être créé à l'étape 10.
-- Les utilisateurs dépendent du compte d'essai de Jérémy (fin vers le 21 novembre 2026).
-- Les feuilles Snowsight sont enregistrées automatiquement : les mots de passe saisis doivent en être effacés après l'exécution.
+Step 5 scripts use the lab 2B RSA method (`connect_snowflake()` in `incremental_orders.py`). Each member keeps their own private key; private keys are never circulated.
 
-## Mise à jour du 4 novembre 2026 : clé de Matis pour les scripts de l'étape 5
+1. Matis generated a pair with the original lab 2 `gen_key.py` in a local directory outside all repositories. Only the ALTER USER command containing the **public** key and expected fingerprint was posted to the step 5 Notion page.
+2. Before execution, the fingerprint recalculated from the public key (SHA-256 of DER, base64 encoded) matched Matis's announcement; valid 2048-bit RSA. Both key slots in `DESC USER MATIS_DOUAY` were empty, so no existing key was overwritten.
+3. At 14:49 UTC on 4 November, at Jérémy's request, his workstation executed `ALTER USER MATIS_DOUAY SET RSA_PUBLIC_KEY = '<Matis public key>'` as ACCOUNTADMIN through service-user key authentication, then DESC USER.
 
-Contexte : l'étape 5 est reprise par Matis. Les scripts Python d'ingestion se connectent par paire de clés RSA (méthode du TD 2, partie B, `connect_snowflake()` de `incremental_orders.py`). Option retenue par le groupe : chaque membre utilise sa propre clé, aucune clé privée ne circule.
-
-Déroulé :
-
-1. Matis a généré sa paire avec le script original `gen_key.py` du TD 2 (Cours 2, `onprem-to-snowflake`), dans un dossier local hors des dépôts. Il a publié sur la fiche Notion de l'étape 5 uniquement la commande `ALTER USER` contenant la clé **publique** et l'empreinte attendue.
-2. Contrôle avant exécution : l'empreinte recalculée à partir de la clé publique (SHA-256 de la clé DER, encodée en base64) est identique à celle annoncée par Matis ; clé RSA 2048 bits valide. `DESC USER MATIS_DOUAY` : les deux emplacements `RSA_PUBLIC_KEY_FP` et `RSA_PUBLIC_KEY_2_FP` étaient vides, donc rien n'est écrasé.
-3. Enregistrement le 4 novembre 2026 à 14:49 UTC, sur demande de Jérémy, depuis son poste avec le rôle ACCOUNTADMIN (connexion par clé de l'utilisateur de service, sans mot de passe) : `ALTER USER MATIS_DOUAY SET RSA_PUBLIC_KEY = '<clé publique de Matis>'`, puis `DESC USER MATIS_DOUAY`.
-
-| Contrôle | Attendu | Obtenu | Preuve |
+| Check | Expected | Observed | Evidence |
 | --- | --- | --- | --- |
-| Emplacements de clé avant | vides | `null` / `null` | `rendu/snowflake_cle_matis_verification.txt` |
-| `ALTER USER` | exécuté | `Statement executed successfully.` | idem |
-| `RSA_PUBLIC_KEY_FP` après | `SHA256:CsUD4fP1ZdhtvytG5im9rjZNic8oH/J0e7ix3s4aFk8=` | identique | idem |
-| `RSA_PUBLIC_KEY_2_FP` après | inchangé | `null` | idem |
+| Key slots before | Empty | null / null | `rendu/snowflake_cle_matis_verification.txt` |
+| ALTER USER | Executed | Statement executed successfully | Same file |
+| RSA_PUBLIC_KEY_FP after | `SHA256:CsUD4fP1ZdhtvytG5im9rjZNic8oH/J0e7ix3s4aFk8=` | Match | Same file |
+| RSA_PUBLIC_KEY_2_FP after | Unchanged | null | Same file |
 
-Reste à faire par Matis : définir `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER=MATIS_DOUAY` et `SNOWFLAKE_PRIVATE_KEY_FILE` sur son poste, puis lancer `python ingestion/check_connection.py` (attendu : MATIS_DOUAY, SYSADMIN, SIDEFLIX_WH, SIDEFLIX.BRONZE). Tant que ce test n'est pas fait, la connexion de Matis n'est pas déclarée réussie.
+Required local variables are SNOWFLAKE_ACCOUNT, SNOWFLAKE_USER=MATIS_DOUAY and SNOWFLAKE_PRIVATE_KEY_FILE. Registration alone did not prove the client connection; the actual check below did. Rotation/removal if needed: `ALTER USER MATIS_DOUAY UNSET RSA_PUBLIC_KEY;` as ACCOUNTADMIN.
 
-Rotation ou retrait : `ALTER USER MATIS_DOUAY UNSET RSA_PUBLIC_KEY;` (ACCOUNTADMIN), par exemple si la clé privée est perdue ou exposée.
+## Actual Python connection, 4 November 2026
 
-## Test réel Python de Matis — 4 novembre 2026
+Reused the existing key without rotation. RSA connection succeeded: MATIS_DOUAY / SYSADMIN / SIDEFLIX_WH / SIDEFLIX.BRONZE. Before V2 ingestion: CATALOG=6, SESSIONS_RAW=32, LOAD_RUNS=3. Raw evidence: `python_connexion_matis.txt`.
 
-Clé existante réutilisée, aucune rotation. Connexion RSA réussie : MATIS_DOUAY / SYSADMIN / SIDEFLIX_WH / SIDEFLIX.BRONZE ; CATALOG=6, SESSIONS_RAW=32, LOAD_RUNS=3 avant ingestion v2. Sortie brute : python_connexion_matis.txt.
+The first system-connector 5.1.0 attempt was stopped by automatic review because cloud-platform detection tried 169.254.169.254. Correction: isolated `.venv`, pack connector 4.8.0, explicit SNOWFLAKE_JWT authentication and SNOWFLAKE_DISABLE_PLATFORM_DETECTION=true / AWS_EC2_METADATA_DISABLED=true. Connector code was inspected: this option exits detection before network calls. A local check returned disabled, then the full Snowflake connection passed. No instance credentials are required or used.
 
-Premier essai avec le connecteur système 5.1.0 interrompu par le contrôle automatique à cause d’une tentative de détection cloud via 169.254.169.254. Correction : environnement .venv isolé, connecteur 4.8.0 du pack, authentification SNOWFLAKE_JWT explicite et options SNOWFLAKE_DISABLE_PLATFORM_DETECTION=true / AWS_EC2_METADATA_DISABLED=true. Le code du connecteur a été inspecté : cette option quitte la détection avant les appels réseau ; test local retournant disabled, puis test Snowflake complet réussi. Aucun accès aux identifiants d’instance n’est nécessaire ou utilisé.
-
-Variables et clé privée restent hors Git dans le dossier local Sideflix-Local-Secrets. Dépendances reproductibles : ingestion/requirements.txt ; fuseau de session SQL UTC.
+Variables and private key remain outside Git in local Sideflix-Local-Secrets. Reproducible dependencies: `ingestion/requirements.txt`; SQL session timezone UTC.

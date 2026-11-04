@@ -1,28 +1,28 @@
-# Étape 5 v2 — vérifications réelles du 4 novembre 2026
+# Step 5 V2 — executed checks, 4 November 2026
 
-Statut : terminée. Poste de Matis, utilisateur MATIS_DOUAY, SYSADMIN, SIDEFLIX_WH, contexte SIDEFLIX.BRONZE. Étapes 1–4 vérifiées dans la passation et les preuves existantes ; aucune commande Terraform exécutée.
+Status: completed. Matis's workstation, user `MATIS_DOUAY`, role `SYSADMIN`, warehouse `SIDEFLIX_WH`, context `SIDEFLIX.BRONZE`. Steps 1–4 were checked against the handover and existing evidence. No Terraform command was executed in this step.
 
-## Méthodes et résultats
+## Methods and results
 
-- **5.1 — TD 2B : watermark/MERGE** : `ingestion/incremental_catalog.py` lit le catalogue PostgreSQL réel. Premier passage : 6 lignes mises à jour, 0 insertion, total 6 ; rejeu : 0 extraction et 0 modification. Identifiants IMDb, provenance et métadonnées conservés. Watermark strict `updated_at > MAX(updated_at)` du TD : il suppose des dates de modification fiables et ne traite pas les suppressions.
-- **5.2 — TD 2B : mise à jour contrôlée** : `ingestion/verify_catalog_replay.py` travaille exclusivement sur deux copies LAB. Résultats : 6 insertions, rejeu 0, modification d'un titre 1 update, restauration 1 update, dernier rejeu 0. Comparaison intégrale avant/après : catalogues réels PostgreSQL et Snowflake inchangés. La première tentative du contrôle a échoué car la table de test PostgreSQL n'était pas encore commitée ; corrigé en exécutant les DDL hors transaction englobante. Aucun changement aux données réelles.
-- **5.3 — TD 2A et pack 05** : `ingestion/load_sessions.py` charge fichiers par PUT/stage/COPY et appelle réellement les deux APIs avec le collecteur `requests` existant, puis PARSE_JSON/VARIANT. Les réponses reçues sont sauvegardées dans `source/real/api_runs/`, d’abord hors Git puis versionnées dans ce dépôt privé depuis le commit 0577f62. L'identité IMDb des six entités et les sept jours par article sont vérifiés. MERGE des réponses sur lot/URL pour éviter les doublons.
-- **5.4 — réconciliation et rejeu** : `ingestion/verify_bronze_v2.py`. Empreintes de tous les fichiers du manifeste initial inchangées. Les APIs sont de nouveaux appels, distingués de ces anciens snapshots par leurs propres empreintes de lot. Chaque ligne a SOURCE_SYSTEM, _BATCH_ID, _source_file et _loaded_at (session UTC), reliés au journal PUBLIC_SOURCE_RUNS. Rejeu des fichiers et des réponses exactes : zéro nouvelle ligne sur les six lots. COPY effectivement rejoué sans FORCE : « 0 files processed » pour les quatre lots fichiers. Grains/clés uniques vérifiés ci-dessous.
+- **5.1 — lab 2B, watermark/MERGE:** `ingestion/incremental_catalog.py` reads the real PostgreSQL catalog. First pass: six updates, no inserts, total six; replay: no extracted rows or changes. IMDb identity, provenance and metadata are retained. The lab's strict `updated_at > MAX(updated_at)` watermark requires reliable modification timestamps and does not handle deletes.
+- **5.2 — lab 2B, controlled update:** `ingestion/verify_catalog_replay.py` works exclusively on two LAB copies. Results: six inserts, replay zero, title change one update, restoration one update, final replay zero. Full before/after comparisons show the real PostgreSQL and Snowflake catalogs unchanged. The first check failed because the PostgreSQL test table was not committed; executing DDL outside the surrounding transaction corrected it. Real data was unchanged.
+- **5.3 — lab 2A and pack 05:** `ingestion/load_sessions.py` loads files through PUT/stage/COPY and actually calls both APIs through the existing `requests` collector, then uses PARSE_JSON/VARIANT. Responses are saved under `source/real/api_runs/`, initially outside Git and versioned in the private repository from commit `0577f62`. IMDb identity for all six entities and seven days per article are checked. Responses are merged by batch/URL to prevent duplicates.
+- **5.4 — reconciliation and replay:** `ingestion/verify_bronze_v2.py`. All original manifest checksums remain unchanged. New API calls have their own batch hashes, distinct from earlier snapshots. Every row has SOURCE_SYSTEM, _BATCH_ID, _source_file and _loaded_at (UTC session), linked to PUBLIC_SOURCE_RUNS. Exact file/response replay adds zero rows across six batches. COPY was actually replayed without FORCE: “0 files processed” for the four file batches. Grain/key uniqueness checks are listed below.
 
-| Source | Grain chargé et volume vérifié | Méthode |
+| Source | Loaded grain and verified volume | Method |
 | --- | --- | --- |
-| IMDb | 6 œuvres, 6 tconst distincts | PUT/COPY, sélection de six lignes du fichier source |
-| MovieLens | 6 films + 6 liens + 74 notes uniques userId/movieId = 86 lignes | PUT/COPY, sous-ensemble réel lié au mapping |
-| Netflix Top 10 | 3 lignes uniques semaine/catégorie/titre/saison pour Sicario/Get Out | PUT/COPY ; seul Sicario est confirmé dans le mapping, les autres correspondances restent non jointes |
-| Wikidata | 6 réponses, 6 URLs distinctes | API réelle → VARIANT |
-| Wikimedia | 6 réponses, 42 observations article/jour distinctes, 26/10–01/11/2026 | API réelle → VARIANT |
-| Sessions Sideflix **simulées** | 32 lignes, 31 session_id distincts, 1 durée négative | PUT/COPY ; ne compte pas parmi les cinq jeux réels |
+| IMDb | Six works, six distinct tconst identifiers | PUT/COPY, six authentic rows selected from the source file |
+| MovieLens | Six movies + six links + 74 unique userId/movieId ratings = 86 rows | PUT/COPY, authentic subset selected through the mapping |
+| Netflix Top 10 | Three unique week/category/title/season rows for Sicario/Get Out | PUT/COPY; only Sicario is confirmed in the mapping, other matches remain unjoined |
+| Wikidata | Six responses, six distinct URLs | Live API → VARIANT |
+| Wikimedia | Six responses, 42 distinct article/day observations, 26 October–1 November 2026 | Live API → VARIANT |
+| **Simulated** Sideflix sessions | 32 rows, 31 distinct session_id values, one negative duration | PUT/COPY; excluded from the five authentic datasets |
 
-Bronze SESSIONS_RAW conserve aussi les 32 lignes du prototype. Les 32 lignes v2 sont identifiées par SOURCE_SYSTEM=sessions_simulated et leur lot ; dbt v2 devra filtrer ce périmètre avant dédoublonnage. Les autres archives restent en LAB. Le journal enregistre également les rejeux réussis avec 0 ligne chargée ; il n'est pas censé garder un nombre fixe d'exécutions.
+Bronze SESSIONS_RAW also retains the prototype's 32 rows. V2 rows are identified by `SOURCE_SYSTEM=sessions_simulated` and their batch; V2 dbt filters this scope before deduplication. Other archives remain in LAB. The journal also records successful zero-row replays, so its execution count is not fixed.
 
 ## Reproduction
 
-Depuis la racine, avec les variables Snowflake/RSA et PG* configurées localement :
+From the repository root, with local Snowflake/RSA and PG* variables configured:
 
 ```sh
 python -m venv .venv
@@ -35,14 +35,14 @@ python -m venv .venv
 .venv/bin/python ingestion/verify_bronze_v2.py
 ```
 
-Le rejeu exact utilise les réponses `api_runs`, versionnées dans ce dépôt depuis le commit 0577f62 (voir `source/README.md`) ; à défaut, effectuer une collecte réelle et produire un nouveau reçu, sans prétendre retrouver le snapshot précédent. Les nouveaux snapshots peuvent différer et doivent être documentés. Aucun secret versionné. Connector 4.8.0 et cryptography 46.0.5 comme dans le pack ; détection de plateforme explicitement désactivée avant import (voir preuve d'accès), aucun accès aux métadonnées d'instance nécessaire.
+Exact replay uses the `api_runs` responses versioned from commit `0577f62` (see `source/README.md`). If unavailable, perform a live collection and create a new receipt rather than claiming to reproduce the previous snapshot. New snapshots may differ and must be documented. No secrets are versioned. Connector 4.8.0 and cryptography 46.0.5 match the pack. Platform detection is disabled before import (see access evidence); instance-metadata access is unnecessary.
 
-## Preuves brutes
+## Raw evidence
 
 - `python_connexion_matis.txt`
 - `python_5_v2_catalog_initial.txt`, `python_5_v2_catalog_replay.txt`, `python_5_v2_catalog_lab.txt`
 - `python_5_v2_sources_initial.txt`, `python_5_v2_sources_replay.txt`
-- `ingestion_v2_initial.json`, `ingestion_v2_replay.json` : lots et attendus, aucune donnée privée
-- `python_5_v2_reconciliation.txt` : tous les contrôles réussis
+- `ingestion_v2_initial.json`, `ingestion_v2_replay.json`: batches and expectations, no private data
+- `python_5_v2_reconciliation.txt`: all checks passed
 
-Suite : étape 6, adapter et exécuter dbt sur ces données v2 ; les anciens résultats dbt restent historiques.
+The subsequent step 6 report records adaptation and execution of dbt on V2 data. Earlier dbt results are historical.

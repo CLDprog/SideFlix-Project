@@ -1,16 +1,16 @@
-# Étape 3.2 v2 — vérifiée en PostgreSQL local
+# Step 3.2 V2 — verified in local PostgreSQL
 
-Chargement réel exécuté avec source/03_load_real_catalog.py, base sideflix sur 127.0.0.1. Six films réels, six identifiants IMDb distincts, durées positives et provenance imdb. Ancien catalogue (six contenus fictifs) conservé dans lab.catalog_reference ; anciens fichiers intacts.
+The real load used `source/03_load_real_catalog.py`, database `sideflix` on `127.0.0.1`. It produced six real movies with six distinct IMDb identifiers, positive runtimes and `imdb` provenance. The earlier catalog of six fictional items was retained in `lab.catalog_reference`; the original files were unchanged at this step.
 
-Premier passage : six mises à jour. Rejeu : zéro modification et updated_at identiques. Clé primaire et durée positive vérifiées par tentatives rejetées puis annulées. Trigger updated_at vérifié sur une modification annulée par ROLLBACK. Aucun contenu de test persistant.
+First pass: six updates. Replay: zero changes and identical `updated_at` values. Primary key and positive-runtime constraints were checked with rejected attempts followed by rollback. The `updated_at` trigger was checked with a change rolled back using `ROLLBACK`. No test data persisted.
 
-Les données ne sont pas encore chargées dans Snowflake. Chaque membre reproduit le chargement sur sa base locale selon le TD.
+At this historical step, the data had not yet been loaded into Snowflake; the subsequent step 5 report records that load. Each member can reproduce the local load as in the lab.
 
-Catalogue vérifié :
+Verified catalog:
 
-- A : Whiplash, 6360 secondes, tt2582802
-- B : Moonlight, 6660 secondes, tt4975722
-- C : Frances Ha, 5160 secondes, tt2347569
-- D : Room, 7080 secondes, tt3170832
-- E : Sicario, 7260 secondes, tt3397884
-- F : Get Out, 6240 secondes, tt5052448
+- A: Whiplash, 6,360 seconds, `tt2582802`
+- B: Moonlight, 6,660 seconds, `tt4975722`
+- C: Frances Ha, 5,160 seconds, `tt2347569`
+- D: Room, 7,080 seconds, `tt3170832`
+- E: Sicario, 7,260 seconds, `tt3397884`
+- F: Get Out, 6,240 seconds, `tt5052448`

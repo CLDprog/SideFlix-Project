@@ -8,7 +8,7 @@ The `SIDEFLIX_WH` warehouse was created by the TD 4.2 module (X-Small, auto-susp
 - Private bucket (public access blocked, uniform access), versioning enabled; native GCS backend locking (`sideflix/default.tflock`).
 - Migrated from Jérémy's actual state, same lineage; `terraform plan -detailed-exitcode` = 0 after migration. Evidence: `rendu/Etape_4_2_V2_Verifications.md`.
 - Snowflake stays on AWS; Google Cloud only holds this state file.
-- `backend.tf.example` keeps the S3 variant prepared earlier (not adopted: no AWS access).
+- The active backend is GCS only; an unused S3 draft has been removed from the final delivery.
 
 ## Running Terraform
 

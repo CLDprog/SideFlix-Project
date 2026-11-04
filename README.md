@@ -1,6 +1,22 @@
-# Sideflix: a data pipeline for an independent streaming platform
+# Sideflix — Data Engineering & Cloud Infrastructure
 
-"Oral Defense" project for the Data Engineering & Cloud Infrastructure course, Albert School, group 6: Matis Douay, Jérémy Caillaud, Rayan Faher Bonne. Oral defense on 6 November 2026.
+Albert School · Group 6: Matis Douay, Jérémy Caillaud, Rayan Faher Bonne. Oral defense: **6 November 2026, 13:00 Europe/Paris**.
+
+## Submission files
+
+| Required deliverable | Open here |
+| --- | --- |
+| Presentation — 21 slides, English | [Sideflix Oral Defense](deliverables/Sideflix_Oral_Defense.pptx) |
+| Architecture | [Full diagram](docs/architecture_v2.png) · [Choices and data flows](docs/architecture_v2.md) |
+| Git repository with README and reproducible code | This repository; setup below |
+| Pipeline video — mandatory, not graded | [Original Airflow recording, 1 min 21 s](deliverables/Sideflix_pipeline.mov) · [Final-task completion evidence](rendu/video_run_verification.json) |
+| Optional execution evidence | [Evidence index: requirements, runs, versions](rendu/INDEX_PREUVES.md) |
+| Gold results | [Snowsight table and chart](rendu/Restitution_Snowsight.md) · [SQL](docs/snowsight_rayan.sql) |
+| dbt documentation and lineage | [Documentation](docs/dbt/README.md) · [Lineage image](docs/dbt_lineage.png) |
+
+The video shows the actual Airflow execution. Its last frame still shows publication running; the unmodified logs of that same run prove successful completion. The video and saved evidence **do not replace the live oral demonstration**. [Live demonstration checklist](docs/conducteur_oral.md).
+
+This repository is private. Its owner must grant the teacher access before submission. No Snowflake login or private key is needed to read the submitted evidence. [Final audit and remaining human actions](docs/DELIVERY_AUDIT.md).
 
 ## The business need
 
@@ -45,11 +61,22 @@ The **Sideflix sessions are simulated** (`source/v2/sessions/`, 32 rows over thr
 
 ## Running the pipeline
 
-Prerequisites: Docker Desktop, Python 3.11 or later, a Snowflake account with an RSA key pair per user (`gen_key.py` from TD 2), a Slack webhook (Incoming Webhook) for alerts, Terraform 1.9 or later and access to the state's GCS bucket for any Terraform operation.
+Prerequisites: Docker Desktop; a Snowflake account and an RSA key belonging to its user; an alert webhook supplied privately. Python 3.11+ is needed for local verification/dbt. Terraform 1.9+ and access to the existing GCS state are needed only for infrastructure operations. Use the recorded versions in the evidence index for exact reproduction.
 
-1. **Snowflake objects** (once): `ingestion/00_create_sideflix_objects.sql` (database and schemas, SYSADMIN role), `terraform init` then `terraform plan` in `terraform/` (warehouse; see `terraform/README.md`), `ingestion/01_bronze_setup.sql` then `ingestion/04_bronze_v2_setup.sql` (Bronze), and as ACCOUNTADMIN `governance/10_admin_setup.sql` then `governance/10b_pipeline_user.sql` (roles, monitor, service user).
-2. **Private configuration**: copy `airflow/.env.example` to `airflow/.env` and fill in the account, the user (`SIDEFLIX_PIPELINE`), the folder holding its key, the absolute paths of the repository and of `airflow/work`, and the webhook URL. This file is never committed.
-3. **Images and services**:
+### 1. Bootstrap once — administrator, separate from runtime
+
+On an **existing team account**, retain the existing state and objects; do not recreate or replace them. On a new account:
+
+1. Run [`ingestion/00_create_sideflix_objects.sql`](ingestion/00_create_sideflix_objects.sql) as SYSADMIN.
+2. Configure Terraform using [`terraform/README.md`](terraform/README.md). Review its plan and apply only an intended new warehouse. For the team's existing warehouse, use its real shared state; never apply from an empty state.
+3. Run [`ingestion/01_bronze_setup.sql`](ingestion/01_bronze_setup.sql), then [`ingestion/04_bronze_v2_setup.sql`](ingestion/04_bronze_v2_setup.sql) as SYSADMIN. These create Bronze and the publication/audit tables required by subsequent grants.
+4. As ACCOUNTADMIN, follow [`governance/README.md`](governance/README.md): roles/monitor in `10_admin_setup.sql`, then the service user in `10b_pipeline_user.sql`. Associate its public RSA key privately. Administrative roles are not pipeline runtime roles.
+
+### 2. Private runtime configuration
+
+Copy `airflow/.env.example` to `airflow/.env`. Fill in the Snowflake account/user, absolute repository/work/key-directory paths, webhook and host UID/GID. The runtime role is **SIDEFLIX_RUNNER**. The dedicated service user is `SIDEFLIX_PIPELINE`; each member may instead use their own authorized user and own key. Never copy someone else's private key or commit `.env`.
+
+### 3. Build and start — repository root
 
 ```sh
 docker build -f docker/ingestion.Dockerfile -t sideflix-ingest:1.0.0 .
@@ -58,43 +85,72 @@ docker compose -f airflow/docker-compose.yml up -d --build
 docker compose -f airflow/docker-compose.yml exec airflow /entrypoint airflow dags list-import-errors
 ```
 
-4. **Demo run**: at http://localhost:8080, enable `sideflix_daily` and trigger it with the configuration `{"date":"2026-11-01"}` (or `airflow dags trigger sideflix_daily --conf '{"date":"2026-11-01"}'` via `/entrypoint`). The simulated sessions cover 30 October to 1 November: a scheduled run for any other day deliberately fails at the source check, without publishing anything.
-5. **Check** in Snowsight:
+Compose creates/seeds the local PostgreSQL catalogue. Use only **one active group Airflow scheduler** against the shared account. Open [Airflow](http://localhost:8080), enable `sideflix_daily`, and trigger with:
 
-```sql
-SELECT usage_date, SUM(valid_sessions) AS sessions, SUM(minutes_watched) AS minutes
-FROM SIDEFLIX.GOLD.GOLD_CONTENT_DAILY WHERE usage_date = '2026-11-01' GROUP BY 1;   -- 13 sessions, 177.4 minutes
-SELECT * FROM SIDEFLIX.LAB.DAILY_USAGE ORDER BY usage_date;                        -- one row per date
-SELECT * FROM SIDEFLIX.GOLD.GOLD_EDITORIAL_WEEKLY ORDER BY editorial_rank;          -- ranking and context
+```json
+{"date":"2026-11-01"}
 ```
 
-The lineage is generated with `dbt docs generate --project-dir dbt/sideflix_dbt --profiles-dir dbt/profiles-core`; graph: [docs/dbt_lineage.png](docs/dbt_lineage.png). Stop, resume and cleanup: [governance/README.md](governance/README.md).
+Or, with a new run ID each time:
 
-## Results and reliability
+```sh
+docker compose -f airflow/docker-compose.yml exec airflow /entrypoint airflow dags trigger sideflix_daily --conf '{"date":"2026-11-01"}'
+```
 
-- **Ranking as of 1 November**: Whiplash on top (7 sessions, 112.7 minutes), ahead of Moonlight, Sicario, Frances Ha, Room and Get Out. The 14 content/day rows are identical to the independent calculation.
-- **Snowsight reporting** (analyst role, read-only on Gold): ranking table with the dated source context, bar chart and daily check (30 sessions, 454.2 minutes over the window). Screenshots and queries: [rendu/Restitution_Snowsight.md](rendu/Restitution_Snowsight.md).
+Four tasks must succeed: `ingest_sources` → `check_sources` → `dbt_build` → `publish_daily_usage`. The three-day simulated input covers **30 October–1 November 2026**. A run for a different day deliberately fails its completeness check and publishes nothing; the live demo must use the explicit date above.
 
-![Minutes watched per content item in Snowsight. Simulated Sideflix viewing, window from 26 October to 1 November 2026, sessions available from 30 October to 1 November](rendu/restitution_snowsight/2_graphique_minutes.jpg)
+### 4. Verify the outputs — read-only
 
-*Simulated Sideflix viewing: analysis window from 26 October to 1 November 2026, sessions available from 30 October to 1 November 2026. The external context (ratings, page views, Top 10) is not counted in minutes.*
+As SIDEFLIX_RUNNER with secondary roles disabled:
 
-- **Quality**: `dbt build` 33/33 (11 models, 21 tests, 1 on-run-end hook), freshness 2/2, reconciliation 32 = 30 valid + 1 quarantined + 1 duplicate.
-- **Replay**: rerunning the same date adds no rows and leaves a single publication per date.
-- **Incident 1**: an invalid `device` value (isolated copy) makes the test fail, blocks Gold and publication, and triggers the Slack alert; recovery by removing only the test batch.
-- **Incident 2**: a crash after the write is caught by the retry; the MERGE keeps a single row per date.
-- **Security**: the pipeline runs as the service user `SIDEFLIX_PIPELINE` with the `SIDEFLIX_RUNNER` role only; the analyst role reads Gold and nothing else; no secrets in Git or in the images.
-- **Costs**: 1.44 credits actually consumed (development and testing included); about 1.5 credits per month projected for a daily run; monitor set to 10 credits per month (alerts at 50% and 80%, stop at 100%).
+```sql
+USE ROLE SIDEFLIX_RUNNER;
+USE SECONDARY ROLES NONE;
+USE WAREHOUSE SIDEFLIX_WH;
+SELECT usage_date, SUM(valid_sessions) AS sessions, SUM(minutes_watched) AS minutes
+FROM SIDEFLIX.GOLD.GOLD_CONTENT_DAILY
+WHERE usage_date = '2026-11-01' GROUP BY 1; -- 13 sessions, 177.4 minutes
+SELECT * FROM SIDEFLIX.LAB.DAILY_USAGE ORDER BY usage_date; -- one row per date
+SELECT * FROM SIDEFLIX.GOLD.GOLD_EDITORIAL_WEEKLY ORDER BY editorial_rank;
+```
 
-All evidence: [rendu/INDEX_PREUVES.md](rendu/INDEX_PREUVES.md).
+Analyst read-only results: [`docs/snowsight_rayan.sql`](docs/snowsight_rayan.sql). Allowed/denied policy checks: [`governance/10_verify_access.sql`](governance/10_verify_access.sql). Stop/resume: [`governance/README.md`](governance/README.md); do not destroy infrastructure before grading.
 
-Pipeline video (1 min 21 s, no sound): [run of the `sideflix_daily` DAG for 1 November](Enregistrement%20de%20l%E2%80%99e%CC%81cran%202026-11-04%20a%CC%80%2020.47.48.mov), recorded on Matis's Mac. It shows the ingestion, the source check and `dbt build` succeeding; the publication is still in progress at the end of the recording. Gold was rebuilt by this run at 19:48:51 UTC, with unchanged values.
+## Results, resilience and governance
 
-## Manual steps and limitations
+- **Daily result, 1 November:** 13 valid sessions / 177.4 minutes; one publication row. Across all three days: 30 valid sessions / 454.2 minutes.
+- **Weekly decision:** Whiplash ranks first, with 7 sessions / 112.7 minutes. External ratings, page views and Netflix ranks provide dated context and never enter the minutes calculation.
+- **Quality:** 11 models + 21 tests + 1 audit hook = **33 successful dbt operations**; source freshness 2/2. Reconciliation: 32 raw rows = 30 valid + 1 quarantined + 1 duplicate.
+- **Incident 1, actually executed:** invalid device on an isolated test batch → accepted-values failure → Gold/publication blocked → Slack alert → targeted batch removal → successful rebuild and publication. [Failure and recovery](rendu/Etape_9_V2_Verifications.md).
+- **Incident 2, actually executed:** deliberate crash after publication MERGE → Airflow retry → same single row and same values, without double counting. [Retry logs](rendu/incident_9_2_logs/).
+- **Security:** dedicated pipeline user/limited role, analyst Gold read-only, RSA keys injected at runtime; positive and negative access checks are recorded. Airflow's local root/socket exception follows the lab; job containers run non-root.
+- **Costs:** 1.44 credits observed during development/testing; about 1.5 credits/month projected, not an invoice. Monitor: 10 credits/month, notifications at 50/80%, suspend at 100%; warehouse auto-suspend 60 s. [Measured evidence](rendu/Etape_10_V2_Verifications.md).
 
-- Manual: Snowflake account and RSA key per user, Slack webhook, GCS bucket for the state, enabling the monitor's email notifications in Snowsight, inviting the professor with read access to this private repository (by its owner).
-- Limitations: simulated sessions over three days; historical or dated external sources; a single Netflix match; two cloud providers (AWS for Snowflake, GCS for the Terraform state only); Snowflake trial account.
+![Snowsight minutes watched by film](rendu/restitution_snowsight/2_graphique_minutes.jpg)
 
-## Contributions
+*Simulated Sideflix viewing; analysis window 26 October–1 November 2026, with sessions available on 30 October–1 November. Original Snowsight screenshots and execution logs are preserved as captured, including their original UI language.*
 
-See the end of [rendu/INDEX_PREUVES.md](rendu/INDEX_PREUVES.md) and the Git history. Internal work log: [docs/journal_interne.md](docs/journal_interne.md).
+## Course alignment and repository structure
+
+The project follows the Framework's six steps: company/use case → sources → ingestion → cloud/tools → architecture/slides → incidents, governance and live demonstration. The [evidence index](rendu/INDEX_PREUVES.md) maps each step and C1–C8 to actual files.
+
+| Folder | Purpose |
+| --- | --- |
+| `deliverables/` | Presentation and original pipeline video |
+| `source/` | Final catalogue, five authentic snapshots, manifest, simulated sessions and independent expected result |
+| `ingestion/` | Setup SQL, course-based Python ingestion, publication and verification |
+| `dbt/` | Bronze declarations, Silver/Gold models, tests, profiles and pinned dependencies |
+| `docker/`, `airflow/` | Job images and the single scheduled DAG |
+| `terraform/`, `governance/` | Infrastructure, least-privilege policies, budget and operating procedures |
+| `docs/` | Architecture, sources, dbt documentation and oral/video procedures |
+| `rendu/` | Final execution evidence, incident/recovery logs and Snowsight captures |
+
+Methods: watermark/MERGE (TD 2B), PUT/stage/COPY (TD 2A), requests/VARIANT (pack 05), dbt Bronze/Silver/Gold and tests (TD 3.2/3.3), DockerOperator/retries/alerting (TD 4.2, packs 06–07), warehouse and remote Terraform state (TD 4.2, pack 09). No additional Kafka, CDC, Iceberg or application is required for this batch use case.
+
+## Scope, limitations and contributions
+
+The grading matrix C1 requests a convincing fictional company; the Framework asks for a real-world enterprise. **Sideflix is explicitly fictional, grounded in Netflix as the real industry reference**. A hypothetical sale to Netflix is not an existing agreement.
+
+Data/compute use Snowflake on **AWS Paris**; **GCS stores Terraform state only**. This is disclosed against the checklist wording “1 cloud”; the setup does not claim a single provider. Sessions are simulated, external datasets have different historical periods, and only Sicario has a confirmed Netflix Top 10 match. The monitor's email delivery and teacher's private-repository invitation require their account owners to verify them.
+
+Contributions: **Matis** — sources, v2 ingestion/dbt/tests, incidents, video and executed Snowsight captures; **Jérémy** — Snowflake/Terraform, Docker/Airflow, alerting, administration, governance/cost validation and deliverables; **Rayan** — assigned ownership and oral presentation of the Gold consumption layer. The saved captures were executed by Matis; the repository does not claim Rayan executed them. Each member must explain their actual pipeline contribution at the oral.

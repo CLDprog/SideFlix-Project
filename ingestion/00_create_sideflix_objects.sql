@@ -1,37 +1,24 @@
--- Sideflix · Action 4.1 : créer la base SIDEFLIX et ses schémas dans Snowflake.
--- Adaptation de 02_snowflake_setup.sql (TD 2, onprem-to-snowflake) :
---   * même rôle SYSADMIN et même principe IF NOT EXISTS (relance sans effet) ;
---   * base SIDEFLIX au lieu de REDGRAVE, avec les quatre schémas du plan :
---     BRONZE (brut), SILVER et GOLD (dbt), LAB (contrôles et publication journalière).
--- Hors périmètre de 4.1 (volontairement absent) :
---   * le warehouse SIDEFLIX_WH, créé par Terraform à l'action 4.2 ;
---   * le format JSON, le stage et les tables Bronze, créés à l'action 4.3.
--- Aucun objet REDGRAVE n'est lu ni modifié. Aucun warehouse n'est nécessaire
--- pour créer une base et des schémas.
--- Exécution : Snowsight, nouvelle feuille SQL, coller ce fichier puis Run All.
-
+-- Create the Sideflix database and Bronze/Silver/Gold/LAB schemas (TD 2).
+-- Warehouse provisioning is managed separately by Terraform (TD 4.2).
+-- Administrator bootstrap only; normal pipeline runs use SIDEFLIX_RUNNER.
+-- IF NOT EXISTS preserves existing objects and data. No REDGRAVE objects are changed.
 USE ROLE SYSADMIN;
 
 CREATE DATABASE IF NOT EXISTS SIDEFLIX
-    COMMENT = 'Sideflix (projet scolaire, donnees fictives) - action 4.1';
+    COMMENT = 'Sideflix academic prototype: authentic external sources and simulated playback';
 
 CREATE SCHEMA IF NOT EXISTS SIDEFLIX.BRONZE
-    COMMENT = 'Donnees brutes : catalogue PostgreSQL et sessions JSON, avec metadonnees de chargement';
+    COMMENT = 'Raw PostgreSQL catalogue, JSON usage and public sources with load metadata';
 CREATE SCHEMA IF NOT EXISTS SIDEFLIX.SILVER
-    COMMENT = 'Donnees nettoyees, typees et dedoublonnees (dbt)';
+    COMMENT = 'Cleaned, typed and deduplicated dbt data';
 CREATE SCHEMA IF NOT EXISTS SIDEFLIX.GOLD
-    COMMENT = 'Indicateurs metier par contenu et par jour (dbt)';
+    COMMENT = 'Business metrics by content item and UTC day, built with dbt';
 CREATE SCHEMA IF NOT EXISTS SIDEFLIX.LAB
-    COMMENT = 'Controles et publication journaliere (DAILY_USAGE)';
+    COMMENT = 'Operational checks and daily publication (DAILY_USAGE)';
 
--- Vérification 1 : attendu BRONZE, GOLD, LAB, SILVER (+ INFORMATION_SCHEMA et PUBLIC,
--- créés automatiquement par Snowflake), tous détenus par SYSADMIN.
 SHOW SCHEMAS IN DATABASE SIDEFLIX;
 
--- Vérification 2 : fournisseur cloud et région réellement utilisés par le compte.
--- CURRENT_REGION() renvoie par exemple AWS_US_WEST_2 (parfois préfixé PUBLIC.) :
--- le premier mot après l'éventuel préfixe est le fournisseur.
-SELECT CURRENT_REGION()                          AS region_snowflake,
-       SPLIT_PART(SPLIT_PART(CURRENT_REGION(), '.', -1), '_', 1) AS fournisseur_cloud,
-       CURRENT_ROLE()                            AS role_utilise,
-       CURRENT_VERSION()                         AS version_snowflake;
+SELECT CURRENT_REGION()                          AS snowflake_region,
+       SPLIT_PART(SPLIT_PART(CURRENT_REGION(), '.', -1), '_', 1) AS cloud_provider,
+       CURRENT_ROLE()                            AS active_role,
+       CURRENT_VERSION()                         AS snowflake_version;

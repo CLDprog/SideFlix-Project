@@ -6,11 +6,11 @@ The 19 manifest files and the 12 responses in `source/real/api_runs/` are versio
 
 Terms, attributions, grains/periods and curation are documented in `docs/sources_and_catalogue.md` and the manifest. Sharing is limited to this private repository: the three members and, for grading, the professor (read-only). No commercial use and no film distribution rights are claimed. The IMDb (`real/imdb/`) and Netflix (`real/netflix/`) exports are not under a redistribution license: the repository must not be made public while they are in it, Git history included. Wikidata (CC0), the Wikimedia statistics and MovieLens keep their attributions, and the MovieLens license `real/movielens/ml-latest-small/README.txt` stays intact.
 
-`source/v2/sessions/` contains explicitly simulated events; `source/v2/expected_daily_usage.csv` holds their expected results, computed locally. The Bronze v2 load and the replay succeeded (see `rendu/Etape_5_V2_Verifications.md`), and then so did the dbt v2 transformation (see `rendu/Etape_6_V2_Verifications.md`). The original is kept in `source/fixtures/reference/`.
+`source/v2/sessions/` contains explicitly simulated events; `source/v2/expected_daily_usage.csv` holds their expected results, computed locally. The Bronze v2 load and the replay succeeded (see `rendu/Etape_5_V2_Verifications.md`), and then so did the dbt v2 transformation (see `rendu/Etape_6_V2_Verifications.md`). Historical prototype fixtures were removed from the final delivery; the final simulated input is `source/v2/sessions/`.
 
 ## Loading the real catalog (TD 2)
 
-Existing local PostgreSQL database `sideflix`, standard PG* variables (host 127.0.0.1 by default). From the root: `python source/03_load_real_catalog.py`. The script saves the previous catalog only once in `lab.catalog_reference`, adds the IMDb identifier/provenance, then applies an UPSERT. An identical replay does not modify `updated_at`. The older scripts numbered 01/02 remain those of the historical fixture. Evidence: `rendu/Etape_3_2_V2_Verifications.md`. This local load is not a Snowflake ingestion.
+Existing local PostgreSQL database `sideflix`, standard PG* variables (host 127.0.0.1 by default). From the root: `python source/03_load_real_catalog.py`. The script saves the previous catalog only once in `lab.catalog_reference`, adds the IMDb identifier/provenance, then applies an UPSERT. An identical replay does not modify `updated_at`. The obsolete prototype seed scripts numbered 01/02 were removed from the final tree. Evidence: `rendu/Etape_3_2_V2_Verifications.md`. This local load is not a Snowflake ingestion.
 
 ## Exact replay on another machine
 

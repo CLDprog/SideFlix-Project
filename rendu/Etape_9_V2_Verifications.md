@@ -1,76 +1,67 @@
-# Étape 9 v2 — terminée et vérifiée
+# Step 9 V2 — two actual incidents, recovery and stable replay
 
-**État actuel au 4 novembre 2026 : 9.1, 9.2, 9.3 et 9.4 terminées.** Deux incidents réellement testés et repris, alerte qualité reçue, deux runs normaux stables. Les sections préparatoires ci-dessous sont conservées comme historique ; la dernière section décrit la clôture. Étape 8 de Jérémy vérifiée dans ses preuves, commit 3106d9f.
+**Completed on 4 November 2026: 9.1, 9.2, 9.3 and 9.4 verified.** Both incidents were actually executed and recovered, the quality alert was received, and two subsequent normal runs were stable. Step 8 was checked against Jérémy's evidence (`3106d9f`).
 
-## Préparation réelle
+## Preparation and isolation
 
-- Docker démarré par Matis depuis son terminal (moteur 29.3.1). L'assistant n'a pas accès au socket ; il n'en contourne pas les permissions.
-- Base Airflow locale consultée en lecture seule : `sideflix_daily` existe, est en pause, zéro erreur d'import. « No data found » de la CLI ne signifie donc pas que le fichier DAG manque.
-- Configuration privée Mac préparée ; présence du webhook vérifiée sans afficher sa valeur.
-- État Snowflake avant incident enregistré dans `incident_9_v2_before.json` : Gold quotidienne, Gold éditoriale et ligne de publication du 1er novembre. Aucune donnée modifiée par ce contrôle.
+Matis started Docker from his own terminal (engine 29.3.1); the assistant did not bypass Docker-socket permissions. A read-only local Airflow check found `sideflix_daily`, paused, with no import errors. The CLI's “No data found” did not mean the DAG file was absent. Private Mac configuration was prepared and webhook presence checked without exposing its value.
 
-## Options de démonstration (méthodes TD 3.2/4.2)
+The initial Snowflake state is captured in `incident_9_v2_before.json`: daily Gold, editorial Gold and the 1 November publication. That check changed no data.
 
-Le DAG normal est inchangé sans paramètre `incident`. Les options ne sont actives que dans le run manuel concerné :
+The normal DAG is unchanged unless the manual run supplies `incident`. Options use lab 3.2/4.2 methods:
 
-- 9.1 : configuration `{"date":"2026-11-01","incident":"bad_device"}`. Le chargeur crée en mémoire une copie des 32 sessions, remplace S1 par TEST_BAD_DEVICE/device=invalid dans cette copie, puis charge un lot distinct via le même PUT/COPY. Le nombre de lignes et les durées restent identiques pour atteindre le test accepted_values, sans échec prématuré de complétude. Le run_id distingue chaque lot de test. Le reçu dirige dbt vers cette copie ; aucun snapshot de référence n'est écrit ni modifié. Les reprises du même run réutilisent le même lot. Attendu, à vérifier réellement : échec du test, Gold/publication conservées, alerte après dernier retry.
-- Correction 9.1 : après capture de l'échec, retirer le lot de démonstration identifié par son batch_id exact, puis relancer sans option d'incident pour sélectionner les sessions de référence. Aucun autre lot ne doit être supprimé. Vérifier le retour au vert et les chiffres de référence.
-- 9.2 : configuration `{"date":"2026-11-01","incident":"crash_after_write"}` transmet `--crash-on-try 1` au script de publication existant, comme au TD4.2. Attendu : premier échec après MERGE, retry réussi, une ligne/date. Ne l'exécuter qu'après clôture 9.1.
-- 9.3 : courte procédure fichier manquant à documenter ensuite ; pas de troisième simulation requise.
-- 9.4 : deux runs normaux, résultats stables et comptes rendus des incidents.
+- **9.1:** `{"date":"2026-11-01","incident":"bad_device"}` creates an in-memory copy of 32 sessions, replacing S1 with TEST_BAD_DEVICE/device=invalid. The same PUT/COPY path loads a distinct batch. Row counts/durations stay unchanged so the intended accepted_values test, rather than an earlier completeness check, detects the fault. The run_id distinguishes the test batch; retries reuse it. The receipt selects this copy without changing reference snapshots.
+- **9.1 recovery:** after the failed run/retries finish, remove only the batch identified by its exact batch_id and launch a new normal run to select the original sessions. No unrelated batch is deleted.
+- **9.2:** `{"date":"2026-11-01","incident":"crash_after_write"}` passes `--crash-on-try 1` to the publication script, as in lab 4.2. First publication fails after MERGE; automatic retry succeeds with one row/date. This was executed after 9.1 recovery.
+- **9.3:** a documented missing-file procedure, not a claimed third executed incident.
+- **9.4:** two normal runs with stable results and no active injection.
 
-Les injections restent désactivées dans tous les runs sans option `incident`. Les fichiers générés de landing sont ignorés par Git. Après les runs, ne conserver aucun changement d'horodatage du manifeste/catalogue si les empreintes et valeurs sont inchangées.
+Generated landing files are ignored by Git. Timestamp-only changes to manifest/catalog files are discarded after comparing checksums and business values.
 
-## Statut
+## 9.1 — invalid device, blocked publication and verified recovery
 
-Options préparées et syntaxe Python vérifiée. Incidents non exécutés à ce stade ; réception des alertes et reprise restent à prouver. Prochaine action : reconstruire l'image ingestion dans le terminal de Matis, laisser Airflow charger le DAG modifié, puis déclencher uniquement 9.1. Conserver logs/états/notifications/avant-après dans rendu et actualiser Notion après résultats réels.
+Actual run `matis_9_1_bad_device`, Mac Docker/Airflow, 4 November. Ingestion and `check_sources` succeeded. All three `dbt_build` attempts failed exclusively on `accepted_values_silver_sessions_device__web__mobile__tv` (one invalid value): PASS=28, ERROR=1, SKIP=4. Both Gold tables and their tests were skipped; publication was upstream_failed with attempt 0. After the final failure, the callback logged `ALERT_DELIVERED_HTTP 200`.
 
-## 9.1 — panne effectivement exécutée, reprise normale encore attendue
+A full Snowflake comparison against `incident_9_v2_before.json` showed daily Gold, editorial Gold (including timestamps) and the 1 November publication strictly unchanged. TEST_BAD_DEVICE/invalid was observed in Silver exclusively from test batch `sessions_simulated_96d78fad181a1ed6db07727b`.
 
-Run `matis_9_1_bad_device`, sur Docker/Airflow du Mac, 4 novembre 2026. Ingestion et check_sources réussis. Les trois tentatives de dbt_build échouent exclusivement sur `accepted_values_silver_sessions_device__web__mobile__tv` (1 valeur fautive) : PASS=28, ERROR=1, SKIP=4. Les deux tables Gold et leurs tests sont SKIP ; `publish_daily_usage` est upstream_failed, tentative0. Après le dernier échec, callback `ALERT_DELIVERED_HTTP 200` ; confirmation visuelle dans le canal encore à obtenir.
+After the run and retries finished, targeted cleanup deleted only the 32-row demonstration batch from Bronze. The original 32-row batch and reference files were preserved. All 19 manifest checksums remained valid. Collector timestamp-only changes were restored after comparing every other value. The ingestion journal retains the test batch as historical evidence; the faulty data copy was removed.
 
-Comparaison Snowflake intégrale avec `incident_9_v2_before.json` : Gold quotidienne, Gold éditoriale (timestamps compris) et publication du 1er novembre strictement inchangées. La session TEST_BAD_DEVICE/invalid a été constatée dans Silver, exclusivement issue du lot de démonstration `sessions_simulated_96d78fad181a1ed6db07727b`.
+Matis confirmed receiving the dbt_build attempt-3 Slack alert at 18:13 Paris (`incident_9_1_slack_confirmation.txt`). Corrective run `matis_9_1_fixed`, without `incident`, succeeded on all four tasks: PASS=33/WARN=0/ERROR=0/SKIP=0. Actual Snowflake checks confirmed:
 
-Correction ciblée exécutée après fin du run et des retries : suppression des 32 lignes de cette seule copie de test en Bronze. Le lot original de32lignes est préservé. Les fichiers de référence n'ont pas été modifiés ; les19empreintes du manifeste restent identiques. Les seuls horodatages réécrits par le collecteur ont été remis à la version du dépôt après comparaison de toutes les autres valeurs. Le journal d'ingestion de ce lot reste comme preuve historique ; la copie de données de test a été retirée.
+- One publication for 1 November: 13 sessions / 177.4 minutes, corrective run_id.
+- 30 unique Silver sessions, no TEST_BAD_DEVICE or invalid device, no residual test batch.
+- All 14 daily Gold rows identical to the pre-incident values.
+- Six editorial works and 30 total sessions.
+- All 19 source checksums conformant; timestamp-only changes restored.
 
-**Prochaine action obligatoire :** déclencher le run normal `matis_9_1_fixed` avec `{"date":"2026-11-01"}` pour reconstruire Silver depuis le lot original et valider le retour au vert. Ne pas utiliser le même run_id que la panne. L'étape9.1 reste en cours tant que cette reprise et ses chiffres ne sont pas vérifiés. Ne pas déclencher9.2 avant.
+Cause: an out-of-contract device category in an isolated copy. Avoided impact: publishing unvalidated data. Detection: accepted_values failure, Airflow retries exhausted, delivered alert. Recovery: remove only the faulty copy and run normally. Prevention: blocking test before Gold/publication, injection disabled by default.
 
-Cause : catégorie device hors des valeurs autorisées sur une copie isolée. Impact évité : publication de données non validées. Détection : accepted_values et échec Airflow après retries, alerte HTTP200. Reprise : retrait de la seule copie fautive puis run normal. Prévention : test bloquant avant Gold/publication ; options d'incident désactivées par défaut.
+Evidence: `incident_9_1_logs/`, `incident_9_1_failed_and_cleanup.json`, `incident_9_v2_before.json`, `incident_9_1_slack_confirmation.txt`, `incident_9_1_recovery.json`, `incident_9_1_recovery_logs/`.
 
-Preuves brutes : `incident_9_1_logs/` (ingestion, contrôle, trois builds), `incident_9_1_failed_and_cleanup.json` (états, comparaison avant/après, nettoyage), `incident_9_v2_before.json` (référence). Aucun incident9.2 exécuté.
+## 9.2 — actual after-write crash and automatic retry
 
-## 9.1 terminée — reprise vérifiée, 4 novembre 2026
+Run `matis_9_2_crash`, 4 November, `incident=crash_after_write`. Ingestion, source checks and dbt succeeded. Publication attempt 1 logged `MERGE_PUBLISHED 2026-11-01 13 177.400000`, then `Simulated crash AFTER write (TD4.2)`.
 
-Matis confirme la réception dans Slack de l'alerte de dbt_build, tentative3, à18h13 Paris (preuve `incident_9_1_slack_confirmation.txt`). Le run correctif `matis_9_1_fixed`, sans option d'incident, a réussi ses quatre tâches ; dbt build PASS33/WARN0/ERROR0/SKIP0. Contrôle Snowflake réel : publication du1er novembre unique,13sessions/177,4minutes, run_id correctif ;30sessions Silver uniques ; aucune TEST_BAD_DEVICE ni catégorie invalid ; copie de test absente ;14résultats Gold quotidiens strictement identiques à l'avant-incident ;6œuvres éditoriales et30sessions au total. Les19empreintes restent conformes au manifeste. Les modifications d'horodatages seules ont été remises à la version Git.
+During up_for_retry, an actual Snowflake read found exactly one row with the same 13 sessions / 177.4 minutes, current run_id and attempt 1. Automatic attempt 2 succeeded and logged `PUBLICATION_UNIQUE_DATE_PASS`; the complete DAG finished success.
 
-Preuves de reprise : `incident_9_1_recovery.json` et `incident_9_1_recovery_logs/`. Les étapes panne/détection/blocage/notification/correction/reprise sont maintenant toutes vérifiées pour9.1. Étape9 globale encore en cours : prochaine action9.2, crash après écriture avec retry, non encore exécuté.
+An independent final check still found one row for 1 November, 13 sessions / 177.4 minutes, attempt 2; no duplicate DAILY_USAGE dates; 30 Silver sessions; no residual anomaly; 19/19 source checksums conformant. The first write was not added a second time. An additive INSERT would have created another row; MERGE on usage_date updates the existing one. No final-failure alert is expected because retry recovered successfully.
 
-## 9.2 terminée — crash réel et retry vérifié
+Cause: intentionally failing after the write committed but before success confirmation. Potential impact: repeating a write after lost confirmation. Detection: failed first Airflow attempt and explicit logs. Recovery: automatic retry. Prevention: idempotent date-based MERGE and duplicate checks. Crash injection applies only to the configured run.
 
-Run `matis_9_2_crash`, 4 novembre2026, conf `incident=crash_after_write`. Ingestion, contrôle et dbt réussis. Tentative1 de publication : `MERGE_PUBLISHED 2026-11-01 13 177.400000`, puis `Simulated crash AFTER write (TD4.2)`. Pendant up_for_retry, lecture Snowflake réellement effectuée : une seule ligne, mêmes13sessions/177,4min, run_id courant et attempt1. Tentative2 automatique : succès et `PUBLICATION_UNIQUE_DATE_PASS`. Le DAG entier finit success.
+Evidence: `incident_9_2_after_first_write.json`, `incident_9_2_recovered.json`, `incident_9_2_logs/` (two publication attempts and upstream tasks).
 
-Contrôle final indépendant : toujours une seule ligne pour le1er novembre,13sessions/177,4min, attempt2 ; aucune date dupliquée dans DAILY_USAGE,30sessions Silver et aucune anomalie résiduelle ;19/19empreintes conformes. L'écriture initiale n'a donc pas été additionnée une seconde fois. Un INSERT additif aurait créé une seconde ligne ; le MERGE sur usage_date met à jour la ligne existante. Aucune alerte d'échec final n'est attendue pour9.2, puisque le retry réussit.
+## 9.3 — documented missing-file procedure
 
-Cause : panne volontaire après validation de l'écriture mais avant confirmation de succès. Impact potentiel : répétition de l'écriture après perte de confirmation. Détection : première tentative Airflow échouée et logs explicites. Reprise : retry automatique ; prévention : MERGE idempotent sur la date et contrôles de doublons. L'option de crash ne s'applique qu'au run configuré ; un run normal ne l'active pas.
+`Procedure_9_3_Fichier_Manquant.md` documents restoring only the affected file, verifying its checksum, rerunning the same date and checking values/publication. The collector may download some missing files again; otherwise failure occurs in ingestion or source checks for an incomplete batch. Both block publication. No third executed simulation is claimed.
 
-Preuves : `incident_9_2_after_first_write.json`, `incident_9_2_recovered.json`, `incident_9_2_logs/` (deux tentatives de publication et tâches amont).
+## 9.4 — two normal runs and closure
 
-## 9.3 terminée — procédure documentaire
+On 4 November, `matis_9_replay1` (18:42–18:43 Paris) and `matis_9_replay2` (18:43–18:44 Paris) both succeeded: four tasks success, one attempt each, dbt PASS=33/WARN=0/ERROR=0/SKIP=0. Snowflake's journal records 11 successful models and 21 passing tests per invocation.
 
-Procédure courte dans `Procedure_9_3_Fichier_Manquant.md` : restaurer le seul fichier concerné, vérifier l'empreinte, relancer la même date, contrôler chiffres/publication. Précision : le collecteur peut retélécharger certains fichiers ; sinon l'échec survient dès ingest_sources, ou lors de check_sources pour un lot incomplet. Publication bloquée dans les deux cas. Pas de troisième simulation annoncée.
+The two receipts are identical: the same six batch IDs, expected volumes 32/6/86/3/6/6, zero added rows in every batch. Files and API responses therefore represent the same snapshot despite actual repeated API calls. Both publication logs show 13 sessions / 177.4 minutes and `PUBLICATION_UNIQUE_DATE_PASS`.
 
-## Reste9.4
+The final SQL check found one publication for 1 November, second replay run_id, attempt 1, with no duplicate dates. All 14 daily Gold rows and six editorial rows, including external context, match the verified post-9.2 result, apart from the normally changing publication timestamp. Silver has 30 unique sessions, one rejection, no TEST_BAD_DEVICE or invalid device. Batch volumes and all 19 checksums remain unchanged. Collector timestamps were restored without changing other values.
 
-Exécuter deux runs normaux de la même date/snapshots, comparer clés, volumes, contextes et publication ; conserver les preuves et vérifier que les injections ne sont pas actives. Le poste et Docker doivent rester allumés. Ne pas clôturer l'étape9 avant cette dernière validation.
+Per-run evidence comes from logs, receipts, validation markers and dbt results. The independent SQL read confirms the final state; it is not claimed to have been taken between the two replays. Evidence: `incident_9_4_replay.json`, `incident_9_4_logs/`.
 
-## 9.4 terminée — deux runs normaux vérifiés et clôture
-
-Le 4 novembre2026, `matis_9_replay1` (18h42–18h43 Paris) puis `matis_9_replay2` (18h43–18h44 Paris) ont réussi : quatre tâches success, une tentative chacune ; dbt PASS33/WARN0/ERROR0/SKIP0 pour chaque run. Le journal Snowflake confirme11modèles success et21tests pass par invocation.
-
-Les reçus des deux runs sont identiques : six mêmes batch_id, volumes attendus32/6/86/3/6/6, zéro nouvelle ligne dans chaque lot. Les fichiers et réponses API sont donc du même snapshot malgré les appels API réellement refaits. Les deux journaux de publication montrent13sessions/177,4minutes et PUBLICATION_UNIQUE_DATE_PASS.
-
-Contrôle SQL final : une seule ligne publiée pour le1er novembre, run_id du second rejeu et attempt1 ; aucune date dupliquée. Les14résultats Gold quotidiens et les6lignes éditoriales, contextes externes compris, sont identiques au résultat vérifié après9.2, hors timestamp de publication qui change normalement. Silver contient30sessions uniques,1rejet, aucun TEST_BAD_DEVICE ni device invalide. Les six lots conservent leurs volumes, les19empreintes restent conformes. Horodatages du collecteur restaurés sans modifier les autres valeurs.
-
-Les preuves par run reposent sur les logs, reçus, marqueurs de validation et résultats dbt ; la lecture SQL indépendante confirme l'état final, sans prétendre à une capture SQL effectuée entre ces deux runs. Fichiers : `incident_9_4_replay.json`, `incident_9_4_logs/`. Les comptes rendus des deux incidents et leurs preuves figurent dans ce rapport et les fichiers9.1/9.2.
-
-Aucune injection activée dans ces runs normaux. Run de démonstration prêt : même DAG, configuration `{"date":"2026-11-01"}`, sans clé incident, avec un run_id neuf. Limite : Docker et le poste doivent rester allumés ; les données simulées s'arrêtent au1er novembre, donc une autre date absente échoue volontairement. Étape9 terminée ; suite : gouvernance/sécurité/coûts, puis livrables et remise propre.
+No injection was active in these normal runs. The demonstration configuration is `{"date":"2026-11-01"}` with a new run_id and no incident key. Docker/the workstation must remain running. The simulated data ends on 1 November; an absent date intentionally fails. Step 9 is complete; governance/security/costs are documented in step 10.

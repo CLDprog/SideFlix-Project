@@ -1,4 +1,4 @@
--- Fonctions TRY_ et conservation des metadonnees, comme le TD 3.3.
+-- TRY_ conversions and retained load metadata, following TD 3.3.
 select
     nullif(trim(raw:session_id::string), '') as session_id,
     nullif(trim(raw:content_id::string), '') as content_id,

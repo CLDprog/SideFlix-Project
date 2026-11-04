@@ -1,4 +1,4 @@
--- Memes regles de validite que la quarantaine ; device reste soumis aux tests dbt.
+-- Same validity rules as quarantine; device values are checked by dbt tests.
 select
     s.session_id, s.content_id, s.viewer_id, s.started_at_utc,
     s.watched_seconds, s.device, s.source_system, s._batch_id, s._source_file, s._loaded_at

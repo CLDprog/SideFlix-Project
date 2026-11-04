@@ -30,10 +30,15 @@ with connect_snowflake() as sf,sf.cursor() as cur:
     cur.execute("SELECT observed_top10_weeks,best_observed_rank,last_observed_week FROM SIDEFLIX.GOLD.GOLD_EDITORIAL_WEEKLY WHERE content_id='E'")
     actual=cur.fetchone();assert actual==(1,int(n['weekly_rank']),__import__('datetime').date.fromisoformat(n['week']))
     print('PASS authentic Sicario Netflix context: week',n['week'],'rank',n['weekly_rank'],'actual',actual,flush=True)
-    # Historical isolated fixture, preserved in LAB, separate from current final tables.
-    cur.execute('SELECT count(*),count(DISTINCT raw:session_id::string),count_if(raw:watched_seconds::number<=0) FROM SIDEFLIX.LAB.SESSIONS_REFERENCE')
-    assert cur.fetchone()==(32,31,1)
-    cur.execute("SELECT content_id,valid_sessions,minutes_watched FROM SIDEFLIX.LAB.GOLD_CONTENT_DAILY_REFERENCE WHERE usage_date='2026-10-30' ORDER BY content_id")
-    actual=cur.fetchall();assert actual==[('A',2,Decimal(45)),('B',1,Decimal(10))]
-    print('PASS isolated LAB reference: 32 raw =30 valid+1 reject+1 duplicate; A45+B10=55min',actual,flush=True)
+    # Historical prototype evidence is optional on a clean installation.
+    cur.execute("""SELECT count(*) FROM SIDEFLIX.INFORMATION_SCHEMA.TABLES
+        WHERE TABLE_SCHEMA='LAB' AND TABLE_NAME='GOLD_CONTENT_DAILY_REFERENCE'""")
+    if cur.fetchone()[0]:
+        cur.execute('SELECT count(*),count(DISTINCT raw:session_id::string),count_if(raw:watched_seconds::number<=0) FROM SIDEFLIX.LAB.SESSIONS_REFERENCE')
+        assert cur.fetchone()==(32,31,1)
+        cur.execute("SELECT content_id,valid_sessions,minutes_watched FROM SIDEFLIX.LAB.GOLD_CONTENT_DAILY_REFERENCE WHERE usage_date='2026-10-30' ORDER BY content_id")
+        actual=cur.fetchall();assert actual==[('A',2,Decimal(45)),('B',1,Decimal(10))]
+        print('PASS isolated historical LAB reference: A45+B10=55min',actual,flush=True)
+    else:
+        print('Historical prototype reference absent; final-data checks above remain required',flush=True)
 print('ALL_INDEPENDENT_BUSINESS_SAMPLES_PASS',flush=True)

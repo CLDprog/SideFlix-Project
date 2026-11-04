@@ -1,16 +1,10 @@
-"""Sideflix · Action 4.3 : vérifier la connexion d'un script à Snowflake, sans mot de passe.
+"""Verify Snowflake RSA authentication and count Bronze rows without modifying data.
 
-Même méthode que connect_snowflake() dans incremental_orders.py (TD 2, partie B) :
-paire de clés RSA + variables d'environnement, rôle SYSADMIN. Seuls la base, le schéma
-et le warehouse changent (SIDEFLIX, BRONZE, SIDEFLIX_WH). Ce script ne modifie rien :
-il lit le contexte de session et compte les lignes des tables Bronze.
-
-Variables d'environnement (voir .env.example ; ne jamais versionner la clé) :
-  SNOWFLAKE_ACCOUNT           identifiant de compte, ex. ABCDEFG-XY12345
-  SNOWFLAKE_USER              utilisateur associé à la clé publique
-  SNOWFLAKE_PRIVATE_KEY_FILE  chemin de rsa_key.p8, en dehors du dépôt
-
-Lancement : python ingestion/check_connection.py
+Adapted from TD 2B's connect_snowflake(): RSA key plus environment variables.
+The default runtime role is SIDEFLIX_RUNNER; administrator setup is separate.
+Required variables: SNOWFLAKE_ACCOUNT, SNOWFLAKE_USER and
+SNOWFLAKE_PRIVATE_KEY_FILE (private key kept outside Git).
+Run: python ingestion/check_connection.py
 """
 import os
 from pathlib import Path
@@ -33,7 +27,7 @@ def connect_snowflake():
             format=serialization.PrivateFormat.PKCS8,
             encryption_algorithm=serialization.NoEncryption(),
         ),
-        role=os.environ.get("SNOWFLAKE_ROLE", "SYSADMIN"),
+        role=os.environ.get("SNOWFLAKE_ROLE", "SIDEFLIX_RUNNER"),
         warehouse="SIDEFLIX_WH",
         database="SIDEFLIX",
         schema="BRONZE",
@@ -51,14 +45,14 @@ def main():
             "CURRENT_DATABASE(), CURRENT_SCHEMA()"
         )
         user, role, warehouse, database, schema = cur.fetchone()
-        print(f"Utilisateur : {user}")
-        print(f"Rôle        : {role}")
+        print(f"User        : {user}")
+        print(f"Role        : {role}")
         print(f"Warehouse   : {warehouse}")
-        print(f"Contexte    : {database}.{schema}")
+        print(f"Context     : {database}.{schema}")
         for table in ("CATALOG", "SESSIONS_RAW", "LOAD_RUNS"):
             cur.execute(f"SELECT COUNT(*) FROM SIDEFLIX.BRONZE.{table}")
-            print(f"{table:<13}: {cur.fetchone()[0]} ligne(s)")
-        print("Connexion par paire de clés réussie, sans mot de passe.")
+            print(f"{table:<13}: {cur.fetchone()[0]} row(s)")
+        print("Key-pair connection succeeded without a password.")
 
 
 if __name__ == "__main__":

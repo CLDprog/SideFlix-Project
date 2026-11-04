@@ -1,4 +1,4 @@
--- Jour de debut de session en UTC ; une ligne par jour et contenu.
+-- UTC session-start day; one row per day and content item.
 select
     to_date(started_at_utc) as usage_date,
     content_id,

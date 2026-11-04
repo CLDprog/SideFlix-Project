@@ -1,0 +1,19 @@
+# TD4.2 standalone teaching setup. Airflow alone schedules jobs.
+services:
+  airflow:
+    build: .
+    image: sideflix-airflow:1.0.0
+    command: standalone
+    ports:
+      - '127.0.0.1:8080:8080'
+    env_file: .env
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__CORE__DEFAULT_TIMEZONE: Europe/Paris
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: 'true'
+    volumes:
+      - ./dags:/opt/airflow/dags:ro
+      - ./state:/opt/airflow
+      - /var/run/docker.sock:/var/run/docker.sock
+    # Same local teaching exception as TD4.2; actual job images are non-root.
+    user: '0:0'

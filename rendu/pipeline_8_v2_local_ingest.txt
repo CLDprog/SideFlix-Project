@@ -1,0 +1,18 @@
+{"job": "ingest", "date": "2026-10-30", "run_id": "matis_stage8_precheck", "command": ["/Users/matisdouay/Desktop/Albert school/M2 - Albert School/Data engineering and cloud infrastructure/Sideflix-Project/.venv/bin/python", "source/collect_public_data.py"]}
+API_OK Whiplash Q15648198 Whiplash (2014 film)
+API_OK Moonlight Q21527875 Moonlight (2016 film)
+API_OK Frances Ha Q5478692 Frances Ha
+API_OK Room Q18703032 Room (2015 film)
+API_OK Sicario Q17337292 Sicario (2015 film)
+API_OK Get Out Q25136235 Get Out
+COLLECTION_COMPLETE 5 datasets
+{"job": "ingest", "date": "2026-10-30", "run_id": "matis_stage8_precheck", "command": ["/Users/matisdouay/Desktop/Albert school/M2 - Albert School/Data engineering and cloud infrastructure/Sideflix-Project/.venv/bin/python", "ingestion/incremental_catalog.py"]}
+{"target": "SIDEFLIX.BRONZE.CATALOG", "watermark": "2026-11-04T12:22:56.965379Z", "extracted": 0, "inserted": 0, "updated": 0, "total": 6, "batch_id": "catalog_4f53cda18c2baa0c0354"}
+{"job": "ingest", "date": "2026-10-30", "run_id": "matis_stage8_precheck", "command": ["/Users/matisdouay/Desktop/Albert school/M2 - Albert School/Data engineering and cloud infrastructure/Sideflix-Project/.venv/bin/python", "ingestion/load_sessions.py", "--public", "--api-mode", "live", "--receipt", "airflow/work/7ea6b724cc8b1442ca509ce3/ingestion.json"]}
+{"source": "sessions_simulated", "method": "PUT_COPY", "batch_id": "sessions_simulated_6c58e1a654180f3e4b910331", "expected": 32, "before": 32, "loaded": 0, "after": 32}
+{"source": "imdb", "method": "PUT_COPY", "batch_id": "imdb_bea94e86ec6fdac6cc69b038", "expected": 6, "before": 6, "loaded": 0, "after": 6}
+{"source": "movielens", "method": "PUT_COPY", "batch_id": "movielens_7e24050af79446cb15cf8d00", "expected": 86, "before": 86, "loaded": 0, "after": 86}
+{"source": "netflix", "method": "PUT_COPY", "batch_id": "netflix_0286f00f5c7eebccd9debf0a", "expected": 3, "before": 3, "loaded": 0, "after": 3}
+{"source": "wikidata", "method": "API_live", "batch_id": "wikidata_b711503480e8aea3d442f00f", "expected": 6, "before": 6, "loaded": 0, "after": 6}
+{"source": "wikimedia", "method": "API_live", "batch_id": "wikimedia_4a60caa5f861b0a04eeb4fa6", "expected": 6, "before": 6, "loaded": 0, "after": 6}
+ALL_LOADS_RECONCILED 6

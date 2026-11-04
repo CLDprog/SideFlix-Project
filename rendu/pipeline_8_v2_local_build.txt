@@ -1,0 +1,100 @@
+{"job": "build", "date": "2026-10-30", "run_id": "matis_stage8_precheck", "command": ["/Users/matisdouay/Desktop/Albert school/M2 - Albert School/Data engineering and cloud infrastructure/Sideflix-Project/.venv/bin/dbt", "source", "freshness", "--project-dir", "dbt/sideflix_dbt", "--profiles-dir", "dbt/profiles-core", "--vars", "{\"analysis_date\": \"2026-10-30\", \"batch_sessions_simulated\": \"sessions_simulated_6c58e1a654180f3e4b910331\", \"batch_imdb\": \"imdb_bea94e86ec6fdac6cc69b038\", \"batch_movielens\": \"movielens_7e24050af79446cb15cf8d00\", \"batch_netflix\": \"netflix_0286f00f5c7eebccd9debf0a\", \"batch_wikidata\": \"wikidata_b711503480e8aea3d442f00f\", \"batch_wikimedia\": \"wikimedia_4a60caa5f861b0a04eeb4fa6\"}"]}
+[0m15:23:16  Running with dbt=1.11.16
+[0m15:23:16  Registered adapter: snowflake=1.11.6
+[0m15:23:16  Unable to do partial parsing because config vars, config profile, or config target have changed
+[0m15:23:17  Found 11 models, 21 data tests, 1 operation, 7 sources, 540 macros
+[0m15:23:17  
+[0m15:23:17  Concurrency: 4 threads (target='core')
+[0m15:23:17  
+[0m15:23:25  Pulling freshness from warehouse metadata tables for 0 sources
+[0m15:23:25  2 of 2 START freshness of bronze.sessions_raw .................................. [RUN]
+[0m15:23:25  1 of 2 START freshness of bronze.catalog ....................................... [RUN]
+[0m15:23:25  1 of 2 PASS freshness of bronze.catalog ........................................ [[32mPASS[0m in 0.29s]
+[0m15:23:25  2 of 2 PASS freshness of bronze.sessions_raw ................................... [[32mPASS[0m in 0.31s]
+[0m15:23:25  
+[0m15:23:34  1 of 1 START hook: sideflix_dbt.on-run-end.0 ................................... [RUN]
+[0m15:23:34  1 of 1 OK hook: sideflix_dbt.on-run-end.0 ...................................... [[32mOK[0m in 8.85s]
+[0m15:23:34  
+[0m15:23:34  Finished running 1 project hook, 2 sources in 0 hours 0 minutes and 17.27 seconds (17.27s).
+[0m15:23:34  Done.
+{"job": "build", "date": "2026-10-30", "run_id": "matis_stage8_precheck", "command": ["/Users/matisdouay/Desktop/Albert school/M2 - Albert School/Data engineering and cloud infrastructure/Sideflix-Project/.venv/bin/dbt", "build", "--project-dir", "dbt/sideflix_dbt", "--profiles-dir", "dbt/profiles-core", "--vars", "{\"analysis_date\": \"2026-10-30\", \"batch_sessions_simulated\": \"sessions_simulated_6c58e1a654180f3e4b910331\", \"batch_imdb\": \"imdb_bea94e86ec6fdac6cc69b038\", \"batch_movielens\": \"movielens_7e24050af79446cb15cf8d00\", \"batch_netflix\": \"netflix_0286f00f5c7eebccd9debf0a\", \"batch_wikidata\": \"wikidata_b711503480e8aea3d442f00f\", \"batch_wikimedia\": \"wikimedia_4a60caa5f861b0a04eeb4fa6\"}"]}
+[0m15:23:36  Running with dbt=1.11.16
+[0m15:23:36  Registered adapter: snowflake=1.11.6
+[0m15:23:36  Found 11 models, 21 data tests, 1 operation, 7 sources, 540 macros
+[0m15:23:36  
+[0m15:23:36  Concurrency: 4 threads (target='core')
+[0m15:23:36  
+[0m15:23:47  4 of 32 START sql view model SILVER.silver_wikimedia ........................... [RUN]
+[0m15:23:47  1 of 32 START sql view model SILVER.silver_imdb ................................ [RUN]
+[0m15:23:47  3 of 32 START sql view model SILVER.silver_netflix ............................. [RUN]
+[0m15:23:47  2 of 32 START sql view model SILVER.silver_movielens ........................... [RUN]
+[0m15:23:48  1 of 32 OK created sql view model SILVER.silver_imdb ........................... [[32mSUCCESS 1[0m in 0.45s]
+[0m15:23:48  5 of 32 START sql view model SILVER.stg_sessions ............................... [RUN]
+[0m15:23:48  2 of 32 OK created sql view model SILVER.silver_movielens ...................... [[32mSUCCESS 1[0m in 0.57s]
+[0m15:23:48  6 of 32 START test not_null_silver_imdb_imdb_tconst ............................ [RUN]
+[0m15:23:48  5 of 32 OK created sql view model SILVER.stg_sessions .......................... [[32mSUCCESS 1[0m in 0.24s]
+[0m15:23:48  7 of 32 START test unique_silver_imdb_imdb_tconst .............................. [RUN]
+[0m15:23:48  6 of 32 PASS not_null_silver_imdb_imdb_tconst .................................. [[32mPASS[0m in 0.24s]
+[0m15:23:48  8 of 32 START test not_null_silver_movielens_imdb_tconst ....................... [RUN]
+[0m15:23:48  7 of 32 PASS unique_silver_imdb_imdb_tconst .................................... [[32mPASS[0m in 0.32s]
+[0m15:23:48  9 of 32 START test unique_silver_movielens_imdb_tconst ......................... [RUN]
+[0m15:23:48  8 of 32 PASS not_null_silver_movielens_imdb_tconst ............................. [[32mPASS[0m in 0.40s]
+[0m15:23:48  10 of 32 START sql view model SILVER.silver_catalog ............................ [RUN]
+[0m15:23:48  9 of 32 PASS unique_silver_movielens_imdb_tconst ............................... [[32mPASS[0m in 0.36s]
+[0m15:23:49  10 of 32 OK created sql view model SILVER.silver_catalog ....................... [[32mSUCCESS 1[0m in 0.36s]
+[0m15:23:49  12 of 32 START test not_null_silver_catalog_content_id ......................... [RUN]
+[0m15:23:49  11 of 32 START test accepted_values_silver_catalog_content_type__film__short_film__documentary__reportage__series_episode  [RUN]
+[0m15:23:49  12 of 32 PASS not_null_silver_catalog_content_id ............................... [[32mPASS[0m in 0.29s]
+[0m15:23:49  13 of 32 START test not_null_silver_catalog_imdb_tconst ........................ [RUN]
+[0m15:23:49  11 of 32 PASS accepted_values_silver_catalog_content_type__film__short_film__documentary__reportage__series_episode  [[32mPASS[0m in 0.40s]
+[0m15:23:49  14 of 32 START test unique_silver_catalog_content_id ........................... [RUN]
+[0m15:23:49  13 of 32 PASS not_null_silver_catalog_imdb_tconst .............................. [[32mPASS[0m in 0.24s]
+[0m15:23:49  15 of 32 START test unique_silver_catalog_imdb_tconst .......................... [RUN]
+[0m15:23:49  14 of 32 PASS unique_silver_catalog_content_id ................................. [[32mPASS[0m in 0.25s]
+[0m15:23:50  15 of 32 PASS unique_silver_catalog_imdb_tconst ................................ [[32mPASS[0m in 0.29s]
+[0m15:23:50  16 of 32 START sql view model SILVER.quarantine_sessions ....................... [RUN]
+[0m15:23:50  17 of 32 START sql view model SILVER.silver_sessions ........................... [RUN]
+[0m15:23:50  17 of 32 OK created sql view model SILVER.silver_sessions ...................... [[32mSUCCESS 1[0m in 0.45s]
+[0m15:23:50  18 of 32 START sql view model SILVER.silver_wikidata ........................... [RUN]
+[0m15:23:50  18 of 32 OK created sql view model SILVER.silver_wikidata ...................... [[32mSUCCESS 1[0m in 0.44s]
+[0m15:23:50  19 of 32 START test accepted_values_silver_sessions_device__web__mobile__tv .... [RUN]
+[0m15:23:51  16 of 32 OK created sql view model SILVER.quarantine_sessions .................. [[32mSUCCESS 1[0m in 1.01s]
+[0m15:23:51  20 of 32 START test assert_valid_session_duration .............................. [RUN]
+[0m15:23:51  19 of 32 PASS accepted_values_silver_sessions_device__web__mobile__tv .......... [[32mPASS[0m in 0.68s]
+[0m15:23:51  21 of 32 START test not_null_silver_sessions_session_id ........................ [RUN]
+[0m15:23:51  20 of 32 PASS assert_valid_session_duration .................................... [[32mPASS[0m in 0.80s]
+[0m15:23:51  22 of 32 START test relationships_silver_sessions_content_id__content_id__ref_silver_catalog_  [RUN]
+[0m15:23:52  21 of 32 PASS not_null_silver_sessions_session_id .............................. [[32mPASS[0m in 0.64s]
+[0m15:23:52  23 of 32 START test unique_silver_sessions_session_id .......................... [RUN]
+[0m15:23:52  22 of 32 PASS relationships_silver_sessions_content_id__content_id__ref_silver_catalog_  [[32mPASS[0m in 0.73s]
+[0m15:23:52  24 of 32 START test not_null_silver_wikidata_content_id ........................ [RUN]
+[0m15:23:53  24 of 32 PASS not_null_silver_wikidata_content_id .............................. [[32mPASS[0m in 0.48s]
+[0m15:23:53  23 of 32 PASS unique_silver_sessions_session_id ................................ [[32mPASS[0m in 0.79s]
+[0m15:23:53  25 of 32 START test unique_silver_wikidata_content_id .......................... [RUN]
+[0m15:23:53  26 of 32 START test assert_session_reconciliation .............................. [RUN]
+[0m15:23:53  25 of 32 PASS unique_silver_wikidata_content_id ................................ [[32mPASS[0m in 0.74s]
+[0m15:23:53  27 of 32 START sql table model GOLD.gold_content_daily ......................... [RUN]
+[0m15:23:54  26 of 32 PASS assert_session_reconciliation .................................... [[32mPASS[0m in 1.57s]
+[0m15:23:54  3 of 32 OK created sql view model SILVER.silver_netflix ........................ [[32mSUCCESS 1[0m in 7.26s]
+[0m15:23:55  4 of 32 OK created sql view model SILVER.silver_wikimedia ...................... [[32mSUCCESS 1[0m in 7.53s]
+[0m15:23:55  28 of 32 START test assert_external_grains_and_values .......................... [RUN]
+[0m15:23:55  29 of 32 START test assert_public_completeness ................................. [RUN]
+[0m15:23:55  27 of 32 OK created sql table model GOLD.gold_content_daily .................... [[32mSUCCESS 14[0m in 1.37s]
+[0m15:23:55  30 of 32 START test assert_gold_matches_silver ................................. [RUN]
+[0m15:23:56  30 of 32 PASS assert_gold_matches_silver ....................................... [[32mPASS[0m in 0.96s]
+[0m15:23:56  28 of 32 PASS assert_external_grains_and_values ................................ [[32mPASS[0m in 1.18s]
+[0m15:23:57  29 of 32 PASS assert_public_completeness ....................................... [[32mPASS[0m in 2.70s]
+[0m15:23:57  31 of 32 START sql table model GOLD.gold_editorial_weekly ...................... [RUN]
+[0m15:24:00  31 of 32 OK created sql table model GOLD.gold_editorial_weekly ................. [[32mSUCCESS 2[0m in 2.58s]
+[0m15:24:00  32 of 32 START test assert_editorial_no_inflation .............................. [RUN]
+[0m15:24:02  32 of 32 PASS assert_editorial_no_inflation .................................... [[32mPASS[0m in 2.01s]
+[0m15:24:02  
+[0m15:24:10  1 of 1 START hook: sideflix_dbt.on-run-end.0 ................................... [RUN]
+[0m15:24:10  1 of 1 OK hook: sideflix_dbt.on-run-end.0 ...................................... [[32mOK[0m in 8.39s]
+[0m15:24:11  
+[0m15:24:11  Finished running 1 project hook, 2 table models, 21 data tests, 9 view models in 0 hours 0 minutes and 34.99 seconds (34.99s).
+[0m15:24:11  
+[0m15:24:11  [32mCompleted successfully[0m
+[0m15:24:11  
+[0m15:24:11  Done. PASS=33 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=33
+BUILD_VALIDATED airflow/work/7ea6b724cc8b1442ca509ce3/validated.json

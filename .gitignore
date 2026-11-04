@@ -20,3 +20,7 @@ airflow/logs/
 source/real/
 **/target/
 **/logs/
+
+# Local Airflow runtime and per-run validation receipts
+airflow/work/
+airflow/state/

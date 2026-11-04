@@ -1,0 +1,235 @@
+{
+  "executed_by": "MATIS_DOUAY",
+  "note": "Queries verified for Rayan; his own Snowsight chart and screenshots remain pending",
+  "queries": [
+    {
+      "sql": "SELECT CURRENT_USER(),CURRENT_ROLE(),CURRENT_SECONDARY_ROLES()",
+      "columns": [
+        "CURRENT_USER()",
+        "CURRENT_ROLE()",
+        "CURRENT_SECONDARY_ROLES()"
+      ],
+      "rows": [
+        [
+          "MATIS_DOUAY",
+          "SIDEFLIX_ANALYST",
+          "{\"roles\":\"\",\"value\":\"\"}"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT analysis_date,DATEADD(day,-6,analysis_date) AS window_start,\n       content_id,title,editorial_rank,valid_sessions,minutes_watched,\n       avg_rating,rating_count,ratings_start,ratings_end,\n       pageviews,views_start,views_end,\n       best_observed_rank,first_observed_week,last_observed_week,netflix_status,\n       sideflix_sessions_simulated,external_sources,published_at_utc\nFROM SIDEFLIX.GOLD.GOLD_EDITORIAL_WEEKLY\nORDER BY editorial_rank",
+      "columns": [
+        "ANALYSIS_DATE",
+        "WINDOW_START",
+        "CONTENT_ID",
+        "TITLE",
+        "EDITORIAL_RANK",
+        "VALID_SESSIONS",
+        "MINUTES_WATCHED",
+        "AVG_RATING",
+        "RATING_COUNT",
+        "RATINGS_START",
+        "RATINGS_END",
+        "PAGEVIEWS",
+        "VIEWS_START",
+        "VIEWS_END",
+        "BEST_OBSERVED_RANK",
+        "FIRST_OBSERVED_WEEK",
+        "LAST_OBSERVED_WEEK",
+        "NETFLIX_STATUS",
+        "SIDEFLIX_SESSIONS_SIMULATED",
+        "EXTERNAL_SOURCES",
+        "PUBLISHED_AT_UTC"
+      ],
+      "rows": [
+        [
+          "2026-11-01",
+          "2026-10-26",
+          "A",
+          "Whiplash",
+          1,
+          7,
+          "112.666667",
+          4.0394736842105265,
+          38,
+          "2015-02-21",
+          "2018-09-17",
+          15551,
+          "2026-10-26",
+          "2026-11-01",
+          null,
+          null,
+          null,
+          "not_observed_or_unmatched",
+          true,
+          "IMDb; MovieLens; Netflix Top 10; Wikidata; Wikimedia",
+          "2026-11-04 18:14:52.994000+00:00"
+        ],
+        [
+          "2026-11-01",
+          "2026-10-26",
+          "B",
+          "Moonlight",
+          2,
+          6,
+          "85.266667",
+          5.0,
+          1,
+          "2016-11-07",
+          "2016-11-07",
+          14329,
+          "2026-10-26",
+          "2026-11-01",
+          null,
+          null,
+          null,
+          "not_observed_or_unmatched",
+          true,
+          "IMDb; MovieLens; Netflix Top 10; Wikidata; Wikimedia",
+          "2026-11-04 18:14:52.994000+00:00"
+        ],
+        [
+          "2026-11-01",
+          "2026-10-26",
+          "E",
+          "Sicario",
+          3,
+          4,
+          "75.266667",
+          3.5454545454545454,
+          11,
+          "2016-03-22",
+          "2018-09-01",
+          26671,
+          "2026-10-26",
+          "2026-11-01",
+          5,
+          "2025-03-09",
+          "2025-03-09",
+          "confirmed_match",
+          true,
+          "IMDb; MovieLens; Netflix Top 10; Wikidata; Wikimedia",
+          "2026-11-04 18:14:52.994000+00:00"
+        ],
+        [
+          "2026-11-01",
+          "2026-10-26",
+          "C",
+          "Frances Ha",
+          4,
+          5,
+          "70.500000",
+          2.5,
+          1,
+          "2018-05-02",
+          "2018-05-02",
+          3614,
+          "2026-10-26",
+          "2026-11-01",
+          null,
+          null,
+          null,
+          "not_observed_or_unmatched",
+          true,
+          "IMDb; MovieLens; Netflix Top 10; Wikidata; Wikimedia",
+          "2026-11-04 18:14:52.994000+00:00"
+        ],
+        [
+          "2026-11-01",
+          "2026-10-26",
+          "D",
+          "Room",
+          5,
+          4,
+          "66.133333",
+          3.5625,
+          8,
+          "2016-04-28",
+          "2018-05-05",
+          9312,
+          "2026-10-26",
+          "2026-11-01",
+          null,
+          null,
+          null,
+          "not_observed_or_unmatched",
+          true,
+          "IMDb; MovieLens; Netflix Top 10; Wikidata; Wikimedia",
+          "2026-11-04 18:14:52.994000+00:00"
+        ],
+        [
+          "2026-11-01",
+          "2026-10-26",
+          "F",
+          "Get Out",
+          6,
+          4,
+          "44.400000",
+          3.6333333333333333,
+          15,
+          "2017-02-27",
+          "2018-09-16",
+          37554,
+          "2026-10-26",
+          "2026-11-01",
+          null,
+          null,
+          null,
+          "not_observed_or_unmatched",
+          true,
+          "IMDb; MovieLens; Netflix Top 10; Wikidata; Wikimedia",
+          "2026-11-04 18:14:52.994000+00:00"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT title,minutes_watched\nFROM SIDEFLIX.GOLD.GOLD_EDITORIAL_WEEKLY\nORDER BY editorial_rank",
+      "columns": [
+        "TITLE",
+        "MINUTES_WATCHED"
+      ],
+      "rows": [
+        [
+          "Whiplash",
+          "112.666667"
+        ],
+        [
+          "Moonlight",
+          "85.266667"
+        ],
+        [
+          "Sicario",
+          "75.266667"
+        ],
+        [
+          "Frances Ha",
+          "70.500000"
+        ],
+        [
+          "Room",
+          "66.133333"
+        ],
+        [
+          "Get Out",
+          "44.400000"
+        ]
+      ]
+    },
+    {
+      "sql": "SELECT usage_date,SUM(valid_sessions) AS sessions,SUM(minutes_watched) AS minutes\nFROM SIDEFLIX.GOLD.GOLD_CONTENT_DAILY\nWHERE usage_date='2026-11-01'::date GROUP BY usage_date",
+      "columns": [
+        "USAGE_DATE",
+        "SESSIONS",
+        "MINUTES"
+      ],
+      "rows": [
+        [
+          "2026-11-01",
+          13,
+          "177.400000"
+        ]
+      ]
+    }
+  ]
+}

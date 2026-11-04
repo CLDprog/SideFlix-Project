@@ -42,4 +42,23 @@ Versions exécutées : Python 3.12.7 (images), Airflow 3.3.2 avec apache-airflow
 
 Documentation dbt et lineage : `dbt docs generate --static` exécuté sous le rôle SIDEFLIX_RUNNER ; graphe dans `docs/dbt_lineage.png`.
 
-Contributions : Matis Douay (collecte des sources, Bronze v2, ingestion, dbt v2, tests, incidents, préparation de l’étape 10), Jérémy Caillaud (socle Snowflake, Terraform et state GCS, accès du groupe, exécution Docker/Airflow et alerte Slack, intervention administrative et validations de l’étape 10, livrables), Rayan Faher Bonne (couche de consommation : restitution Snowsight depuis Gold avec le rôle analyste en lecture seule, présentée pendant la démonstration). Historique détaillé : `git log` et la roadmap Notion interne.
+Contributions : Matis Douay (collecte des sources, Bronze v2, ingestion, dbt v2, tests, incidents, préparation de l’étape 10), Jérémy Caillaud (socle Snowflake, Terraform et state GCS, accès du groupe, exécution Docker/Airflow et alerte Slack, intervention administrative et validations de l’étape 10, livrables), Rayan Faher Bonne (couche de consommation attribuée : restitution Snowsight depuis Gold avec le rôle analyste en lecture seule ; réalisation et captures personnelles à confirmer avant la remise). Historique détaillé : `git log` et la roadmap Notion interne.
+
+## Audit explicite du barème C1 à C8 — relecture finale du 4 novembre
+
+Cette table relie les critères aux preuves disponibles. La vérification du dépôt interne ne prouve ni l'accès du jury au dépôt de remise distinct, ni l'existence d'une vidéo ou de slides exportées.
+
+| Critère | Réalisation et preuve | État de la vérification |
+| --- | --- | --- |
+| C1 Entreprise,10pts | README «Le besoin» : plateforme fictive, clients, abonnement,10000abonnés/7,99€,100contenus/6salariés comme hypothèses ; ancrage Netflix et revente hypothétique | Documentation présente ; formulation des slides à relire sur l'export14diapos |
+| C2 Valeur métier,10pts | README utilisateur/décision/grain/formules/rythme, exclusions dans `dbt/sideflix_dbt/models/silver/quarantine_sessions.sql` ; `source/v2/expected_daily_usage.csv`, `rendu/dbt_7_v2_business_samples.txt` : exclusions, exemple indépendant,13sessions/177,4min le1er novembre | Preuves techniques vérifiées ; discours des slides à confirmer |
+| C3 Pipeline bout en bout,20pts | Sources/mapping, trois méthodes,11modèles dbt ; runs8/9/10 et README reproductible ; conteneurs exécutés | Prouvé dans les fichiers d'exécution, pas seulement prévu |
+| C4 Choix proportionnés,10pts | `docs/architecture_v2.md` : choix, limites et alternatives rechargement complet/BigQuery ; `rendu/Etape_10_Mesures.json` : Query Profile réel | Documentation et mesure disponibles ; aucune optimisation décorative |
+| C5 Cloud contrôlé/IaC,10pts | Terraform warehouse, plan0 et state privé/versionné/verrouillé4.2 ; exécution/calcul Snowflake8/10 | Prouvé ; AWS pour données + GCS uniquement state, second fournisseur explicitement signalé |
+| C6 Fiabilité/exploitation,10pts | Tests7, alertes8/9, deux incidents réellement repris et rejoués9, cron/retries/logs | Prouvé ; scénarios et reprises dans `rendu/Etape_9_V2_Verifications.md` |
+| C7 Accès/secrets/coûts,5pts | Tests autorisés/refusés, utilisateur de service limité, consommation observée/projection, moniteur et arrêt10 | Preuves10 disponibles ; audit de la copie finale encore bloqué sur son accès |
+| C8 Slides et groupe,5pts | Architecture et lineage, contributions README, résultats Gold ; restitution de Rayan et conducteur à valider à trois | Ouvert : export slides14diapos, tableau/graphique de Rayan et répétition non vérifiés ici |
+
+Compléments des supports : Session1.2p.6 exige slides, architecture, Git avec README et vidéo non notée mais à remettre ; preuves d'exécution facultatives comme livrable séparé. Session4.2p.39 : plusieurs sources/méthodes,1cloud, chacun porte une partie, documentation dbt. Le Framework ajoute le run en direct et les deux incidents réellement démontrés ; la vidéo ne remplace pas le direct. Conserver explicitement l'ambiguïté entreprise réelle/Sideflix fictif et la présence du backend GCS ; ne pas présenter le rachat comme un fait réel.
+
+**Points de remise encore ouverts lors de ce contrôle :** vidéo et lecture du fichier ; export14slides/relecture et partage (Jérémy) ; captures tableau/graphique Snowsight par Rayan ; accès à `CLDprog/Sideflix-Oral-Defense` et synchronisation des derniers fichiers ; confirmation de dépôt sur la plateforme avant23h59. Les requêtes de restitution sont dans `docs/snowsight_rayan.sql` ; elles ont été vérifiées par Matis sous SIDEFLIX_ANALYST (`rendu/Restitution_SQL_Verification.json`), ce qui ne remplace pas la contribution/capture de Rayan.

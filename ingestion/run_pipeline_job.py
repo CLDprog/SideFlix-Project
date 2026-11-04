@@ -16,6 +16,7 @@ def main():
     p.add_argument('--date',required=True,type=date.fromisoformat)
     p.add_argument('--run-id',required=True)
     p.add_argument('--work-dir',default='/work')
+    p.add_argument('--incident-device',action='store_true')
     args=p.parse_args()
     # Stable safe filename; preserve the actual run ID in the validation record.
     import hashlib
@@ -29,7 +30,9 @@ def main():
         if valid.exists():valid.unlink()
         run([sys.executable,'source/collect_public_data.py'])
         run([sys.executable,'ingestion/incremental_catalog.py'])
-        run([sys.executable,'ingestion/load_sessions.py','--public','--api-mode','live','--receipt',str(receipt)])
+        load=[sys.executable,'ingestion/load_sessions.py','--public','--api-mode','live','--receipt',str(receipt)]
+        if args.incident_device:load+=['--incident-device',args.run_id]
+        run(load)
         return
     results=json.loads(receipt.read_text())
     vars={'analysis_date':str(args.date),**{'batch_'+r['source']:r['batch_id'] for r in results}}

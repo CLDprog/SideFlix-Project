@@ -33,6 +33,8 @@ def alert_on_failure(context):
 DAY=("{{ dag_run.conf['date'] if dag_run.conf and dag_run.conf.get('date') "
      "else data_interval_end.in_timezone('UTC').subtract(days=1).to_date_string() }}")
 ARGS=' --date '+DAY+' --run-id {{ run_id }}'
+QUALITY="{{ ' --incident-device' if (dag_run.conf or {}).get('incident') == 'bad_device' else '' }}"
+CRASH="{{ ' --crash-on-try 1' if (dag_run.conf or {}).get('incident') == 'crash_after_write' else '' }}"
 
 with DAG(dag_id='sideflix_daily',schedule='0 6 * * *',
          start_date=pendulum.datetime(2026,11,1,tz='Europe/Paris'),catchup=False,max_active_runs=1,
@@ -43,9 +45,9 @@ with DAG(dag_id='sideflix_daily',schedule='0 6 * * *',
             environment=ENV,mounts=MOUNTS,user=os.environ['SIDEFLIX_TASK_USER'],
             mount_tmp_dir=False,auto_remove='success',
             extra_hosts={'host.docker.internal':'host-gateway'})
-    ingest=job('ingest_sources','sideflix-ingest:1.0.0','python ingestion/run_pipeline_job.py ingest'+ARGS)
+    ingest=job('ingest_sources','sideflix-ingest:1.0.0','python ingestion/run_pipeline_job.py ingest'+ARGS+QUALITY)
     check=job('check_sources','sideflix-ingest:1.0.0','python ingestion/run_pipeline_job.py check'+ARGS)
     build=job('dbt_build','sideflix-dbt:1.0.0','python ingestion/run_pipeline_job.py build'+ARGS)
     publish=job('publish_daily_usage','sideflix-ingest:1.0.0',
-        'python ingestion/publish_daily_usage.py'+ARGS+' --try-number {{ ti.try_number }}')
+        'python ingestion/publish_daily_usage.py'+ARGS+' --try-number {{ ti.try_number }}'+CRASH)
     ingest >> check >> build >> publish

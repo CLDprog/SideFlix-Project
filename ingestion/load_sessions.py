@@ -119,6 +119,7 @@ def main():
     p.add_argument('--api-mode',choices=['snapshot','live'],default='snapshot')
     p.add_argument('--receipt',default='rendu/ingestion_v2_receipt.json')
     p.add_argument('--replay-receipt',help='Replay the exact API payloads of a previous receipt, without HTTP requests')
+    p.add_argument('--incident-device',metavar='RUN_ID',help='TD quality incident: isolated copy, never edits reference files')
     args=p.parse_args();mapping=list(csv.DictReader((ROOT/'source/content_mapping.csv').open()))
     results=[]
     replay={r['source']:r for r in json.loads((ROOT/args.replay_receipt).read_text())} if args.replay_receipt else {}
@@ -127,6 +128,11 @@ def main():
         for file in sorted((ROOT/'source/v2/sessions').glob('sessions_*.json')):
             sessions.extend(json.loads(line) for line in file.read_text().splitlines() if line.strip())
         if len(sessions)!=32:raise ValueError('Expected 32 simulated input rows')
+        if args.incident_device:
+            # Change one valid session in this in-memory copy, preserving expected counts.
+            bad=next(r for r in sessions if r['session_id']=='S1')
+            bad.update(session_id='TEST_BAD_DEVICE',device='invalid',incident_run_id=args.incident_device)
+            print('INCIDENT_BAD_DEVICE: isolated batch for run',args.incident_device,flush=True)
         results.append(file_batch(cur,'sessions_simulated','SIDEFLIX.BRONZE.SESSIONS_RAW',sessions))
         if args.public:
             imdb=list(csv.DictReader((ROOT/'source/real/imdb/title.basics.selected.tsv').open(),delimiter='\t'))

@@ -1,9 +1,9 @@
 -- Called by on-run-end: stores one row per model/test result in SIDEFLIX.LAB.DBT_RESULTS.
--- runtime = where dbt ran: here always 'snowflake' (dbt Projects on Snowflake).
+-- Runtime distinguishes Core/Docker from dbt Projects on Snowflake.
 {% macro log_run_results(results) %}
   {% if execute and results | length > 0 %}
     {% set table = target.database ~ '.LAB.DBT_RESULTS' %}
-    {% set runtime = 'snowflake' %}
+    {% set runtime = 'core' if target.name == 'core' else 'snowflake' %}
     {% do run_query('create schema if not exists ' ~ target.database ~ '.LAB') %}
     {% do run_query('create table if not exists ' ~ table ~ ' (
         invocation_id varchar, run_at timestamp_tz, command varchar, runtime varchar,

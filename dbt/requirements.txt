@@ -1,0 +1,4 @@
+# Resource pack 06/docker/dbt-runner versions; ingestion connector stays pinned.
+-r ../ingestion/requirements.txt
+dbt-core==1.11.16
+dbt-snowflake==1.11.6

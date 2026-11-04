@@ -1,0 +1,16 @@
+# Core/Docker profile; secrets supplied exclusively by environment.
+sideflix:
+  target: core
+  outputs:
+    core:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      private_key_path: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_FILE') }}"
+      role: SYSADMIN
+      warehouse: SIDEFLIX_WH
+      database: SIDEFLIX
+      schema: SILVER
+      threads: 4
+      session_parameters:
+        TIMEZONE: UTC

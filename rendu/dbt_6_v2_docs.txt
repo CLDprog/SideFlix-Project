@@ -1,0 +1,12 @@
+[0m15:13:09  Running with dbt=1.11.16
+[0m15:13:09  Registered adapter: snowflake=1.11.6
+[0m15:13:10  [[33mWARNING[0m]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 2 unused configuration paths:
+- models.sideflix_dbt.my_second_dbt_model
+- models.sideflix_dbt.my_first_dbt_model
+[0m15:13:10  Found 11 models, 1 operation, 7 sources, 540 macros
+[0m15:13:10  
+[0m15:13:10  Concurrency: 4 threads (target='core')
+[0m15:13:10  
+[0m15:13:16  Building catalog
+[0m15:13:34  Catalog written to /Users/matisdouay/Desktop/Albert school/M2 - Albert School/Data engineering and cloud infrastructure/Sideflix-Project/dbt/sideflix_dbt/target/catalog.json

@@ -1,0 +1,41 @@
+[0m15:12:44  Running with dbt=1.11.16
+[0m15:12:44  Registered adapter: snowflake=1.11.6
+[0m15:12:45  [[33mWARNING[0m]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 2 unused configuration paths:
+- models.sideflix_dbt.my_first_dbt_model
+- models.sideflix_dbt.my_second_dbt_model
+[0m15:12:45  Found 11 models, 1 operation, 7 sources, 540 macros
+[0m15:12:45  
+[0m15:12:45  Concurrency: 4 threads (target='core')
+[0m15:12:45  
+[0m15:12:51  3 of 11 START sql view model SILVER.silver_netflix ............................. [RUN]
+[0m15:12:51  2 of 11 START sql view model SILVER.silver_movielens ........................... [RUN]
+[0m15:12:51  1 of 11 START sql view model SILVER.silver_imdb ................................ [RUN]
+[0m15:12:51  4 of 11 START sql view model SILVER.silver_wikimedia ........................... [RUN]
+[0m15:12:51  2 of 11 OK created sql view model SILVER.silver_movielens ...................... [[32mSUCCESS 1[0m in 0.54s]
+[0m15:12:51  1 of 11 OK created sql view model SILVER.silver_imdb ........................... [[32mSUCCESS 1[0m in 0.54s]
+[0m15:12:51  5 of 11 START sql view model SILVER.stg_sessions ............................... [RUN]
+[0m15:12:51  6 of 11 START sql view model SILVER.silver_catalog ............................. [RUN]
+[0m15:12:52  5 of 11 OK created sql view model SILVER.stg_sessions .......................... [[32mSUCCESS 1[0m in 0.33s]
+[0m15:12:52  6 of 11 OK created sql view model SILVER.silver_catalog ........................ [[32mSUCCESS 1[0m in 0.52s]
+[0m15:12:52  7 of 11 START sql view model SILVER.quarantine_sessions ........................ [RUN]
+[0m15:12:52  8 of 11 START sql view model SILVER.silver_sessions ............................ [RUN]
+[0m15:12:52  8 of 11 OK created sql view model SILVER.silver_sessions ....................... [[32mSUCCESS 1[0m in 0.48s]
+[0m15:12:52  9 of 11 START sql view model SILVER.silver_wikidata ............................ [RUN]
+[0m15:12:52  7 of 11 OK created sql view model SILVER.quarantine_sessions ................... [[32mSUCCESS 1[0m in 0.55s]
+[0m15:12:52  10 of 11 START sql table model GOLD.gold_content_daily ......................... [RUN]
+[0m15:12:53  9 of 11 OK created sql view model SILVER.silver_wikidata ....................... [[32mSUCCESS 1[0m in 0.53s]
+[0m15:12:54  10 of 11 OK created sql table model GOLD.gold_content_daily .................... [[32mSUCCESS 14[0m in 1.34s]
+[0m15:12:56  3 of 11 OK created sql view model SILVER.silver_netflix ........................ [[32mSUCCESS 1[0m in 5.42s]
+[0m15:12:56  4 of 11 OK created sql view model SILVER.silver_wikimedia ...................... [[32mSUCCESS 1[0m in 5.44s]
+[0m15:12:56  11 of 11 START sql table model GOLD.gold_editorial_weekly ...................... [RUN]
+[0m15:13:00  11 of 11 OK created sql table model GOLD.gold_editorial_weekly ................. [[32mSUCCESS 6[0m in 3.46s]
+[0m15:13:00  
+[0m15:13:07  1 of 1 START hook: sideflix_dbt.on-run-end.0 ................................... [RUN]
+[0m15:13:07  1 of 1 OK hook: sideflix_dbt.on-run-end.0 ...................................... [[32mOK[0m in 7.09s]
+[0m15:13:08  
+[0m15:13:08  Finished running 1 project hook, 2 table models, 9 view models in 0 hours 0 minutes and 23.21 seconds (23.21s).
+[0m15:13:08  
+[0m15:13:08  [32mCompleted successfully[0m
+[0m15:13:08  
+[0m15:13:08  Done. PASS=12 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=12

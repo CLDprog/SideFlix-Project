@@ -17,7 +17,8 @@ Plateforme fictive de streaming indépendant inspirée de Netflix réel. Hypoth�
 | Étape 4.2 v2 | State Terraform migré vers un backend GCS privé, versionné et verrouillé ; plan sans changement (code 0). Étape 4 terminée. Preuves : `rendu/Etape_4_2_V2_Verifications.md`. |
 | Étape 3.3 v2 | Sessions simulées préparées et contrôlées ; 32 brutes, 30 valides. Résultats attendus en CSV. |
 | Étape 5 v2 | Terminée : cinq sources réelles et 32 sessions simulées chargées, catalogue synchronisé, rejeu sans nouvelle ligne et test de mise à jour en LAB réussis. Voir `rendu/Etape_5_V2_Verifications.md`. |
-| Suite | Étape 6 : adapter dbt à la v2 ; puis tests, Docker/Airflow, incidents et rendu. |
+| Étape 6 v2 | 11 modèles exécutés en Core, contexte des cinq sources et chiffres métier vérifiés. Voir `rendu/Etape_6_V2_Verifications.md`. |
+| Suite | Étape 7 : tests/build et fraîcheur ; puis Docker/Airflow, incidents et rendu. |
 
 La reprise porte sur les données et leurs adaptations ; le socle technique est réutilisé. Le Framework impose cinq jeux authentiques : IMDb, MovieLens, Netflix Top 10, Wikidata et Wikimedia. Les sessions Sideflix sont **simulées** et ne comptent pas parmi ces cinq jeux. Notes, consultations et classements externes ne sont pas des minutes regardées sur Sideflix.
 
@@ -46,7 +47,7 @@ python source/collect_public_data.py
 
 Le collecteur récupère les fichiers manquants et réutilise les snapshots présents ; les APIs ont timeout, échec HTTP visible et reprise limitée des erreurs 429. Les valeurs des sources publiques peuvent évoluer : consulter les empreintes/périodes et ne pas remplacer silencieusement un snapshot de démonstration. Voir `source/README.md` et `rendu/Collecte_V2_Verifications.md`.
 
-Le profil dbt fourni fonctionne dans Snowsight Workspaces avec la session du groupe. Pour dbt Core/Docker, préparer le profil à variables et clé du TD : ce n’est pas encore fait. Aucune clé, mot de passe, webhook, `.env` ou state ne doit être versionné.
+Le profil dbt fourni fonctionne dans Snowsight Workspaces avec la session du groupe. Pour dbt Core/Docker, le profil à variables/RSA se trouve dans `dbt/profiles-core/` ; son exécution Core a été vérifiée. Aucune clé, mot de passe, webhook, `.env` ou state ne doit être versionné.
 
 Les anciens scripts `source/01_create_catalog.sql` et `source/02_verify_catalog.sql` reproduisent le **fixture historique fictif**, pas le nouveau catalogue réel. Ne pas les présenter comme l’adaptation v2 ni remplacer les données du groupe avant intégration contrôlée.
 

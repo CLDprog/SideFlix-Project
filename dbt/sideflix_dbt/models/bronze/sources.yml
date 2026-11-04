@@ -1,15 +1,32 @@
 version: 2
 sources:
-  - name: bronze
-    database: SIDEFLIX
-    schema: BRONZE
-    description: "Deux sources fictives chargees par les scripts de Jeremy."
-    loaded_at_field: _loaded_at
-    freshness:
-      warn_after: {count: 24, period: hour}
-      error_after: {count: 90, period: day}
-    tables:
-      - name: catalog
-        description: "Catalogue PostgreSQL charge par watermark et MERGE ; une ligne par contenu."
-      - name: sessions_raw
-        description: "Sessions JSON brutes chargees par stage et COPY ; doublon et anomalie conserves."
+- name: bronze
+  database: SIDEFLIX
+  schema: BRONZE
+  description: Catalogue réel, cinq sources publiques authentiques et sessions Sideflix
+    explicitement simulées.
+  loaded_at_field: _loaded_at
+  freshness:
+    warn_after:
+      count: 24
+      period: hour
+    error_after:
+      count: 90
+      period: day
+  tables:
+  - name: catalog
+    description: Catalogue PostgreSQL charge par watermark et MERGE ; une ligne par
+      contenu.
+  - name: sessions_raw
+    description: Historique JSON brut ; dbt sélectionne uniquement le lot simulé v2
+      déclaré dans vars.
+  - name: imdb_raw
+    description: Source publique imdb ; provenance et lot conservés.
+  - name: movielens_raw
+    description: Source publique movielens ; provenance et lot conservés.
+  - name: netflix_raw
+    description: Source publique netflix ; provenance et lot conservés.
+  - name: wikidata_raw
+    description: Source publique wikidata ; provenance et lot conservés.
+  - name: wikimedia_raw
+    description: Source publique wikimedia ; provenance et lot conservés.

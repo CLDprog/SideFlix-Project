@@ -16,8 +16,12 @@ dbt/target/
 dbt/logs/
 airflow/logs/
 
-# Public-source raw snapshots: recreate with the collector; do not publish by default.
-source/real/
+# Raw snapshots are shared only in the private group repository.
+# Exclude downloaded archives/full IMDb dumps and generated landing cache.
+source/real/**/*.zip
+source/real/**/*.gz
+source/real/imdb/title.basics.tsv
+source/real/landing/
 **/target/
 **/logs/
 

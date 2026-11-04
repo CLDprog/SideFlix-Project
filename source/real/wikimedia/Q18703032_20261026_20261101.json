@@ -1,0 +1,67 @@
+{
+  "items": [
+    {
+      "project": "en.wikipedia",
+      "article": "Room_(2015_film)",
+      "granularity": "daily",
+      "timestamp": "2026102600",
+      "access": "all-access",
+      "agent": "user",
+      "views": 1585
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Room_(2015_film)",
+      "granularity": "daily",
+      "timestamp": "2026102700",
+      "access": "all-access",
+      "agent": "user",
+      "views": 1550
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Room_(2015_film)",
+      "granularity": "daily",
+      "timestamp": "2026102800",
+      "access": "all-access",
+      "agent": "user",
+      "views": 1146
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Room_(2015_film)",
+      "granularity": "daily",
+      "timestamp": "2026102900",
+      "access": "all-access",
+      "agent": "user",
+      "views": 1089
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Room_(2015_film)",
+      "granularity": "daily",
+      "timestamp": "2026103000",
+      "access": "all-access",
+      "agent": "user",
+      "views": 1326
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Room_(2015_film)",
+      "granularity": "daily",
+      "timestamp": "2026103100",
+      "access": "all-access",
+      "agent": "user",
+      "views": 1365
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Room_(2015_film)",
+      "granularity": "daily",
+      "timestamp": "2026110100",
+      "access": "all-access",
+      "agent": "user",
+      "views": 1251
+    }
+  ]
+}

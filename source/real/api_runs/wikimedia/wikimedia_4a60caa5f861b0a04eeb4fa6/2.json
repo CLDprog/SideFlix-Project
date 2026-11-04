@@ -1,0 +1,67 @@
+{
+  "items": [
+    {
+      "project": "en.wikipedia",
+      "article": "Frances_Ha",
+      "granularity": "daily",
+      "timestamp": "2026102600",
+      "access": "all-access",
+      "agent": "user",
+      "views": 575
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Frances_Ha",
+      "granularity": "daily",
+      "timestamp": "2026102700",
+      "access": "all-access",
+      "agent": "user",
+      "views": 525
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Frances_Ha",
+      "granularity": "daily",
+      "timestamp": "2026102800",
+      "access": "all-access",
+      "agent": "user",
+      "views": 523
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Frances_Ha",
+      "granularity": "daily",
+      "timestamp": "2026102900",
+      "access": "all-access",
+      "agent": "user",
+      "views": 513
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Frances_Ha",
+      "granularity": "daily",
+      "timestamp": "2026103000",
+      "access": "all-access",
+      "agent": "user",
+      "views": 504
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Frances_Ha",
+      "granularity": "daily",
+      "timestamp": "2026103100",
+      "access": "all-access",
+      "agent": "user",
+      "views": 495
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Frances_Ha",
+      "granularity": "daily",
+      "timestamp": "2026110100",
+      "access": "all-access",
+      "agent": "user",
+      "views": 479
+    }
+  ]
+}

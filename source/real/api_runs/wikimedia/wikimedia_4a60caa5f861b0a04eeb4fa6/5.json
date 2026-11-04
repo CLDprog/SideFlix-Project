@@ -1,0 +1,67 @@
+{
+  "items": [
+    {
+      "project": "en.wikipedia",
+      "article": "Get_Out",
+      "granularity": "daily",
+      "timestamp": "2026102600",
+      "access": "all-access",
+      "agent": "user",
+      "views": 4369
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Get_Out",
+      "granularity": "daily",
+      "timestamp": "2026102700",
+      "access": "all-access",
+      "agent": "user",
+      "views": 4095
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Get_Out",
+      "granularity": "daily",
+      "timestamp": "2026102800",
+      "access": "all-access",
+      "agent": "user",
+      "views": 4711
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Get_Out",
+      "granularity": "daily",
+      "timestamp": "2026102900",
+      "access": "all-access",
+      "agent": "user",
+      "views": 4396
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Get_Out",
+      "granularity": "daily",
+      "timestamp": "2026103000",
+      "access": "all-access",
+      "agent": "user",
+      "views": 5592
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Get_Out",
+      "granularity": "daily",
+      "timestamp": "2026103100",
+      "access": "all-access",
+      "agent": "user",
+      "views": 7483
+    },
+    {
+      "project": "en.wikipedia",
+      "article": "Get_Out",
+      "granularity": "daily",
+      "timestamp": "2026110100",
+      "access": "all-access",
+      "agent": "user",
+      "views": 6908
+    }
+  ]
+}

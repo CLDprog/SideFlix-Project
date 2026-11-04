@@ -1,0 +1,15 @@
+version: 2
+sources:
+  - name: bronze
+    database: SIDEFLIX
+    schema: BRONZE
+    description: "Deux sources fictives chargees par les scripts de Jeremy."
+    loaded_at_field: _loaded_at
+    freshness:
+      warn_after: {count: 24, period: hour}
+      error_after: {count: 90, period: day}
+    tables:
+      - name: catalog
+        description: "Catalogue PostgreSQL charge par watermark et MERGE ; une ligne par contenu."
+      - name: sessions_raw
+        description: "Sessions JSON brutes chargees par stage et COPY ; doublon et anomalie conserves."

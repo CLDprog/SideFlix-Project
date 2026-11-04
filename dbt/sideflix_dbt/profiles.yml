@@ -1,0 +1,14 @@
+# Profil Workspaces du TD 3.2 : utilise la session Snowflake courante.
+# Ce profil sans secrets est reserve a dbt Projects on Snowflake.
+sideflix:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "not needed"
+      user: "not needed"
+      role: SYSADMIN
+      warehouse: SIDEFLIX_WH
+      database: SIDEFLIX
+      schema: SILVER
+      threads: 4

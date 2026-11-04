@@ -1,0 +1,23 @@
+version: 2
+models:
+  - name: silver_catalog
+    description: "Catalogue nettoye et type ; un episode est un contenu."
+    columns:
+      - name: content_id
+        description: "Identifiant stable du contenu (A a F dans le prototype)."
+      - name: duration_seconds
+        description: "Duree du contenu en secondes."
+  - name: stg_sessions
+    description: "32 lignes JSON typees, avec provenance et date de chargement."
+    columns:
+      - name: started_at_utc
+        description: "Debut de lecture converti en UTC."
+  - name: quarantine_sessions
+    description: "Lignes invalides conservees avec leur premier motif de rejet ; S31 attendue."
+  - name: silver_sessions
+    description: "Sessions valides jointes au catalogue et dedoublonnees par session_id ; 30 attendues."
+    columns:
+      - name: session_id
+        description: "Identifiant du resume final de lecture ; plusieurs sessions par spectateur sont possibles."
+      - name: watched_seconds
+        description: "Secondes positives ne depassant pas la duree du contenu."

@@ -1,0 +1,10 @@
+CONTROLE	OBTENU
+bronze_catalog	6
+bronze_sessions	32
+silver_catalog	6
+stg_sessions	32
+quarantine_sessions	1
+silver_sessions	30
+rejet	S31: invalid_watched_seconds
+reference_A	2 sessions / 45.000000 minutes
+reference_B	1 sessions / 10.000000 minutes

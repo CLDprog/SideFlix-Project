@@ -1,0 +1,13 @@
+version: 2
+models:
+  - name: gold_content_daily
+    description: "Sessions distinctes et minutes visionnees par contenu et par jour UTC."
+    columns:
+      - name: usage_date
+        description: "Date UTC de debut des sessions."
+      - name: content_id
+        description: "Contenu visionne."
+      - name: valid_sessions
+        description: "COUNT DISTINCT session_id parmi les sessions Silver."
+      - name: minutes_watched
+        description: "Somme watched_seconds / 60 ; doublons et rejets exclus."

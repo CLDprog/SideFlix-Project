@@ -1,82 +1,53 @@
-# Sideflix — projet scolaire
+# Sideflix — projet scolaire (travail interne du groupe)
 
-Pipeline analytique d’une plateforme fictive de streaming indépendant, réalisé avec les méthodes des cours et TD de Data Engineering & Cloud Infrastructure.
+Plateforme fictive de streaming indépendant inspirée de Netflix réel. Hypothèses : 10 000 abonnés à 7,99 €/mois, 100 contenus et 6 salariés. La revente à Netflix est une porte de sortie hypothétique.
 
-## Cadrage retenu
+**Cas d’usage conservé :** aider le responsable du catalogue à choisir les mises en avant hebdomadaires. Calcul quotidien à 06 h Paris, disponible avant 07 h. Grain : contenu et jour UTC de début de session. Indicateurs : sessions valides distinctes et somme des secondes visionnées / 60. Classement sur sept jours.
 
-Entreprise fictive : 10 000 abonnés à 7,99 €/mois, 100 contenus et 6 salariés. Ces hypothèses sont distinctes du petit jeu de démonstration.
+## Où nous en sommes — reprise du 4 novembre 2026
 
-Besoin : aider le responsable du catalogue à préparer les mises en avant de la semaine. Calcul quotidien à 6 h, heure de Paris, disponible avant 7 h.
-
-- Sessions valides distinctes par contenu et par jour UTC.
-- Minutes visionnées : somme des secondes valides divisée par 60.
-- Classement sur sept jours selon les minutes visionnées.
-
-Une session est un résumé final de lecture. Une ligne par session après dédoublonnage ; le jour est celui du début de la session en UTC. Un épisode de série est un contenu. Toutes les données sont fictives.
-
-## Architecture prévue
-
-Catalogue PostgreSQL (watermark + MERGE, TD 2) et sessions JSON (stage + COPY INTO, TD 3.3), puis Bronze → Silver dbt → Gold dbt dans Snowflake. Restitution SQL dans Snowsight. Docker exécutera les jobs, Airflow les ordonnera et Terraform créera le warehouse.
-
-PostgreSQL et le pilotage restent locaux ; stockage et calculs analytiques seront dans Snowflake. Les objets REDGRAVE des TD sont conservés.
-
-## Dossiers
-
-| Dossier | Rôle |
+| Partie | État réel |
 | --- | --- |
-| `source/` | SQL du catalogue et fichiers de sessions |
-| `ingestion/` | `00_create_sideflix_objects.sql` (base et schémas, 4.1), `01_bronze_setup.sql` (format JSON, stage, tables Bronze, 4.3), `check_connection.py` et `.env.example` (connexion par clé, 4.3), `incremental_catalog.py` (catalogue, watermark + MERGE), `load_sessions.py` (sessions, PUT + COPY INTO), `02_check_bronze.sql` (contrôle Bronze), `03_create_team_users.sql` (accès Snowflake de Matis et Rayan, sans mot de passe dans le fichier) |
-| `dbt/` | À compléter aux étapes 6 et 7 |
-| `airflow/` | À compléter à l’étape 8 |
-| `terraform/` | Warehouse `SIDEFLIX_WH` déclaré en IaC (module du TD 4.2) ; `terraform.tfvars` et state locaux, non versionnés |
-| `rendu/` | Contrôles, preuves et futurs documents de rendu |
+| Ancien prototype, étapes 3–5 | Catalogue fictif PostgreSQL, 32 lignes JSON, Snowflake et Terraform réalisés par le groupe ; ingestion/replay vérifiés. Scripts préservés. |
+| Étape 6 | Projet dbt et preuves de son exécution Workspaces intégrés au dépôt : 6 contenus, 30 sessions valides, un rejet, un doublon ; Gold de référence 55 min. Tests de l’étape 7 encore à réaliser. |
+| Reprise Framework, étape 2.1 | Cinq jeux publics collectés localement ; manifeste, mapping six films et catalogue réel CSV préparés. Conditions/attributions et références de curation encore à compléter. |
+| Étape 2.2 | Architecture v2 préparée dans Notion, à vérifier avec l’implémentation. |
+| Étape 3.3 v2 | Sessions simulées préparées et contrôlées ; 32 brutes, 30 valides. Résultats attendus en CSV. |
+| Suite | Charger le catalogue réel, étendre Bronze/ingestions et dbt, puis tests, Docker/Airflow, deux incidents/reprises, droits/coûts et rendu/live. Aucune exécution cloud v2 n’est revendiquée. |
 
-## Préparer le catalogue sur son poste
+La reprise porte sur les données et leurs adaptations ; le socle technique est réutilisé. Le Framework impose cinq jeux authentiques : IMDb, MovieLens, Netflix Top 10, Wikidata et Wikimedia. Les sessions Sideflix sont **simulées** et ne comptent pas parmi ces cinq jeux. Notes, consultations et classements externes ne sont pas des minutes regardées sur Sideflix.
 
-Prérequis : PostgreSQL 16 démarré et outils `createdb`/`psql` disponibles. Depuis ce dossier, avec son utilisateur PostgreSQL local :
+## Dossiers et méthodes du cours
+
+- `source/real/` : snapshots publics locaux, ignorés par Git ; URLs et empreintes dans `source/sources_manifest.csv`.
+- `source/content_mapping.csv`, `catalog_real.csv` : correspondances IMDb/MovieLens/Wikidata/article, catalogue réel.
+- `source/fixtures/reference/` : ancien jeu contrôlé conservé ; fichiers historiques aussi présents à leur emplacement initial.
+- `source/v2/sessions/` et `expected_daily_usage.csv` : simulation finale isolée et résultats attendus.
+- `ingestion/` : code de Jérémy conservé, watermark/MERGE et PUT/COPY des TD 2/3.3. Il traite encore l’ancien prototype.
+- `dbt/sideflix_dbt/` : modèles Silver/Gold déjà exécutés sur le prototype ; profil fourni réservé à Workspaces.
+- `terraform/` : warehouse existant ; utiliser son véritable state, jamais recréer depuis un state vide.
+- `rendu/` : preuves de travail internes, pas un paquet final de remise.
+
+Schéma détaillé : [architecture v2](docs/architecture_v2.md).
+
+Architecture cible : catalogue IMDb → PostgreSQL → watermark/MERGE ; fichiers MovieLens/Netflix et sessions simulées → stage/COPY ; APIs Wikidata/Wikimedia → Python requests/VARIANT ; Snowflake Bronze → Silver/quarantaine → contrôles → Gold → Snowsight. Docker exécute, Airflow ordonnance seul ; Terraform gère l’infrastructure. Pas de déploiement supplémentaire lié au seul nom Netflix.
+
+## Reprendre sur son poste
 
 ```sh
-createdb -h 127.0.0.1 sideflix
-psql -X -h 127.0.0.1 -v ON_ERROR_STOP=1 -d sideflix -f source/01_create_catalog.sql
+git pull --ff-only
+python -m pip install -r source/requirements.txt
+python source/collect_public_data.py
 ```
 
-Si la base existe déjà, ignorer uniquement `createdb`. Le SQL conserve les contenus existants et ne réinitialise pas les titres modifiés. Il attend un compte local autorisé à créer la table et son trigger ; utiliser ses propres paramètres de connexion si nécessaire.
+Le collecteur récupère les fichiers manquants et réutilise les snapshots présents ; les APIs ont timeout, échec HTTP visible et reprise limitée des erreurs 429. Les valeurs des sources publiques peuvent évoluer : consulter les empreintes/périodes et ne pas remplacer silencieusement un snapshot de démonstration. Voir `source/README.md` et `rendu/Collecte_V2_Verifications.md`.
 
-La table `public.catalog` contient 6 contenus (A à F), une clé primaire, une durée strictement positive et un trigger mettant `updated_at` à jour à chaque modification, comme au TD 2.
+Le profil dbt fourni fonctionne dans Snowsight Workspaces avec la session du groupe. Pour dbt Core/Docker, préparer le profil à variables et clé du TD : ce n’est pas encore fait. Aucune clé, mot de passe, webhook, `.env` ou state ne doit être versionné.
 
-## Sessions de démonstration
+Les anciens scripts `source/01_create_catalog.sql` et `source/02_verify_catalog.sql` reproduisent le **fixture historique fictif**, pas le nouveau catalogue réel. Ne pas les présenter comme l’adaptation v2 ni remplacer les données du groupe avant intégration contrôlée.
 
-`source/sessions/` contient trois fichiers JSON **avec un objet par ligne** (pas de tableau englobant). Ils seront chargés dans une colonne VARIANT à l’étape 5.
+## Collaboration et rendu
 
-Champs : `session_id`, `content_id`, `viewer_id`, `started_at`, `watched_seconds`, `device`. Dates UTC, durées en secondes, identifiants de spectateurs fictifs. Appareils autorisés : `web`, `mobile`, `tv`.
+[Roadmap et avancement Notion — interne](https://app.notion.com/p/40cf4ba8c522812db500d27d4f5662c4). Les consignes actuelles viennent du Framework, du resource pack, des cours/TD et de Demo Content ; le PDF initial décrit l’ancien périmètre. Pas de rôles fixes : prendre une tâche disponible, indiquer son responsable temporaire et documenter résultats/commit dans Notion en fin de session.
 
-| Jour UTC | Lignes brutes | Sessions valides distinctes | Cas volontaire |
-| --- | --- | --- | --- |
-| 2026-10-30 | 3 | 3 | Référence manuelle du PDF |
-| 2026-10-31 | 15 | 14 | Doublon exact de S4 |
-| 2026-11-01 | 14 | 13 | S31 : durée de -60 secondes |
-| Total | 32 | 30 | 1 doublon et 1 rejet attendu |
-
-Référence du 30 octobre : S1/A = 1 800 s ; S2/A = 900 s ; S3/B = 600 s. Après transformation : A = 2 sessions / 45 minutes ; B = 1 session / 10 minutes ; total = 3 sessions / 55 minutes. Aucun autre visionnage ce jour-là.
-
-Les anomalies sont conservées dans les fichiers bruts pour démontrer la quarantaine et le dédoublonnage plus tard. Les résultats ci-dessus sont attendus ; ils ne prouvent pas encore une exécution dans Snowflake.
-
-## Travail à plusieurs
-
-[Projet et roadmap Notion](https://app.notion.com/p/40cf4ba8c522812db500d27d4f5662c4).
-
-Consulter l’avancement, choisir une tâche disponible, indiquer sa prise en charge, puis noter les fichiers, contrôles, résultats et prochaine action en fin de session. Pas de rôle fixe A/B/C. Les contributions de chacun restent identifiables pour l’oral.
-
-Le dépôt est initialisé localement ; sa publication sur GitHub reste à faire pour partager le code. Les fichiers et preuves sont regroupés ici ; Notion suit les tâches.
-
-## Références
-
-- `Sideflix_Plan_Action_Scolaire.pdf`, étapes 3 et 7.
-- TD 2 : `01_create_merch_db.sql` (table, contraintes, trigger).
-- TD 3.3 : option fichiers JSON (ingestion à réaliser).
-
-## État du travail
-
-Voir `rendu/Etape_3_Verifications.md` (sources) et `rendu/Etape_4_1_Verifications.md` (base `SIDEFLIX` et schémas BRONZE, SILVER, GOLD, LAB créés par SYSADMIN ; compte Snowflake sur AWS, région `AWS_EU_WEST_3`). `rendu/Etape_4_2_Verifications.md` : warehouse `SIDEFLIX_WH` (X-Small, auto-suspend 60 s) créé par Terraform, second plan sans changement. `rendu/Etape_4_3_Verifications.md` : format JSON, stage interne et tables Bronze vides créés ; connexion d’un script par paire de clés vérifiée. `rendu/Etape_5_Verifications.md` : les deux sources sont chargées en Bronze (6 contenus, 32 lignes de sessions), replay et mise à jour vérifiés, 10 contrôles OK. dbt (étapes 6-7) et orchestration restent à réaliser.
-
-Ne jamais versionner les clés, mots de passe, fichiers `.env` ou états Terraform.
+Ce dépôt contient l’historique de travail du groupe. La remise à la professeure sera une copie distincte des seuls éléments exigés et correspondant à la version finale, avec accès vérifiés, sans lien vers les brouillons/archives internes. Conserver les tests et deux incidents/reprises exigés, ainsi que les limites et origines des données. Ce dépôt n’est pas encore le rendu final.

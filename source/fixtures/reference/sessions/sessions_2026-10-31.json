@@ -1,0 +1,15 @@
+{"session_id": "S4", "content_id": "A", "viewer_id": "V005", "started_at": "2026-10-31T08:00:00Z", "watched_seconds": 848, "device": "mobile"}
+{"session_id": "S5", "content_id": "B", "viewer_id": "V006", "started_at": "2026-10-31T09:00:00Z", "watched_seconds": 985, "device": "tv"}
+{"session_id": "S6", "content_id": "C", "viewer_id": "V007", "started_at": "2026-10-31T10:00:00Z", "watched_seconds": 1122, "device": "web"}
+{"session_id": "S7", "content_id": "D", "viewer_id": "V008", "started_at": "2026-10-31T11:00:00Z", "watched_seconds": 1259, "device": "mobile"}
+{"session_id": "S8", "content_id": "E", "viewer_id": "V009", "started_at": "2026-10-31T12:00:00Z", "watched_seconds": 1396, "device": "tv"}
+{"session_id": "S9", "content_id": "F", "viewer_id": "V010", "started_at": "2026-10-31T13:00:00Z", "watched_seconds": 333, "device": "web"}
+{"session_id": "S10", "content_id": "A", "viewer_id": "V001", "started_at": "2026-10-31T14:00:00Z", "watched_seconds": 470, "device": "mobile"}
+{"session_id": "S11", "content_id": "B", "viewer_id": "V002", "started_at": "2026-10-31T15:00:00Z", "watched_seconds": 607, "device": "tv"}
+{"session_id": "S12", "content_id": "C", "viewer_id": "V003", "started_at": "2026-10-31T16:00:00Z", "watched_seconds": 744, "device": "web"}
+{"session_id": "S13", "content_id": "D", "viewer_id": "V004", "started_at": "2026-10-31T17:00:00Z", "watched_seconds": 881, "device": "mobile"}
+{"session_id": "S14", "content_id": "E", "viewer_id": "V005", "started_at": "2026-10-31T18:00:00Z", "watched_seconds": 1018, "device": "tv"}
+{"session_id": "S15", "content_id": "F", "viewer_id": "V006", "started_at": "2026-10-31T19:00:00Z", "watched_seconds": 1155, "device": "web"}
+{"session_id": "S16", "content_id": "A", "viewer_id": "V007", "started_at": "2026-10-31T20:00:00Z", "watched_seconds": 1292, "device": "mobile"}
+{"session_id": "S17", "content_id": "B", "viewer_id": "V008", "started_at": "2026-10-31T21:00:00Z", "watched_seconds": 1200, "device": "tv"}
+{"session_id": "S4", "content_id": "A", "viewer_id": "V005", "started_at": "2026-10-31T08:00:00Z", "watched_seconds": 848, "device": "mobile"}

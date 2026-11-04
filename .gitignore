@@ -15,3 +15,8 @@ terraform.tfvars
 dbt/target/
 dbt/logs/
 airflow/logs/
+
+# Public-source raw snapshots: recreate with the collector; do not publish by default.
+source/real/
+**/target/
+**/logs/

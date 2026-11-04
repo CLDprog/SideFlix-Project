@@ -1,0 +1,23 @@
+# Adaptation du projet dbt du TD 3.2 pour Sideflix.
+name: sideflix_dbt
+version: "1.0.0"
+config-version: 2
+profile: sideflix
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+clean-targets: ["target", "dbt_packages", "logs"]
+models:
+  sideflix_dbt:
+    my_first_dbt_model:
+      +enabled: false
+    my_second_dbt_model:
+      +enabled: false
+    silver:
+      +schema: SILVER
+      +materialized: view
+    gold:
+      +schema: GOLD
+      +materialized: table
+on-run-end:
+  - "{{ log_run_results(results) }}"

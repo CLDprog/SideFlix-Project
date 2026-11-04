@@ -1,6 +1,6 @@
-# Étape 9 v2 — en cours sur le Mac de Matis
+# Étape 9 v2 — terminée et vérifiée
 
-Étape 8 de Jérémy vérifiée dans ses preuves, commit 3106d9f. Aucune des sous-étapes 9.1–9.4 n'est encore déclarée terminée.
+**État actuel au 4 novembre 2026 : 9.1, 9.2, 9.3 et 9.4 terminées.** Deux incidents réellement testés et repris, alerte qualité reçue, deux runs normaux stables. Les sections préparatoires ci-dessous sont conservées comme historique ; la dernière section décrit la clôture. Étape 8 de Jérémy vérifiée dans ses preuves, commit 3106d9f.
 
 ## Préparation réelle
 
@@ -62,3 +62,15 @@ Procédure courte dans `Procedure_9_3_Fichier_Manquant.md` : restaurer le seul f
 ## Reste9.4
 
 Exécuter deux runs normaux de la même date/snapshots, comparer clés, volumes, contextes et publication ; conserver les preuves et vérifier que les injections ne sont pas actives. Le poste et Docker doivent rester allumés. Ne pas clôturer l'étape9 avant cette dernière validation.
+
+## 9.4 terminée — deux runs normaux vérifiés et clôture
+
+Le 4 novembre2026, `matis_9_replay1` (18h42–18h43 Paris) puis `matis_9_replay2` (18h43–18h44 Paris) ont réussi : quatre tâches success, une tentative chacune ; dbt PASS33/WARN0/ERROR0/SKIP0 pour chaque run. Le journal Snowflake confirme11modèles success et21tests pass par invocation.
+
+Les reçus des deux runs sont identiques : six mêmes batch_id, volumes attendus32/6/86/3/6/6, zéro nouvelle ligne dans chaque lot. Les fichiers et réponses API sont donc du même snapshot malgré les appels API réellement refaits. Les deux journaux de publication montrent13sessions/177,4minutes et PUBLICATION_UNIQUE_DATE_PASS.
+
+Contrôle SQL final : une seule ligne publiée pour le1er novembre, run_id du second rejeu et attempt1 ; aucune date dupliquée. Les14résultats Gold quotidiens et les6lignes éditoriales, contextes externes compris, sont identiques au résultat vérifié après9.2, hors timestamp de publication qui change normalement. Silver contient30sessions uniques,1rejet, aucun TEST_BAD_DEVICE ni device invalide. Les six lots conservent leurs volumes, les19empreintes restent conformes. Horodatages du collecteur restaurés sans modifier les autres valeurs.
+
+Les preuves par run reposent sur les logs, reçus, marqueurs de validation et résultats dbt ; la lecture SQL indépendante confirme l'état final, sans prétendre à une capture SQL effectuée entre ces deux runs. Fichiers : `incident_9_4_replay.json`, `incident_9_4_logs/`. Les comptes rendus des deux incidents et leurs preuves figurent dans ce rapport et les fichiers9.1/9.2.
+
+Aucune injection activée dans ces runs normaux. Run de démonstration prêt : même DAG, configuration `{"date":"2026-11-01"}`, sans clé incident, avec un run_id neuf. Limite : Docker et le poste doivent rester allumés ; les données simulées s'arrêtent au1er novembre, donc une autre date absente échoue volontairement. Étape9 terminée ; suite : gouvernance/sécurité/coûts, puis livrables et remise propre.

@@ -40,6 +40,7 @@ Sideflix is a **fictional** company. Its real-world reference is Netflix, whose 
 | Size, operations, stakeholders | 100 titles, 6 employees, featured titles reviewed every week; subscribers, catalogue manager, independent producers, management |
 | Problem and constraints | 100 titles compete for weekly featuring; seven-day figures must be ready by 07:00 Paris time every day; Snowflake budget capped at 10 credits per month (about 1.5 projected) |
 | Possible exit | A sale to Netflix: a scenario, not an agreement and not a second use case |
+| Production volume (assumption) | If one subscriber in five watches one title per day: about 2,000 viewing sessions per day, 14,000 per week. The demonstration replays a 32-session sample instead (Step 2) |
 
 **Use case (one decision, one user).** The **catalogue manager** decides **which titles to feature this week**.
 
@@ -62,7 +63,7 @@ Five **authentic** datasets. Each one has its URL, SHA-256 checksum, period, gra
 | Wikidata | Identity (QID), IMDb and Wikipedia links | Response of 4 Nov 2026 | API, requests → VARIANT |
 | Wikimedia | Daily Wikipedia page views (42 observations) | 26 Oct–1 Nov 2026 | API, requests → VARIANT |
 
-The six films (Whiplash, Moonlight, Frances Ha, Room, Sicario, Get Out) are matched across sources by IMDb `tconst` and Wikidata QID, not by title. Netflix Top 10 has no identifier, so its single match (Sicario) uses the exact title and was confirmed manually as Netflix title 80046311. The **Sideflix viewing sessions are simulated**: `source/v2/sessions/`, 32 JSON rows over 30 October–1 November 2026. They are not counted among the five real datasets. The raw snapshots in `source/real/` allow an exact replay; downloaded archives and the full IMDb dump are excluded from Git.
+The six films (Whiplash, Moonlight, Frances Ha, Room, Sicario, Get Out) are matched across sources by IMDb `tconst` and Wikidata QID, not by title. Netflix Top 10 has no identifier, so its single match (Sicario) uses the exact title and was confirmed manually as Netflix title 80046311. The **Sideflix viewing sessions are simulated**: `source/v2/sessions/`, 32 JSON rows over 30 October–1 November 2026. Real viewing logs are private, and no public dataset provides them for these films. This is a deliberately small **demonstration and acceptance sample**, not production traffic: it contains every case the pipeline must handle (a duplicate, an impossible duration, six films, three days), so that each published figure can be checked by hand against an independent calculation. They are not counted among the five real datasets. The raw snapshots in `source/real/` allow an exact replay; downloaded archives and the full IMDb dump are excluded from Git.
 
 ## Step 3 — Ingestion strategy
 
@@ -99,7 +100,7 @@ The [slides](deliverables/Sideflix_Oral_Defense.pptx) present the business conte
 
 *Simulated Sideflix viewing; analysis window 26 October–1 November 2026, with sessions on 30 October–1 November. Screenshot taken in Snowsight under the read-only analyst role; original UI language kept.*
 
-- **Weekly ranking:** Whiplash first (7 sessions, 112.7 minutes), then Moonlight, Sicario, Frances Ha, Room and Get Out.
+- **Weekly ranking, on the demonstration sample:** Whiplash first (7 sessions, 112.7 minutes), then Moonlight, Sicario, Frances Ha, Room and Get Out. It proves that the calculation is correct; it has no statistical weight until real viewing events feed the same pipeline.
 - **Daily output, 1 November:** 13 valid sessions and 177.4 minutes, one publication row. All three days: 30 valid sessions and 454.2 minutes.
 - **Reproducible queries:** [docs/snowsight_gold_report.sql](docs/snowsight_gold_report.sql). Screenshots and values: [Snowsight report](evidence/08_gold_report/snowsight_report.md).
 
@@ -194,7 +195,7 @@ Analyst queries: [`docs/snowsight_gold_report.sql`](docs/snowsight_gold_report.s
 ## Scope, limitations and contributions
 
 - **Company:** the grading matrix asks for a convincing fictional company, while Framework step 1 mentions a real-world enterprise. Sideflix is explicitly fictional and grounded in Netflix as the real reference; no real acquisition is claimed.
-- **Data:** Sideflix sessions are simulated and labelled as such. The external datasets cover different historical periods, and only Sicario has a confirmed Netflix Top 10 match.
+- **Data:** Sideflix sessions are simulated and labelled as such: a 32-session sample, far below the assumed production volume. With real volumes, a title would enter the ranking only above a minimum number of sessions (planned guardrail, not implemented). The external datasets cover different historical periods, and only Sicario has a confirmed Netflix Top 10 match.
 - **Cloud:** data and compute run on Snowflake (AWS Paris); GCS stores the Terraform state only.
 - **Shared account:** the Snowflake trial account also holds `REDGRAVE`, the course's lab database. Sideflix never modifies it, and the [recorded access tests](evidence/07_security_and_costs/access_tests.txt) show that `SIDEFLIX_RUNNER` cannot read it.
 - **Evidence:** the raw logs, receipts and screenshots keep their captured values (only human-written notes in some text logs were translated). Some show French labels from the team's scripts or the Snowsight interface; the [evidence index](evidence/README.md) explains them.

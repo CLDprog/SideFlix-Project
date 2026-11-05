@@ -30,7 +30,7 @@ This folder holds the optional execution evidence requested in Session 1.2: run 
 | C5 Actual, controlled cloud use | Snowflake on AWS actually traversed by every run, warehouse declared in Terraform, private, versioned and locked GCS state | [03](03_cloud_and_iac/), [Terraform README](../terraform/README.md) |
 | C6 Reliability, quality, operations | Key, business-rule and freshness/completeness tests with a demonstrated failure; replay without double counting; schedule, retries, logs, two incidents with recovery | [04](04_dbt_and_quality/), [05](05_orchestration/), [06](06_incidents/) |
 | C7 Security and costs | Allowed/denied access checks, protected keys and secrets, 1.44 credits measured, projection with assumptions, 10-credit monitor, shutdown procedure | [07](07_security_and_costs/), [governance README](../governance/README.md) |
-| C8 Slides and presentation | French deck of 16 slides plus three appendix slides, little text on screen; the speaker notes tie each slide's claims to this evidence; limitations stated, each member's contribution, slide plan with timing and speakers | [slides](../deliverables/Sideflix_Oral_Defense.pptx) ([PDF](../deliverables/Sideflix_Oral_Defense.pdf)), [live demonstration runbook](../docs/live_demo_runbook.md) |
+| C8 Slides and presentation | French deck of 16 slides plus three appendix slides, little text on screen; the speaker notes tie each slide's claims to this evidence; limitations stated, each member's contribution | [slides](../deliverables/Sideflix_Oral_Defense.pptx) ([PDF](../deliverables/Sideflix_Oral_Defense.pdf)) |
 
 ## Key runs
 

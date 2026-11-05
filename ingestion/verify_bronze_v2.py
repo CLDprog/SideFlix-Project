@@ -10,8 +10,8 @@ for row in csv.DictReader((ROOT/'source/sources_manifest.csv').open()):
     path=ROOT/'source'/row['file']
     assert hashlib.sha256(path.read_bytes()).hexdigest()==row['sha256'],str(path)
 print('PASS: all original manifest file checksums unchanged',flush=True)
-receipt=json.loads((ROOT/'rendu/ingestion_v2_initial.json').read_text())
-replay=json.loads((ROOT/'rendu/ingestion_v2_replay.json').read_text())
+receipt=json.loads((ROOT/'evidence/02_ingestion/ingestion_v2_initial.json').read_text())
+replay=json.loads((ROOT/'evidence/02_ingestion/ingestion_v2_replay.json').read_text())
 assert all(r['loaded']==0 and r['before']==r['after']==r['expected'] for r in replay)
 with connect_snowflake() as sf,sf.cursor() as cur:
     for row in receipt:

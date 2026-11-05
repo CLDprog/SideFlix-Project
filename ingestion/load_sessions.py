@@ -117,7 +117,7 @@ def api_batch(cur, source, mapping, mode, replay=None):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--public',action='store_true')
     p.add_argument('--api-mode',choices=['snapshot','live'],default='snapshot')
-    p.add_argument('--receipt',default='rendu/ingestion_v2_receipt.json')
+    p.add_argument('--receipt',default='evidence/02_ingestion/ingestion_v2_receipt.json')
     p.add_argument('--replay-receipt',help='Replay the exact API payloads of a previous receipt, without HTTP requests')
     p.add_argument('--incident-device',metavar='RUN_ID',help='TD quality incident: isolated copy, never edits reference files')
     args=p.parse_args();mapping=list(csv.DictReader((ROOT/'source/content_mapping.csv').open()))

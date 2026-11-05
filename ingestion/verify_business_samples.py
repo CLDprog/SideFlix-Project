@@ -4,7 +4,7 @@ from decimal import Decimal
 from pathlib import Path
 from check_connection import connect_snowflake
 ROOT=Path(__file__).resolve().parent.parent
-receipt={r['source']:r for r in json.loads((ROOT/'rendu/ingestion_v2_initial.json').read_text())}
+receipt={r['source']:r for r in json.loads((ROOT/'evidence/02_ingestion/ingestion_v2_initial.json').read_text())}
 mapping=list(csv.DictReader((ROOT/'source/content_mapping.csv').open()))
 # Recompute final 31 October/A directly from simulated input, not from Silver.
 rows=[]

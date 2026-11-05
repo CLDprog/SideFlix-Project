@@ -1,5 +1,5 @@
 -- Fixed demonstration snapshots, not an assertion that every real-world day has six films.
--- Referencing sessions makes this upstream check block both Gold publications on failure.
+-- Every model it reads is upstream of GOLD_EDITORIAL_WEEKLY, so a failure skips that table and fails the build: nothing is published.
 with counts as (
     select 'sessions' as source,count(*) as actual,30 as expected from {{ ref('silver_sessions') }}
     union all select 'imdb',count(*),6 from {{ ref('silver_imdb') }}

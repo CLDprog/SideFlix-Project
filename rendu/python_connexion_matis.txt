@@ -1,8 +1,0 @@
-Utilisateur : MATIS_DOUAY
-Rôle        : SYSADMIN
-Warehouse   : SIDEFLIX_WH
-Contexte    : SIDEFLIX.BRONZE
-CATALOG      : 6 ligne(s)
-SESSIONS_RAW : 32 ligne(s)
-LOAD_RUNS    : 3 ligne(s)
-Connexion par paire de clés réussie, sans mot de passe.

@@ -1,6 +1,7 @@
 -- Flatten the received entity and its IMDb claim; join on verified stable identifiers.
+-- Wikidata may keep only the multilingual default label ("mul") when it equals the English one.
 select c.content_id,e.key::string as wikidata_qid,
-    e.value:labels:en:value::string as wikidata_label,
+    coalesce(e.value:labels:en:value::string, e.value:labels:mul:value::string) as wikidata_label,
     e.value:descriptions:en:value::string as description_en,
     e.value:sitelinks:enwiki:title::string as wikipedia_article,
     w.source_system,w._batch_id,w._source_file,w._loaded_at

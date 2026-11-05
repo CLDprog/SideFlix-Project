@@ -6,9 +6,11 @@ sources:
   description: Real catalogue, five authentic public sources and explicitly simulated Sideflix sessions.
   tables:
   - name: catalog
-    description: PostgreSQL catalogue loaded using a watermark and MERGE; one row per content item.
+    description: PostgreSQL catalogue loaded using a watermark and MERGE; one row per content item. Freshness is the last successful, reconciled catalogue ingestion recorded in PUBLIC_SOURCE_RUNS, including runs that find no change.
     config:
-      loaded_at_field: _loaded_at
+      loaded_at_query: >
+        select max(started_at) from SIDEFLIX.BRONZE.PUBLIC_SOURCE_RUNS
+        where source_system = 'catalogue_postgresql' and status = 'SUCCESS'
       freshness:
         warn_after:
           count: 24
@@ -17,9 +19,12 @@ sources:
           count: 26
           period: hour
   - name: sessions_raw
-    description: Raw JSON history; dbt selects only the simulated batch declared in vars.
+    description: Raw JSON history; dbt selects only the simulated batch declared in vars. Freshness is the last successful landing or zero-row replay of that batch recorded in PUBLIC_SOURCE_RUNS, because a replayed batch keeps its first _loaded_at.
     config:
-      loaded_at_field: _loaded_at
+      loaded_at_query: >
+        select max(started_at) from SIDEFLIX.BRONZE.PUBLIC_SOURCE_RUNS
+        where source_system = 'sessions_simulated' and status = 'SUCCESS'
+        and batch_id = '{{ var("batch_sessions_simulated") }}'
       freshness:
         warn_after:
           count: 24
@@ -27,8 +32,6 @@ sources:
         error_after:
           count: 26
           period: hour
-        filter: source_system='sessions_simulated' AND _batch_id='{{ var("batch_sessions_simulated")
-          }}'
   - name: imdb_raw
     description: Public source imdb; provenance and batch metadata retained.
     config:

@@ -31,7 +31,7 @@ with connect_snowflake() as sf,sf.cursor() as cur:
     print('PASS weekly grain, unchanged 30 sessions/minutes, five sources useful; Netflix confirmed only for E',flush=True)
     cur.execute('SELECT * FROM SIDEFLIX.GOLD.GOLD_EDITORIAL_WEEKLY ORDER BY editorial_rank')
     cols=[x[0] for x in cur.description];rows=cur.fetchall()
-    with (ROOT/'rendu/gold_editorial_v2.csv').open('w') as f:
+    with (ROOT/'evidence/04_dbt_and_quality/gold_editorial_v2.csv').open('w') as f:
         writer=csv.writer(f);writer.writerow(cols);writer.writerows(rows)
     print('PASS winner:',rows[0][cols.index('TITLE')],rows[0][cols.index('MINUTES_WATCHED')],flush=True)
     cur.execute('''SELECT count(*),count_if(imdb_duration_seconds=duration_seconds)

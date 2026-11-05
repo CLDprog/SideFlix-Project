@@ -1,0 +1,152 @@
+{
+  "purpose": "Rehearsal of the oral sequence and final run of the delivered code on Matis's Mac (Docker Desktop, Airflow 3.3.2), 5 November 2026, with both job images rebuilt from the final working tree. It follows docs/live_demo_runbook.md: unpause the DAG, let the scheduled run for the previous day fail by design, then trigger the demonstration run.",
+  "runs": [
+    {
+      "run_id": "scheduled__2026-11-05T05:00:00+00:00",
+      "requested_day": "2026-11-04",
+      "started_utc": "2026-11-05T08:45:42Z",
+      "ended_utc": "2026-11-05T08:47:13Z",
+      "task_states": {
+        "ingest_sources": "success",
+        "check_sources": "failed after 3 attempts",
+        "dbt_build": "upstream_failed",
+        "publish_daily_usage": "upstream_failed"
+      },
+      "events": [
+        {
+          "timestamp": "2026-11-05T08:46:22.933435Z",
+          "task": "check_sources",
+          "event": "AssertionError: No simulated sessions for requested UTC day; use an available demonstration date"
+        },
+        {
+          "timestamp": "2026-11-05T08:46:46.321642Z",
+          "task": "check_sources",
+          "event": "AssertionError: No simulated sessions for requested UTC day; use an available demonstration date"
+        },
+        {
+          "timestamp": "2026-11-05T08:47:09.702717Z",
+          "task": "check_sources",
+          "event": "AssertionError: No simulated sessions for requested UTC day; use an available demonstration date"
+        },
+        {
+          "timestamp": "2026-11-05T08:47:10.177278Z",
+          "task": "check_sources",
+          "event": "ALERT_DELIVERED_HTTP 200"
+        }
+      ],
+      "snowflake": {
+        "role": "SIDEFLIX_RUNNER",
+        "queries": 60,
+        "query_errors": 0,
+        "publication_for_2026_11_04": "none"
+      },
+      "logs": "missing_day_logs/"
+    },
+    {
+      "run_id": "oral_rehearsal_20261105",
+      "conf": {
+        "date": "2026-11-01"
+      },
+      "started_utc": "2026-11-05T08:47:13Z",
+      "ended_utc": "2026-11-05T08:48:22Z",
+      "task_states": {
+        "ingest_sources": "success",
+        "check_sources": "success",
+        "dbt_build": "success",
+        "publish_daily_usage": "success"
+      },
+      "snowflake": {
+        "role": "SIDEFLIX_RUNNER",
+        "queries": 95,
+        "query_errors": 0
+      },
+      "logs": "not kept: superseded by final_verification_20261105, which ran the final code",
+      "note": "All four tasks succeeded (freshness 2/2, dbt 33/33, 13 / 177.4 published once). Comparing Gold with the reference export then showed an empty WIKIDATA_LABEL for Moonlight."
+    },
+    {
+      "run_id": "final_verification_20261105",
+      "conf": {
+        "date": "2026-11-01"
+      },
+      "started_utc": "2026-11-05T08:55:51Z",
+      "ended_utc": "2026-11-05T08:56:50Z",
+      "code_change_before_run": "silver_wikidata falls back to the multilingual Wikidata label (labels.mul) when labels.en is absent; the dbt image was rebuilt.",
+      "task_states": {
+        "ingest_sources": "success",
+        "check_sources": "success",
+        "dbt_build": "success",
+        "publish_daily_usage": "success"
+      },
+      "events": [
+        {
+          "timestamp": "2026-11-05T08:56:21.451126Z",
+          "task": "check_sources",
+          "event": "SOURCE_CHECKS_PASS 2026-11-01 final_verification_20261105"
+        },
+        {
+          "timestamp": "2026-11-05T08:56:28.301270Z",
+          "task": "dbt_build",
+          "event": "PASS freshness of bronze.catalog"
+        },
+        {
+          "timestamp": "2026-11-05T08:56:28.302171Z",
+          "task": "dbt_build",
+          "event": "PASS freshness of bronze.sessions_raw"
+        },
+        {
+          "timestamp": "2026-11-05T08:56:45.394411Z",
+          "task": "dbt_build",
+          "event": "Done. PASS=33 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=33"
+        },
+        {
+          "timestamp": "2026-11-05T08:56:48.961463Z",
+          "task": "publish_daily_usage",
+          "event": "MERGE_PUBLISHED 2026-11-01 13 177.400000 run_id final_verification_20261105 attempt 1"
+        },
+        {
+          "timestamp": "2026-11-05T08:56:49.273217Z",
+          "task": "publish_daily_usage",
+          "event": "PUBLICATION_UNIQUE_DATE_PASS"
+        }
+      ],
+      "snowflake": {
+        "role": "SIDEFLIX_RUNNER",
+        "queries": 95,
+        "query_errors": 0
+      },
+      "gold_editorial_weekly_vs_reference_export": "identical except published_at_utc (evidence/04_dbt_and_quality/gold_editorial_v2.csv)",
+      "logs": "final_check_logs/"
+    }
+  ],
+  "snowflake_read_only_checks_after_runs": {
+    "user": "MATIS_DOUAY",
+    "role": "SIDEFLIX_RUNNER",
+    "lab_daily_usage": [
+      {
+        "usage_date": "2026-10-30",
+        "valid_sessions": 3,
+        "minutes_watched": "55.000000",
+        "run_id": "matis_stage8_precheck"
+      },
+      {
+        "usage_date": "2026-11-01",
+        "valid_sessions": 13,
+        "minutes_watched": "177.400000",
+        "run_id": "final_verification_20261105",
+        "attempt": 1
+      }
+    ],
+    "gold_content_daily_all_days": {
+      "rows": 14,
+      "valid_sessions": 30,
+      "minutes_watched": "454.233333"
+    },
+    "freshness_journal_latest_utc": {
+      "catalogue_postgresql": "2026-11-05T08:47:17Z",
+      "sessions_simulated": "2026-11-05T08:47:19Z"
+    }
+  },
+  "note": "Source freshness is measured from the ingestion journal BRONZE.PUBLIC_SOURCE_RUNS (dbt loaded_at_query) since 5 November: the simulated batch loaded on 4 November keeps its first _loaded_at on replays, so the former _loaded_at check would have failed every replay more than 26 h after that load. An earlier run the same night, final_check_20261105 (02:01 UTC), succeeded with the former check.",
+  "origin": "Unmodified Airflow task logs copied from airflow/state/logs; Snowflake values read with SIDEFLIX_RUNNER after the runs. The Slack alert of the scheduled run was delivered (HTTP 200) to the group channel.",
+  "upstream_change_observed": "At 06:30 UTC on 5 November, a Wikidata editor added the multilingual default label 'Moonlight' (mul) to Q21527875 and removed the identical language labels, including en (revisions 2564933247 and 2564933252). The live API ingestion stored this response as batch wikidata_b09aa049240cca01f62d51ce (source/real/api_runs/wikidata/). Business metrics were unaffected; the label fallback restored WIKIDATA_LABEL."
+}

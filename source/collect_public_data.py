@@ -1,7 +1,9 @@
 """Small public-source collection, using the course's requests/JSON pattern.
 
-Run: python source/collect_public_data.py from Sideflix.
-Does not connect to PostgreSQL/Snowflake or alter the historical fixture.
+Run from the repository root: python source/collect_public_data.py
+Does not connect to PostgreSQL or Snowflake. Reuses the retained snapshots and rewrites
+source/content_mapping.csv, source/catalog_real.csv and source/sources_manifest.csv
+(only their check timestamps change when the snapshots are unchanged).
 """
 import csv
 import gzip

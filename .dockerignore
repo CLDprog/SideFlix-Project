@@ -10,5 +10,7 @@
 **/target
 **/logs
 source/real
-rendu
+evidence
+deliverables
+docs
 terraform

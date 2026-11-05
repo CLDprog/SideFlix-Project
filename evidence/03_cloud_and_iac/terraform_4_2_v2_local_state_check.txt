@@ -1,0 +1,21 @@
+# Action 4.2 (v2) - check of the existing Terraform state, 2026-11-04 around 14:20 (Paris)
+# Jérémy's workstation (state holder), Sideflix/terraform folder, Terraform v1.16.6. Read-only: no apply.
+
+> terraform fmt -check -recursive
+(no output); exit code 0
+
+> terraform validate -no-color
+Success! The configuration is valid.
+exit code 0
+
+> terraform plan -detailed-exitcode -no-color -input=false
+module.sideflix_warehouse.snowflake_warehouse.this: Refreshing state... [id=SIDEFLIX_WH]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.
+exit code 0
+
+# S3 backend prerequisites checked on this workstation: no AWS CLI, no ~/.aws/credentials or ~/.aws/config file,
+# no AWS_* environment variable. No AWS access available: state migration not possible at this stage.

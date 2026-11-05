@@ -1,4 +1,4 @@
-# Module: one Snowflake warehouse with the club's cost rules built in.
+# Module adapted from TD 4.2: one Snowflake warehouse with cost controls built in (60 s auto-suspend, auto-resume, created suspended).
 terraform {
   required_providers {
     snowflake = { source = "snowflakedb/snowflake" }

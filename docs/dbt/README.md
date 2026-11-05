@@ -1,21 +1,16 @@
 # dbt documentation and lineage
 
-This directory packages the real generated dbt documentation (`index.html`, `manifest.json`, `catalog.json`) from the project's 4 November execution. Model/source descriptions and source-code displays have been refreshed from the submitted English model files; the captured database catalog and dependency graph are preserved. This documentation packaging does not claim a new Snowflake/dbt execution.
+This folder contains the dbt documentation generated from the delivered code on 5 November 2026 with `dbt docs generate --static` (dbt Core 1.11.16, dbt-snowflake 1.11.6), run inside the project's `sideflix-dbt:1.0.0` image under the limited `SIDEFLIX_RUNNER` role. The catalog (column types and table statistics) was read from the live Snowflake account at that time. It covers 7 Bronze sources, 11 models (9 Silver views and 2 Gold tables), 21 data tests and the run-results hook.
 
-GitHub shows HTML as source. After cloning/downloading the repository, run from the repository root:
+- `index.html` is a self-contained static site: the manifest and catalog are embedded in it. GitHub shows HTML files as source code, so download or clone the repository and open `docs/dbt/index.html` directly in a browser. Select a model, then open its lineage graph with the button at the bottom right. No Snowflake credentials are needed.
+- `manifest.json` and `catalog.json` are the matching machine-readable artifacts from the same run.
 
-```sh
-python -m http.server 8001 --bind 127.0.0.1
-```
+For a quick view on GitHub, use [the lineage image](../dbt_lineage.png), [the dbt project README](../../dbt/sideflix_dbt/README.md), and the model and column descriptions in the YAML files under `dbt/sideflix_dbt/models/`.
 
-Open [the local dbt documentation](http://127.0.0.1:8001/docs/dbt/). Select a model and open its lineage graph. Stop the server with Ctrl+C. No Snowflake credentials are required to browse this saved documentation.
-
-For an immediate GitHub preview, use [the lineage image](../dbt_lineage.png), [the dbt project README](../../dbt/sideflix_dbt/README.md), and the YAML model/column descriptions under `dbt/sideflix_dbt/models/`.
-
-To regenerate against the account using an authorized user and the environment-based Core profile:
+To regenerate the documentation against the account with an authorized user, using the environment-based Core profile:
 
 ```sh
-dbt docs generate --project-dir dbt/sideflix_dbt --profiles-dir dbt/profiles-core
+dbt docs generate --static --project-dir dbt/sideflix_dbt --profiles-dir dbt/profiles-core
 ```
 
-Keep keys and environment files private. The packaged catalog is a dated execution snapshot, not a live view of the account.
+Then copy `static_index.html` (renamed `index.html`), `manifest.json` and `catalog.json` from the dbt target folder into `docs/dbt/`. Keep keys and environment files private. The packaged catalog is a dated snapshot, not a live view of the account.

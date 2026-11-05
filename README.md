@@ -8,7 +8,7 @@ Sideflix is a fictional independent-film streaming platform. Its daily batch pip
 
 | Requested deliverable | Where |
 | --- | --- |
-| Slides of the oral presentation (16 slides plus two appendix slides, English, with speaker notes) | [deliverables/Sideflix_Oral_Defense.pptx](deliverables/Sideflix_Oral_Defense.pptx) · [PDF export](deliverables/Sideflix_Oral_Defense.pdf) |
+| Slides of the oral presentation (16 slides plus three appendix slides, French, with speaker notes) | [deliverables/Sideflix_Oral_Defense.pptx](deliverables/Sideflix_Oral_Defense.pptx) · [PDF export](deliverables/Sideflix_Oral_Defense.pdf) |
 | Architecture | [Diagram](docs/architecture.png) · [Components, data flows and choices](docs/architecture.md) |
 | Git repository with README | This repository: README, reproducible code and [launch procedure](#running-the-pipeline) |
 | Video of the working pipeline (to submit, not graded) | [Airflow run recording, 1 min 21 s](deliverables/Sideflix_pipeline.mov) · [completion proof from the same run's logs](evidence/09_video_run/video_run_verification.json) |

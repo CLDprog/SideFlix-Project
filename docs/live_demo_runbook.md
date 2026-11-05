@@ -11,7 +11,7 @@ Group 6 presents on **6 November 2026 at 13:00 Paris time**. The proposed speaki
 | 3. Ingestion strategy | Matis | PostgreSQL watermark/MERGE, file stage/COPY, API requests/VARIANT; schema checks, landing storage, reconciliation, deduplication and quarantine. |
 | 4. Cloud and tools | Jérémy | Executed architecture, AWS Snowflake, GCS for Terraform state only, local Docker/PostgreSQL/Airflow, justified choices, limited roles and measured costs. Disclose the auxiliary second cloud provider. |
 | 5. Architecture and outcomes | Rayan | Gold table and chart in Snowsight, Whiplash first, business interpretation and limitations. Captures are in `evidence/08_gold_report/snowsight_report.md`. Distinguish simulated viewing, historical ratings, page views and Netflix Top 10. |
-| 6. Resilience, governance and live run | Jérémy and Matis | Execute the normal pipeline live, verify results and governance, inspect lineage and documentation, and show the two actually executed incidents and recoveries using the evidence below. |
+| 6. Resilience, governance and live run | Jérémy and Matis | Execute the normal pipeline live, verify results and governance, inspect lineage and documentation, and run the two incidents live with their recovery (section below), keeping the recorded evidence as a fallback. |
 
 ## Before presenting
 
@@ -62,16 +62,31 @@ Explain the expected denials as evidence of isolation. No data is changed by the
 
 Open the packaged dbt documentation, `docs/dbt/index.html`, directly in a browser (a self-contained static site, see `docs/dbt/README.md`); keep `docs/dbt_lineage.png` as the image fallback. Trace one Bronze source through Silver to Gold, inspect the model descriptions and tests, and connect this lineage to the actual SQL models. Open the README launch procedure, `source/sources_manifest.csv`, and `evidence/README.md` to demonstrate reproducibility, provenance and traceability. Confirm the docs correspond to the delivered models.
 
-## Showcase both executed incidents and recovery
+## Showcase the two incidents live, with recovery
 
-These are deliberate faults that were actually executed against the pipeline, with failed tasks and verified recoveries. They are not merely hypothetical scenarios. The Framework requires showcasing at least two real incident scenarios; present the execution evidence and recovery clearly. A fresh live normal run remains required separately.
+Both incidents can be run live with the delivered code: they were rehearsed on 5 November (`live_rehearsal_9_2_crash`, `live_rehearsal_9_1_bad_device`, `live_rehearsal_9_1_recovery`, see `evidence/06_incidents/live_rehearsal_20261105/`). Run them after the normal run, each with a new run ID. If time is short, run incident 9.2 live and show incident 9.1 from its recorded evidence. The missing-day failure that starts when the DAG is unpaused is a third failure scenario seen live: the completeness check blocks the publication and alerts Slack.
 
-| Scenario | Show the failure and protection | Show the recovery |
-| --- | --- | --- |
-| Invalid device category | `matis_9_1_bad_device`: isolated test batch; `accepted_values` fails after three attempts, Gold and publication remain unchanged, Slack alert received. Open `evidence/06_incidents/incident_9_1_logs/` and `evidence/06_incidents/incident_9_1_failed_and_cleanup.json`. | Only the identified test batch was removed; `matis_9_1_fixed` succeeds with build 33/33, 13 sessions / 177.4 minutes and no residual invalid session. Open `evidence/06_incidents/incident_9_1_recovery.json` and recovery logs. |
-| Crash after publication write | `matis_9_2_crash`, attempt 1: the MERGE writes successfully, then the process deliberately crashes. Show `evidence/06_incidents/incident_9_2_after_first_write.json` and attempt 1 logs. | Airflow retries automatically; attempt 2 succeeds. `evidence/06_incidents/incident_9_2_recovered.json` and logs prove one row for the date with unchanged totals. Explain why MERGE prevents duplicate publication. |
+| Incident | Trigger configuration | What the audience sees | Recovery |
+| --- | --- | --- | --- |
+| 9.2 — crash after the publication write (about 1 min 30 s, no cleanup) | `{"date":"2026-11-01","incident":"crash_after_write"}` | `publish_daily_usage` attempt 1 logs `MERGE_PUBLISHED`, then `Simulated crash AFTER write`; the task goes up for retry | Airflow retries after 20 s; attempt 2 publishes again and logs `PUBLICATION_UNIQUE_DATE_PASS`. `SIDEFLIX.LAB.DAILY_USAGE` still has one row for 1 November (13 sessions, 177.4 minutes), now with attempt 2: the MERGE prevents double counting |
+| 9.1 — invalid device category (about 2 min, then cleanup) | `{"date":"2026-11-01","incident":"bad_device"}` | `ingest_sources` loads an isolated 32-row copy with one `invalid` device; `dbt_build` fails three times on `accepted_values` (`PASS=28 ERROR=1 SKIP=4`); `publish_daily_usage` is `upstream_failed`; Slack alert; Gold and the publication are unchanged | Run the prepared cleanup below, then trigger a normal run `{"date":"2026-11-01"}`: four green tasks, 13 sessions / 177.4 minutes, one row |
 
-The consolidated account is `evidence/06_incidents/incident_report.md`. Replays `matis_9_replay1` and `matis_9_replay2` further prove stable values and no duplicate publication. Do not claim that these historical runs occurred during the oral. Do not improvise a destructive cleanup or run the invalid-device injection during the normal live demonstration.
+Prepared cleanup for 9.1, in Snowsight. The pipeline role has no DELETE right on Bronze by design, so the operator uses SYSADMIN and removes only the test batch:
+
+```sql
+USE ROLE SYSADMIN;
+USE WAREHOUSE SIDEFLIX_WH;
+-- Replace <run ID> with the run ID of the 9.1 run: expect one batch of 32 rows.
+SELECT _batch_id, COUNT(*) FROM SIDEFLIX.BRONZE.SESSIONS_RAW
+WHERE _batch_id IN (SELECT DISTINCT _batch_id FROM SIDEFLIX.BRONZE.SESSIONS_RAW
+                    WHERE raw:incident_run_id::string = '<run ID>')
+GROUP BY 1;
+DELETE FROM SIDEFLIX.BRONZE.SESSIONS_RAW
+WHERE _batch_id IN (SELECT DISTINCT _batch_id FROM SIDEFLIX.BRONZE.SESSIONS_RAW
+                    WHERE raw:incident_run_id::string = '<run ID>');
+```
+
+Never add an `incident` option to the normal demonstration run, and use only the prepared cleanup statement. The first executions on 4 November remain the reference evidence: `matis_9_1_bad_device` → `matis_9_1_fixed` and `matis_9_2_crash`, consolidated in `evidence/06_incidents/incident_report.md`, plus the replays `matis_9_replay1` and `matis_9_replay2`.
 
 ## Final group checks
 

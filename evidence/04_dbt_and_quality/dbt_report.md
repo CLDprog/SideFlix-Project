@@ -33,4 +33,4 @@ export SNOWFLAKE_DISABLE_PLATFORM_DETECTION=true AWS_EC2_METADATA_DISABLED=true 
 
 Snowflake/RSA variables come from the private local configuration, never Git. Evidence: `dbt_6_v2_run.txt`, `dbt_6_v2_replay.txt`, `dbt_6_v2_docs.txt`, `dbt_6_v2_business_checks.txt`, `gold_editorial_v2.csv` (written by `verify_dbt_v2.py`; re-running it overwrites this export with the current values). Generated dbt catalog/lineage files were then written to the ignored `target/` folder; the final documentation site is packaged in [`docs/dbt/`](../../docs/dbt/README.md).
 
-At this historical checkpoint, steps 7 and 8 were not validated. The Docker access test returned “permission denied while trying to connect to the docker API”, so no successful container execution was claimed here. **Update, 4 November:** steps 7 and 8 were subsequently completed; see [quality_report.md](quality_report.md) and [orchestration_report.md](../05_orchestration/orchestration_report.md).
+The data-quality tests and the containerised runs are covered in [quality_report.md](quality_report.md) and [orchestration_report.md](../05_orchestration/orchestration_report.md).

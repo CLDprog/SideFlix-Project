@@ -11,7 +11,7 @@ Local collection on 4 November 2026. No publication or PostgreSQL/Snowflake chan
 - Netflix: 11,160 rows = 279 weeks × 40 rows (four top-10 categories), weeks dated 4 July 2021–1 November 2026. Sicario appears in the week of 9 March 2025 at rank 5; the identity of the 2015 movie is corroborated by official Netflix title 80046311. Get Out was not marked as a verified mapping. These historical periods differ from the simulated viewing events.
 - All manifest file checksums were checked successfully.
 - Isolated final simulation: `source/v2/sessions`, 32 raw rows = 30 valid sessions + one rejection + one duplicate. Daily expectations are in `expected_daily_usage.csv`; viewing provenance is explicitly `sideflix_simulated`. The 30 October reference is A=45 minutes/2 sessions and B=10 minutes/1 session.
-- The original prototype was copied unchanged to `source/fixtures/reference`; the original files were also retained in this historical collection step. These obsolete prototype fixtures were subsequently removed from the final delivery tree.
+- The earlier prototype fixtures were kept during collection and removed from the final delivery; the final simulated input is `source/v2/sessions/`.
 
 ## Reproduction
 

@@ -18,10 +18,8 @@ Script replay was verified without redefining added-column defaults and with ref
 
 The three reference checks (6 catalogue rows, 32 raw sessions, 55 minutes on 30 October) concerned prototype copies kept in `LAB`. They were later removed from `04b_check_bronze_v2_setup.sql`, because those copies do not exist on a clean account; the four structural checks remain.
 
-At this historical checkpoint, the five new datasets were not loaded yet. Object creation alone does not prove ingestion or validation of V2 dbt models; see the subsequent step 5–7 reports.
+These checks cover object creation only; the loads and the dbt validation are recorded in [ingestion_report.md](ingestion_report.md) and [dbt_report.md](../04_dbt_and_quality/dbt_report.md).
 
-## State migration follow-up
+## Terraform state
 
-The existing Terraform warehouse was retained. At the initial 4.3 checkpoint, team state still lived on Jérémy's workstation and migration was pending. No apply was run with empty state.
-
-**Update, 4 November 2026 (Jérémy):** action 4.2 was completed: migration to a private, versioned, locked GCS backend, followed by a no-change plan (exit 0). Step 4 is closed. See `evidence/03_cloud_and_iac/terraform_report.md`.
+The existing Terraform warehouse was kept and no apply was ever run from an empty state. Jérémy then migrated the state to a private, versioned, locked GCS backend, followed by a no-change plan (exit 0): see [terraform_report.md](../03_cloud_and_iac/terraform_report.md).

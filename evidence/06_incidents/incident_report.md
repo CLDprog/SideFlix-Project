@@ -65,3 +65,12 @@ The final SQL check found one publication for 1 November, second replay run_id, 
 Per-run evidence comes from logs, receipts, validation markers and dbt results. The independent SQL read confirms the final state; it is not claimed to have been taken between the two replays. Evidence: `incident_9_4_replay.json`, `incident_9_4_logs/`.
 
 No injection was active in these normal runs. The demonstration configuration is `{"date":"2026-11-01"}` with a new run_id and no incident key. Docker/the workstation must remain running. The simulated data ends on 1 November; an absent date intentionally fails. Step 9 is complete; governance/security/costs are documented in step 10.
+
+## Live rehearsal with the final code (5 November)
+
+Both incidents were run again with the delivered code to prepare their live demonstration at the oral ([receipt and key logs](live_rehearsal_20261105/rehearsal_receipt.json)):
+
+- **9.2:** `live_rehearsal_9_2_crash` published, crashed after the MERGE on attempt 1, and succeeded on the automatic attempt 2; one row remained for 1 November (13 sessions, 177.4 minutes).
+- **9.1:** `live_rehearsal_9_1_bad_device` loaded an isolated 32-row copy, failed three times on `accepted_values` (`PASS=28 ERROR=1 SKIP=4`), skipped the publication and delivered the Slack alert; Gold and the publication were unchanged. The 32 test rows were then deleted as SYSADMIN (the pipeline role has no DELETE right on Bronze), and the normal run `live_rehearsal_9_1_recovery` passed 33/33 with one publication.
+
+The exact live procedure and the prepared cleanup statement are in [docs/live_demo_runbook.md](../../docs/live_demo_runbook.md).

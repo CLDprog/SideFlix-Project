@@ -1,0 +1,78 @@
+{
+  "purpose": "Rehearsal of both incidents with the final delivered code on Matis's Mac, 5 November 2026, to prepare their live demonstration at the oral (docs/live_demo_runbook.md).",
+  "runs": [
+    {
+      "run_id": "live_rehearsal_9_2_crash",
+      "conf": {
+        "date": "2026-11-01",
+        "incident": "crash_after_write"
+      },
+      "result": "success after one automatic retry",
+      "events": [
+        "attempt 1: MERGE_PUBLISHED 2026-11-01 13 177.400000, then 'Simulated crash AFTER write (TD4.2)'",
+        "attempt 2: MERGE_PUBLISHED 2026-11-01 13 177.400000, PUBLICATION_UNIQUE_DATE_PASS"
+      ],
+      "publication_after": {
+        "usage_date": "2026-11-01",
+        "valid_sessions": 13,
+        "minutes_watched": "177.400000",
+        "attempt": 2,
+        "rows_for_date": 1
+      },
+      "logs": [
+        "9_2_publish_attempt_1.log",
+        "9_2_publish_attempt_2.log"
+      ]
+    },
+    {
+      "run_id": "live_rehearsal_9_1_bad_device",
+      "conf": {
+        "date": "2026-11-01",
+        "incident": "bad_device"
+      },
+      "result": "failed by design",
+      "events": [
+        "ingest_sources: INCIDENT_BAD_DEVICE isolated batch sessions_simulated_e3749dc85d795af6e3a3a02e, 32 rows loaded",
+        "dbt_build attempts 1-3: FAIL accepted_values_silver_sessions_device__web__mobile__tv; PASS=28 ERROR=1 SKIP=4",
+        "publish_daily_usage: upstream_failed",
+        "Slack alert delivered: ALERT_DELIVERED_HTTP 200"
+      ],
+      "after_failure": {
+        "publication_unchanged": "13 / 177.400000 from live_rehearsal_9_2_crash attempt 2",
+        "gold_content_daily": {
+          "rows": 14,
+          "valid_sessions": 30,
+          "minutes_watched": "454.233333"
+        }
+      },
+      "logs": [
+        "9_1_ingest_sources.log",
+        "9_1_dbt_build_attempt_3.log"
+      ]
+    },
+    {
+      "step": "cleanup",
+      "role": "SYSADMIN (SIDEFLIX_RUNNER has no DELETE on Bronze)",
+      "statement": "DELETE FROM SIDEFLIX.BRONZE.SESSIONS_RAW WHERE _batch_id = 'sessions_simulated_e3749dc85d795af6e3a3a02e'",
+      "rows_deleted": 32,
+      "remaining_batches": {
+        "sessions_simulated_6c58e1a654180f3e4b910331": 32,
+        "legacy_reference": 32
+      }
+    },
+    {
+      "run_id": "live_rehearsal_9_1_recovery",
+      "conf": {
+        "date": "2026-11-01"
+      },
+      "result": "success",
+      "events": [
+        "SOURCE_CHECKS_PASS 2026-11-01",
+        "Done. PASS=33 WARN=0 ERROR=0 SKIP=0",
+        "MERGE_PUBLISHED 2026-11-01 13 177.400000 attempt 1",
+        "PUBLICATION_UNIQUE_DATE_PASS"
+      ]
+    }
+  ],
+  "origin": "Unmodified Airflow task logs copied from airflow/state/logs (key attempts only); Snowflake values read after each step; the DAG was paused again afterwards."
+}

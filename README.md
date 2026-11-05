@@ -105,7 +105,7 @@ The [slides](deliverables/Sideflix_Oral_Defense.pptx) present the business conte
 
 ## Step 6 — Resilience, governance and live demonstration
 
-**Two real incidents, actually executed, with recovery** ([incident report](evidence/06_incidents/incident_report.md)):
+**Two real incidents, actually executed, with recovery** ([incident report](evidence/06_incidents/incident_report.md)). Both were executed on 4 November and rehearsed again with the final code on 5 November, so they can be run live at the oral ([live procedure](docs/live_demo_runbook.md#showcase-the-two-incidents-live-with-recovery)):
 
 1. **Invalid data:** an invalid device injected into an isolated copy of a batch → the dbt `accepted_values` test fails after 3 attempts → Gold and the publication stay unchanged → Slack alert received → only the test batch is removed → the corrective run passes 33/33 with unchanged figures.
 2. **Crash after the publication write:** the job crashes right after its MERGE → Airflow retries automatically → attempt 2 succeeds → still one row for the date, same totals, no double counting ([task logs](evidence/06_incidents/incident_9_2_logs/)).

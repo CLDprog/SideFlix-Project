@@ -23,14 +23,14 @@ This folder holds the optional execution evidence requested in Session 1.2: run 
 
 | Criterion | What is shown | Where |
 | --- | --- | --- |
-| C1 Convincing fictional company | Revenue model, customers, size, operations, stakeholders, problem and numerical constraints, explicit assumptions | [README, step 1](../README.md#step-1--company-and-use-case), slides 4–6 |
-| C2 Use case and business value | Catalogue manager, weekly feature decision, grain, formulas, exclusions, daily cadence, acceptance test 13 sessions / 177.4 minutes | [README, step 1](../README.md#step-1--company-and-use-case), slide 6, [Gold report](08_gold_report/snowsight_report.md) |
+| C1 Convincing fictional company | Revenue model, customers, size, operations, stakeholders, problem and numerical constraints, explicit assumptions | [README, step 1](../README.md#step-1--company-and-use-case), slide 2 |
+| C2 Use case and business value | Catalogue manager, weekly feature decision, grain, formulas, exclusions, daily cadence, acceptance test 13 sessions / 177.4 minutes | [README, step 1](../README.md#step-1--company-and-use-case), slides 3 and 11, [Gold report](08_gold_report/snowsight_report.md) |
 | C3 Working end-to-end pipeline | Ingestion from three kinds of sources, Bronze/Silver/Gold models, Gold checked against the independent expected result, containerised Airflow jobs, documented launch | [02](02_ingestion/), [04](04_dbt_and_quality/), [05](05_orchestration/), [10](10_final_check/), [README launch procedure](../README.md#running-the-pipeline) |
 | C4 Appropriate tools | Ingestion, storage and transformation choices, alternatives and trade-offs, measured small-data query (248 ms, 3 of 5 partitions) | [architecture](../docs/architecture.md), [step10_measurements.json](07_security_and_costs/step10_measurements.json) |
 | C5 Actual, controlled cloud use | Snowflake on AWS actually traversed by every run, warehouse declared in Terraform, private, versioned and locked GCS state | [03](03_cloud_and_iac/), [Terraform README](../terraform/README.md) |
 | C6 Reliability, quality, operations | Key, business-rule and freshness/completeness tests with a demonstrated failure; replay without double counting; schedule, retries, logs, two incidents with recovery | [04](04_dbt_and_quality/), [05](05_orchestration/), [06](06_incidents/) |
 | C7 Security and costs | Allowed/denied access checks, protected keys and secrets, 1.44 credits measured, projection with assumptions, 10-credit monitor, shutdown procedure | [07](07_security_and_costs/), [governance README](../governance/README.md) |
-| C8 Slides and presentation | 21-slide English deck, claims tied to this evidence, limitations stated, each member's contribution | [slides](../deliverables/Sideflix_Oral_Defense.pptx), [live demonstration runbook](../docs/live_demo_runbook.md) |
+| C8 Slides and presentation | English deck of 16 slides plus two appendix slides, with speaker notes; claims tied to this evidence, limitations stated, each member's contribution, slide plan with timing and speakers | [slides](../deliverables/Sideflix_Oral_Defense.pptx) ([PDF](../deliverables/Sideflix_Oral_Defense.pdf)), [live demonstration runbook](../docs/live_demo_runbook.md) |
 
 ## Key runs
 

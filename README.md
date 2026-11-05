@@ -8,7 +8,7 @@ Sideflix is a fictional independent-film streaming platform. Its daily batch pip
 
 | Requested deliverable | Where |
 | --- | --- |
-| Slides of the oral presentation (21 slides, English) | [deliverables/Sideflix_Oral_Defense.pptx](deliverables/Sideflix_Oral_Defense.pptx) |
+| Slides of the oral presentation (16 slides plus two appendix slides, English, with speaker notes) | [deliverables/Sideflix_Oral_Defense.pptx](deliverables/Sideflix_Oral_Defense.pptx) · [PDF export](deliverables/Sideflix_Oral_Defense.pdf) |
 | Architecture | [Diagram](docs/architecture.png) · [Components, data flows and choices](docs/architecture.md) |
 | Git repository with README | This repository: README, reproducible code and [launch procedure](#running-the-pipeline) |
 | Video of the working pipeline (to submit, not graded) | [Airflow run recording, 1 min 21 s](deliverables/Sideflix_pipeline.mov) · [completion proof from the same run's logs](evidence/09_video_run/video_run_verification.json) |
@@ -21,7 +21,7 @@ The repository is private because it contains IMDb and Netflix exports that may 
 
 | Framework step | Section | Evidence folder |
 | --- | --- | --- |
-| 1. Company and use cases | [Step 1](#step-1--company-and-use-case) | Slides 3–6 |
+| 1. Company and use cases | [Step 1](#step-1--company-and-use-case) | Slides 2–3 |
 | 2. At least five real sources | [Step 2](#step-2--five-real-data-sources) | [01_sources](evidence/01_sources/) |
 | 3. Different ingestion methods, automated flow | [Step 3](#step-3--ingestion-strategy) | [02_ingestion](evidence/02_ingestion/), [04_dbt_and_quality](evidence/04_dbt_and_quality/), [05_orchestration](evidence/05_orchestration/) |
 | 4. Cloud and tools, with justification | [Step 4](#step-4--cloud-and-tools) | [03_cloud_and_iac](evidence/03_cloud_and_iac/), [07_security_and_costs](evidence/07_security_and_costs/) |

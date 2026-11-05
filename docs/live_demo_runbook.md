@@ -90,7 +90,4 @@ Never add an `incident` option to the normal demonstration run, and use only the
 
 ## Final group checks
 
-If the panel asks why there are so few sessions: the 32 sessions are a simulated demonstration and acceptance sample, built so that every rule can be checked by hand against an independent calculation; real viewing logs are private. At the assumed production volume (about 2,000 sessions per day for 10,000 subscribers), the same code runs unchanged, and a minimum number of sessions per title would be required before ranking.
-
-
 Agree the speakers and slide transitions, rehearse to the teacher's time limit, verify the workstation/network and professor's repository access, and identify each member's actual pipeline contribution. Rayan's assigned consumption section was executed and captured by Matis on 4 November; explain actual contributions accurately. Keep the normal-run video and evidence available as fallbacks. After the live run, `ingest_sources` will have rewritten the check timestamps in `source/sources_manifest.csv` and `source/catalog_real.csv`; once checksums and business values are confirmed unchanged, discard these timestamp-only changes instead of committing them.
